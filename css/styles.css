@@ -843,6 +843,37 @@ footer {
 .quick-search-wrap input::placeholder { color: var(--muted); }
 .btn-add-product { background: var(--blue); color: #fff; border: none; border-radius: 3px; padding: 12px 20px; font-family: var(--font-display); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .btn-add-product:hover { background: var(--blue-dark); }
+.quick-add-sub-label { font-size: 13px; font-weight: 600; color: var(--white); margin: 16px 0 10px; }
+/* ─── ADD CSV ─── */
+.csv-section-body { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+.csv-drop-zone { border: 1px dashed var(--border); border-radius: 4px; padding: 20px 16px 0; background: var(--bg3); display: flex; flex-direction: column; }
+.csv-drop-zone.drag-over { border-color: var(--blue); background: #00a8e010; }
+.csv-drop-inner { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding-bottom: 16px; }
+.csv-drop-icon { color: var(--blue); margin-bottom: 4px; }
+.csv-drop-title { font-family: var(--font-display); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+.csv-drop-sub { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.csv-drop-sub a { color: var(--blue); cursor: pointer; text-decoration: none; }
+.csv-drop-size { font-size: 11px; color: var(--muted); }
+.csv-file-preview { display: none; flex-direction: column; gap: 8px; padding: 12px 0; }
+.csv-file-preview.visible { display: flex; }
+.csv-file-info { display: flex; align-items: center; gap: 10px; }
+.csv-file-badge { width: 36px; height: 36px; background: #22a055; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 9px; font-weight: 800; color: #fff; letter-spacing: 0.5px; flex-shrink: 0; }
+.csv-file-name { font-size: 13px; font-weight: 600; }
+.csv-file-size { font-size: 11px; color: var(--muted); }
+.csv-progress-wrap { display: flex; align-items: center; gap: 8px; }
+.csv-progress-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.csv-progress-fill { height: 100%; background: var(--blue); border-radius: 2px; transition: width .4s ease; }
+.csv-progress-pct { font-size: 11px; color: var(--muted); flex-shrink: 0; width: 32px; text-align: right; }
+.csv-upload-btn { width: 100%; background: var(--blue); color: #fff; border: none; border-radius: 3px; padding: 11px; font-family: var(--font-display); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 12px; display: block; }
+.csv-upload-btn:hover { background: var(--blue-dark); }
+.csv-instructions { display: flex; flex-direction: column; font-size: 13px; }
+.csv-step { color: var(--muted); padding: 5px 0; border-bottom: 1px solid var(--border); }
+.csv-step:last-of-type { border-bottom: none; }
+.csv-step span { color: var(--white); }
+.csv-links { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.csv-link { font-size: 12px; color: var(--blue); cursor: pointer; text-decoration: none; display: flex; align-items: flex-start; gap: 5px; line-height: 1.4; }
+.csv-link:hover { text-decoration: underline; }
+.csv-link::before { content: '✱'; flex-shrink: 0; }
 
 /* ─── CART EMPTY STATE ─── */
 .cart-empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg2); }

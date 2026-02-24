@@ -110,6 +110,80 @@ function toggleQuickAdd() {
   toggle.textContent = isOpen ? '+' : '−';
 }
 
+// ─── ADD CSV ─────────────────────────────────────────
+let _csvFile = null;
+let _csvUploading = false;
+
+function _csvShowFile(file) {
+  _csvFile = file;
+  document.getElementById('csv-empty-state').style.display = 'none';
+  const preview = document.getElementById('csv-file-preview');
+  preview.classList.add('visible');
+  document.getElementById('csv-file-name').textContent = file.name;
+  const kb = Math.round(file.size / 1024);
+  document.getElementById('csv-file-size').textContent = kb < 1024 ? `${kb} KB` : `${(kb/1024).toFixed(1)} MB`;
+  document.getElementById('csv-progress-fill').style.width = '0%';
+  document.getElementById('csv-progress-pct').textContent = '0%';
+}
+
+function csvFileSelected(input) {
+  if (input.files && input.files[0]) _csvShowFile(input.files[0]);
+}
+
+function csvDragOver(e) {
+  e.preventDefault();
+  document.getElementById('csv-drop-zone').classList.add('drag-over');
+}
+
+function csvDragLeave() {
+  document.getElementById('csv-drop-zone').classList.remove('drag-over');
+}
+
+function csvDrop(e) {
+  e.preventDefault();
+  document.getElementById('csv-drop-zone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.name.toLowerCase().endsWith('.csv')) _csvShowFile(file);
+}
+
+function csvUpload() {
+  if (_csvUploading) return;
+  if (!_csvFile) {
+    document.getElementById('csv-file-input').click();
+    return;
+  }
+  _csvUploading = true;
+  const fill = document.getElementById('csv-progress-fill');
+  const pct  = document.getElementById('csv-progress-pct');
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress = Math.min(progress + Math.random() * 18 + 8, 100);
+    const p = Math.round(progress);
+    fill.style.width = p + '%';
+    pct.textContent  = p + '%';
+    if (progress >= 100) {
+      clearInterval(interval);
+      _csvUploading = false;
+      _csvFile = null;
+      // Reset drop zone
+      document.getElementById('csv-empty-state').style.display = '';
+      document.getElementById('csv-file-preview').classList.remove('visible');
+      document.getElementById('csv-file-input').value = '';
+      showToast('CSV file uploaded successfully', 'check');
+    }
+  }, 120);
+}
+
+function csvDownloadTemplate() {
+  const header = 'SKU,Quantity\n';
+  const rows   = 'ZX11-501/26,10\nPM-4550,2\nOX-S248930,5\n';
+  const blob   = new Blob([header + rows], { type: 'text/csv' });
+  const url    = URL.createObjectURL(blob);
+  const a      = document.createElement('a');
+  a.href = url; a.download = 'ox-order-template.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
 // ─── LISTING ACTIONS ────────────────────────────────
 function selectCat(i) {
   selectedCat = i;

@@ -450,6 +450,8 @@
           <span id="quick-add-toggle">+</span>
         </div>
         <div class="quick-add-body" id="quick-add-body" style="display:none">
+          <!-- Quick Add row -->
+          <div class="quick-add-sub-label">Quick Add</div>
           <div class="quick-add-row">
             <div class="quick-search-wrap">
               <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><path d="M21 21L16.65 16.65M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -461,6 +463,45 @@
               <div class="qty-btn">+</div>
             </div>
             <button class="btn-add-product">Add Product</button>
+          </div>
+          <!-- Add CSV -->
+          <div class="quick-add-sub-label" style="margin-top:20px">Add CSV</div>
+          <div class="csv-section-body">
+            <div class="csv-drop-zone" id="csv-drop-zone"
+                 ondragover="csvDragOver(event)" ondragleave="csvDragLeave(event)" ondrop="csvDrop(event)">
+              <div class="csv-drop-inner" id="csv-empty-state">
+                <div class="csv-drop-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="17 8 12 3 7 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="3" x2="12" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="csv-drop-title">Upload Your .CSV File</div>
+                <div class="csv-drop-sub">Drag &amp; Drop or <a onclick="document.getElementById('csv-file-input').click()">browse your desktop</a> to upload a .CSV file</div>
+                <div class="csv-drop-size">&gt;Max file size: 10 MB</div>
+              </div>
+              <div class="csv-file-preview" id="csv-file-preview">
+                <div class="csv-file-info">
+                  <div class="csv-file-badge">CSV</div>
+                  <div>
+                    <div class="csv-file-name" id="csv-file-name"></div>
+                    <div class="csv-file-size" id="csv-file-size"></div>
+                  </div>
+                </div>
+                <div class="csv-progress-wrap">
+                  <div class="csv-progress-bar"><div class="csv-progress-fill" id="csv-progress-fill" style="width:0%"></div></div>
+                  <div class="csv-progress-pct" id="csv-progress-pct">0%</div>
+                </div>
+              </div>
+              <input type="file" id="csv-file-input" accept=".csv" style="display:none" onchange="csvFileSelected(this)">
+              <button class="csv-upload-btn" onclick="csvUpload()">Upload</button>
+            </div>
+            <div class="csv-instructions">
+              <div class="csv-step"><span>1.</span> Upload Your .CSV</div>
+              <div class="csv-step"><span>2.</span> Add To Cart</div>
+              <div class="csv-step"><span>3.</span> Place Order In Cart</div>
+              <div class="csv-links">
+                <a class="csv-link" onclick="csvDownloadTemplate()">Download an example .csv template</a>
+                <a class="csv-link" href="#">Experience any problem?</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
