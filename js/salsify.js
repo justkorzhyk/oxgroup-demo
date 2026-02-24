@@ -18,6 +18,7 @@ let _total      = null;
 let _assetCache = {};
 let _assetQueue = [];
 let _inFlight   = 0;
+const _catLoadedBrands = new Set(); // brands whose CAT_DATA has been built from Salsify
 
 // ─── Field mapping ───────────────────────────────────────────────────────────
 function _mapProduct(raw) {
@@ -28,6 +29,8 @@ function _mapProduct(raw) {
     id:         raw['Product SKU'] || raw['salsify:id'],
     name:       raw['Global Product Name'] || raw['salsify:id'] || '',
     cat:        raw['Product Type'] || 'Other',
+    segment:    raw['Segment'] || raw['Product Segment'] || raw['Product Group'] || raw['Category'] || null,
+    subType:    raw['Sub-Type'] || raw['Sub Type'] || raw['Product Sub-Type'] || raw['Sub Category'] || null,
     price:      price,
     orig:       price,
     stock:      0,
@@ -50,6 +53,70 @@ function _rebuildCategories() {
     CATEGORIES.push(cat);
     CAT_ICONS.push(CAT_ICON_MAP[cat] || 'tag');
   });
+}
+
+// ─── Build dynamic CAT_DATA for mega menu ─────────────────────────────────────
+function _buildDynamicCatData(brand, products) {
+  const hasSegments = products.some(p => p.segment);
+
+  if (hasSegments) {
+    // 3-level: segment → product type → sub-types
+    const segMap = new Map();
+    products.forEach(p => {
+      const seg = p.segment;
+      const cat = p.cat;
+      if (!segMap.has(seg)) segMap.set(seg, new Map());
+      if (!segMap.get(seg).has(cat)) segMap.get(seg).set(cat, new Set());
+      if (p.subType) segMap.get(seg).get(cat).add(p.subType);
+    });
+    CAT_DATA[brand] = [...segMap.entries()].map(([seg, catMap]) => ({
+      name: seg,
+      icon: CAT_ICON_MAP[seg] || 'tag',
+      subs: [...catMap.entries()].map(([cat, subTypes]) => ({
+        heading: cat,
+        items:   subTypes.size > 0 ? [...subTypes].sort() : [cat],
+      })),
+    }));
+  } else {
+    // 2-level: product type → sub-types (or just the type itself)
+    const typeMap = new Map();
+    products.forEach(p => {
+      if (!typeMap.has(p.cat)) typeMap.set(p.cat, new Set());
+      if (p.subType) typeMap.get(p.cat).add(p.subType);
+    });
+    CAT_DATA[brand] = [...typeMap.entries()].map(([cat, subTypes]) => ({
+      name: cat,
+      icon: CAT_ICON_MAP[cat] || 'tag',
+      subs: subTypes.size > 0 ? [{ heading: cat, items: [...subTypes].sort() }] : [],
+    }));
+  }
+
+  _catLoadedBrands.add(brand);
+
+  // Re-render the dropdown if it's open
+  if (document.getElementById('cat-dropdown')?.classList.contains('open')) {
+    renderCatDropdown();
+  }
+}
+
+// ─── Lazy-load CAT_DATA for a brand (for the dropdown tabs) ──────────────────
+async function loadCatDataForBrand(brand) {
+  if (_catLoadedBrands.has(brand)) return;
+  _catLoadedBrands.add(brand); // mark as in-progress so we don't double-fetch
+  try {
+    const params = new URLSearchParams({ filter: `='Brand Name':'${brand}'`, per_page: 100 });
+    const res    = await fetch(`/api/products?${params}`);
+    const json   = await res.json();
+    const prods  = (json.data || []).map(raw => ({
+      cat:     raw['Product Type'] || 'Other',
+      segment: raw['Segment'] || raw['Product Segment'] || raw['Product Group'] || raw['Category'] || null,
+      subType: raw['Sub-Type'] || raw['Sub Type'] || raw['Product Sub-Type'] || raw['Sub Category'] || null,
+    }));
+    _buildDynamicCatData(brand, prods);
+  } catch (e) {
+    console.warn('[Salsify] Cat load failed for', brand, e);
+    _catLoadedBrands.delete(brand); // allow retry
+  }
 }
 
 // ─── Load products ───────────────────────────────────────────────────────────
@@ -95,6 +162,7 @@ async function loadSalsifyProducts(reset = true) {
     _total  = json.meta?.total_entries ?? PRODUCTS.length;
 
     _rebuildCategories();
+    if (reset) _buildDynamicCatData(selectedBrand, PRODUCTS);
 
     // If brand returned no products AND we're on the listing page, show 404
     if (reset && PRODUCTS.length === 0) {

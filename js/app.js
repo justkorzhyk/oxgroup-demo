@@ -488,6 +488,8 @@ function openCategoryDropdown() {
   document.getElementById('cat-overlay').classList.add('open');
   document.getElementById('cat-dropdown').classList.add('open');
   renderCatDropdown();
+  // Kick off lazy loading for all brand tabs in the background
+  CAT_BRANDS.forEach(b => loadCatDataForBrand(b));
 }
 
 function closeCategoryDropdown() {
@@ -528,6 +530,7 @@ function selectCatBrand(i) {
   catActiveBrand = i;
   catActiveItem  = 0;
   renderCatDropdown();
+  loadCatDataForBrand(CAT_BRANDS[i]); // no-op if already loaded
 }
 
 function selectCatItem(i) {
