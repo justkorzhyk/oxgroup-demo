@@ -40,7 +40,8 @@ function galleryGoTo(idx) {
   _galleryIdx = idx;
   const view = document.getElementById('gallery-main-view');
   if (view) {
-    const img = _galleryImages[idx];
+    // Use latest loaded image from currentProduct (set by Salsify async loader)
+    const img = currentProduct?.img || _galleryImages[idx];
     view.innerHTML = img
       ? `<img src="${img}" alt="" style="width:100%;height:100%;object-fit:contain">`
       : icon('diamond', 'icon-lg');

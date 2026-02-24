@@ -131,7 +131,7 @@ function renderDetail() {
   document.getElementById('detail-content').innerHTML = `
     <div>
       <div class="gallery-main">
-        <div id="gallery-main-view" class="gallery-main-view">
+        <div id="gallery-main-view" class="gallery-main-view" data-product-img="${p.id}">
           ${p.img ? `<img src="${p.img}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain">` : icon('diamond', 'icon-lg')}
         </div>
         <div class="gallery-nav prev" onclick="galleryNav(-1)">${icon('chevronLeft')}</div>
@@ -139,7 +139,7 @@ function renderDetail() {
       </div>
       <div class="gallery-thumbs">
         ${[0, 1, 2, 3].map(i => `
-          <div class="gallery-thumb ${i === 0 ? 'active' : ''}" onclick="galleryGoTo(${i})">
+          <div class="gallery-thumb ${i === 0 ? 'active' : ''}" data-product-img="${p.id}" onclick="galleryGoTo(${i})">
             ${p.img ? `<img src="${p.img}" alt="" style="width:100%;height:100%;object-fit:contain">` : icon('diamond')}
           </div>`).join('')}
       </div>
