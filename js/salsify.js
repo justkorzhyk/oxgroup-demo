@@ -1,5 +1,4 @@
 // ─── SALSIFY CLIENT ─────────────────────────────────────────────────────────
-const SALSIFY_FILTER   = "='Brand Name':'OX'";
 const SALSIFY_PER_PAGE = 20;
 const ASSET_CONCURRENCY = 4;
 
@@ -76,7 +75,7 @@ async function loadSalsifyProducts(reset = true) {
   }
 
   try {
-    const params = new URLSearchParams({ filter: SALSIFY_FILTER, per_page: SALSIFY_PER_PAGE });
+    const params = new URLSearchParams({ filter: `='Brand Name':'${selectedBrand}'`, per_page: SALSIFY_PER_PAGE });
     if (_cursor) params.set('cursor', _cursor);
 
     const res  = await fetch(`/api/products?${params}`);
@@ -96,9 +95,29 @@ async function loadSalsifyProducts(reset = true) {
     _total  = json.meta?.total_entries ?? PRODUCTS.length;
 
     _rebuildCategories();
+
+    // If brand returned no products, show 404
+    if (reset && PRODUCTS.length === 0) {
+      _pendingProductSlug = null;
+      navigate('404', { skipHistory: true });
+      _loading = false;
+      return;
+    }
+
     renderListing();
     // Refresh home promo rows so images appear there too
     if (document.getElementById('home-promo-rows')) renderHome();
+
+    // If we were navigating directly to a product URL, open it now
+    if (_pendingProductSlug) {
+      const slug = _pendingProductSlug;
+      _pendingProductSlug = null;
+      const found = PRODUCTS.find(p => slugify(p.name) === slug);
+      if (found) {
+        currentProduct = found;
+        navigate('detail', { skipHistory: true });
+      }
+    }
 
     // Show real total in header
     const countEl = document.getElementById('prod-count');

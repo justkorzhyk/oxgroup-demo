@@ -1411,3 +1411,15 @@ body.page-checkout-mode nav .nav-actions { display: none; }
 .review-section-header h2 { margin-bottom: 0; }
 .addr-card h4 { font-family: inherit; font-size: 13px; font-weight: 500; line-height: 1.5; }
 .payment-method-line { justify-content: center; }
+
+/* ─── 404 PAGE ─── */
+#page-404 { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
+.page-404-inner { text-align: center; padding: 60px 24px; max-width: 480px; }
+.page-404-code { font-size: 96px; font-weight: 900; color: var(--blue); line-height: 1; }
+.page-404-title { font-size: 28px; font-weight: 800; text-transform: uppercase; margin: 8px 0 16px; }
+.page-404-sub { font-size: 14px; color: var(--muted); margin-bottom: 32px; line-height: 1.6; }
+.page-404-brands { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 24px; }
+.page-404-btn { background: transparent; border: 2px solid var(--border); color: var(--white); font-size: 13px; font-weight: 700; font-family: inherit; padding: 8px 18px; cursor: pointer; transition: border-color .15s, color .15s; }
+.page-404-btn:hover { border-color: var(--blue); color: var(--blue); }
+.page-404-home { background: var(--blue); border: none; color: #fff; font-size: 14px; font-weight: 700; font-family: inherit; padding: 12px 32px; cursor: pointer; }
+.page-404-home:hover { opacity: .85; }

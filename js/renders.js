@@ -404,7 +404,7 @@ function buildAccFooter() {
   return `<footer class="home-footer">
     <div class="home-footer-bg"></div>
     <div class="home-footer-columns">
-      <div class="home-footer-col"><h4>Products</h4><a onclick="navigate('listing')">OX</a><a onclick="navigate('listing')">BORA</a><a onclick="navigate('listing')">TRACER</a><a onclick="navigate('listing')">SMART</a><a onclick="navigate('listing')">UNITEC</a></div>
+      <div class="home-footer-col"><h4>Products</h4><a onclick="navigateBrand('OX')">OX</a><a onclick="navigateBrand('BORA')">BORA</a><a onclick="navigateBrand('TRACER')">TRACER</a><a onclick="navigateBrand('SMART')">SMART</a><a onclick="navigateBrand('UNITEC')">UNITEC</a></div>
       <div class="home-footer-col"><h4>About Us</h4><a>Blog</a><a class="blue">News</a><a>Videos</a><a>Catalogs</a></div>
       <div class="home-footer-col"><h4>Help</h4><a>Support Requests</a><a>All Contacts</a><a>Orders</a><a>Returns</a><a>FAQs</a></div>
       <div class="home-footer-col"><h4>Social</h4><a>LinkedIn</a></div>

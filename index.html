@@ -84,15 +84,15 @@
 
   <!-- ── Banner ── -->
   <section class="home-banner">
-    <div class="home-banner-slide active" onclick="navigate('listing')">
+    <div class="home-banner-slide active" onclick="navigateBrand('OX')">
       <img src="OX.png" alt="OX">
       <div class="home-banner-overlay"></div>
     </div>
-    <div class="home-banner-slide" onclick="navigate('listing')">
+    <div class="home-banner-slide" onclick="navigateBrand('BORA')">
       <img src="BORA.png" alt="BORA">
       <div class="home-banner-overlay"></div>
     </div>
-    <div class="home-banner-slide" onclick="navigate('listing')">
+    <div class="home-banner-slide" onclick="navigateBrand('TRACER')">
       <img src="TRACER.png" alt="TRACER">
       <div class="home-banner-overlay"></div>
     </div>
@@ -111,7 +111,7 @@
     <div class="home-section-sub">High-quality products for your business, trusted by industry experts</div>
     <div class="home-brands-grid" id="brands-grid" onmouseleave="resetBrands()">
       <!-- OX Tools (active by default) -->
-      <div class="home-brand-card active" onmouseenter="activateBrand(this)" onclick="navigate('listing')">
+      <div class="home-brand-card active" onmouseenter="activateBrand(this)" onclick="navigateBrand('OX')">
         <img src="https://www.figma.com/api/mcp/asset/2f0ed1c6-b3b4-419c-8c42-01de119d7463" alt="OX Tools">
         <div class="brand-overlay-narrow"></div>
         <div class="brand-overlay-featured"></div>
@@ -119,15 +119,15 @@
         <div class="brand-content">
           <h3>OX TOOLS</h3>
           <div class="brand-content-desc">Built from high-quality materials and offering a broader product range designed for demanding trade applications.</div>
-          <button class="brand-content-btn" onclick="event.stopPropagation();navigate('listing')">
+          <button class="brand-content-btn" onclick="event.stopPropagation();navigateBrand('OX')">
             View Products
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
-        
+
       </div>
       <!-- Tracer -->
-      <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigate('listing')">
+      <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigateBrand('TRACER')">
         <img src="https://www.figma.com/api/mcp/asset/855962de-d3ad-4a59-aec1-1a3e202cd5b5" alt="Tracer">
         <div class="brand-overlay-narrow"></div>
         <div class="brand-overlay-featured"></div>
@@ -135,15 +135,15 @@
         <div class="brand-content">
           <h3>TRACER</h3>
           <div class="brand-content-desc">Professional marking and measuring tools trusted by tradespeople worldwide for precision on every job.</div>
-            <button class="brand-content-btn" onclick="event.stopPropagation();navigate('listing')">
+            <button class="brand-content-btn" onclick="event.stopPropagation();navigateBrand('TRACER')">
             View Products
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
-       
+
       </div>
       <!-- Bora -->
-      <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigate('listing')">
+      <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigateBrand('BORA')">
         <img src="https://www.figma.com/api/mcp/asset/6dd31e5d-cc2d-4993-b166-051a23625601" alt="Bora">
         <div class="brand-overlay-narrow"></div>
         <div class="brand-overlay-featured"></div>
@@ -151,14 +151,14 @@
         <div class="brand-content">
           <h3>BORA</h3>
           <div class="brand-content-desc">Innovative tool guides and accessories that elevate precision in every cut and joint on site.</div>
-          <button class="brand-content-btn" onclick="event.stopPropagation();navigate('listing')">
+          <button class="brand-content-btn" onclick="event.stopPropagation();navigateBrand('BORA')">
             View Products
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
       </div>
       <!-- Smart -->
-      <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigate('listing')">
+      <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigateBrand('SMART')">
         <img src="https://www.figma.com/api/mcp/asset/e3546aef-79e7-4144-b02f-ca6063599810" alt="Smart">
         <div class="brand-overlay-narrow"></div>
         <div class="brand-overlay-featured"></div>
@@ -168,14 +168,14 @@
           <h3>SMART</h3>
           <div class="brand-content-desc">Smart solutions for modern tradespeople — where advanced technology meets everyday craftsmanship.</div>
           </div>
-          <button class="brand-content-btn" onclick="event.stopPropagation();navigate('listing')">
+          <button class="brand-content-btn" onclick="event.stopPropagation();navigateBrand('SMART')">
             View Products
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
       </div>
       <!-- Unitec -->
-      <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigate('listing')">
+      <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigateBrand('UNITEC')">
         <img src="https://www.figma.com/api/mcp/asset/b5ab2d92-d93c-4c15-ab37-21a304929c81" alt="Unitec">
         <div class="brand-overlay-narrow"></div>
         <div class="brand-overlay-featured"></div>
@@ -183,7 +183,7 @@
         <div class="brand-content">
           <h3>UNITEC</h3>
           <div class="brand-content-desc">Reliable, performance-driven tools engineered to handle the toughest professional environments.</div>
-          <button class="brand-content-btn" onclick="event.stopPropagation();navigate('listing')">
+          <button class="brand-content-btn" onclick="event.stopPropagation();navigateBrand('UNITEC')">
             View Products
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
@@ -314,11 +314,11 @@
     <div class="home-footer-columns">
       <div class="home-footer-col">
         <h4>Products</h4>
-        <a onclick="navigate('listing')">OX</a>
-        <a onclick="navigate('listing')">BORA</a>
-        <a onclick="navigate('listing')">TRACER</a>
-        <a onclick="navigate('listing')">SMART</a>
-        <a onclick="navigate('listing')">UNITEC</a>
+        <a onclick="navigateBrand('OX')">OX</a>
+        <a onclick="navigateBrand('BORA')">BORA</a>
+        <a onclick="navigateBrand('TRACER')">TRACER</a>
+        <a onclick="navigateBrand('SMART')">SMART</a>
+        <a onclick="navigateBrand('UNITEC')">UNITEC</a>
       </div>
       <div class="home-footer-col">
         <h4>About Us</h4>
@@ -1105,6 +1105,23 @@
      PAGE: ACCOUNT SUBMIT NEW CASE
 ════════════════════════════════════════════ -->
 <div class="page" id="page-account-newcase"></div>
+
+<!-- ─── 404 ─── -->
+<div class="page" id="page-404">
+  <div class="page-404-inner">
+    <div class="page-404-code">404</div>
+    <h1 class="page-404-title">Brand not found</h1>
+    <p class="page-404-sub">No products were found for this brand. Please check the URL or browse our brands below.</p>
+    <div class="page-404-brands">
+      <button class="page-404-btn" onclick="navigateBrand('OX')">OX</button>
+      <button class="page-404-btn" onclick="navigateBrand('BORA')">BORA</button>
+      <button class="page-404-btn" onclick="navigateBrand('TRACER')">TRACER</button>
+      <button class="page-404-btn" onclick="navigateBrand('SMART')">SMART</button>
+      <button class="page-404-btn" onclick="navigateBrand('UNITEC')">UNITEC</button>
+    </div>
+    <button class="page-404-home" onclick="navigate('home')">Go to Home</button>
+  </div>
+</div>
 
 <!-- ─── TOAST ─── -->
 <div class="toast" id="toast">

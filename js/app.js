@@ -4,8 +4,6 @@ const ACCOUNT_PAGES  = ['account-overview', 'account-profile', 'account-email', 
 
 const ROUTES = {
   home:                 '/',
-  listing:              '/listing',
-  detail:               '/detail',
   cart:                 '/cart',
   'checkout-shipping':  '/checkout/shipping',
   'checkout-payment':   '/checkout/payment',
@@ -28,8 +26,23 @@ const ROUTES = {
 };
 const PATH_TO_PAGE = Object.fromEntries(Object.entries(ROUTES).map(([k, v]) => [v, k]));
 
+function slugify(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
 function pageFromPath(path) {
-  return PATH_TO_PAGE[path] || PATH_TO_PAGE['/' + path.replace(/^\//, '')] || 'home';
+  if (PATH_TO_PAGE[path]) return PATH_TO_PAGE[path];
+
+  const parts = path.replace(/^\//, '').split('/').filter(Boolean);
+  if (parts.length >= 1 && BRANDS.map(b => b.toLowerCase()).includes(parts[0].toLowerCase())) {
+    selectedBrand = parts[0].toUpperCase();
+    if (parts.length >= 2) {
+      _pendingProductSlug = parts.slice(1).join('-');
+    }
+    return 'listing';
+  }
+
+  return 'home';
 }
 
 // ─── PRODUCT GALLERY ─────────────────────────────────
@@ -79,13 +92,27 @@ function _resetBannerTimer() {
   _bannerTimer = setInterval(() => bannerGoTo(_bannerIdx + 1), 5000);
 }
 
+function navigateBrand(brand) {
+  selectedBrand = brand.toUpperCase();
+  navigate('listing');
+}
+
 function navigate(page, opts = {}) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   window.scrollTo(0, 0);
   document.body.classList.toggle('page-checkout-mode', CHECKOUT_PAGES.includes(page));
   if (!opts.skipHistory) {
-    history.pushState({ page }, '', ROUTES[page] || '/' + page);
+    let path;
+    if (page === 'listing') {
+      path = '/' + selectedBrand.toLowerCase();
+    } else if (page === 'detail' && currentProduct) {
+      const brand = (currentProduct.brand || selectedBrand).toLowerCase();
+      path = '/' + brand + '/' + slugify(currentProduct.name);
+    } else {
+      path = ROUTES[page] || '/' + page;
+    }
+    history.pushState({ page }, '', path);
   }
   if (page === 'home')                  renderHome();
   if (page === 'listing')               loadSalsifyProducts();
@@ -247,6 +274,7 @@ function toggleStock() {
 // ─── PRODUCT DETAIL ACTIONS ─────────────────────────
 function openProduct(idx) {
   currentProduct = PRODUCTS[idx];
+  if (currentProduct.brand) selectedBrand = currentProduct.brand.toUpperCase();
   navigate('detail');
 }
 
@@ -487,7 +515,7 @@ function renderCatDropdown() {
     document.getElementById('cat-right').innerHTML = activeCat.subs.map(sub =>
       `<div class="cat-subgroup">
          <div class="cat-subgroup-title">${sub.heading}</div>
-         ${sub.items.map(item => `<div class="cat-subitem" onclick="navigate('listing');closeCategoryDropdown()">${item}</div>`).join('')}
+         ${sub.items.map(item => `<div class="cat-subitem" onclick="navigateBrand('${CAT_BRANDS[catActiveBrand]}');closeCategoryDropdown()">${item}</div>`).join('')}
        </div>`
     ).join('');
   } else {
@@ -591,7 +619,11 @@ function renderSearchResults(query) {
 
 function openProductFromSearch(id) {
   const idx = PRODUCTS.findIndex(p => p.id === id);
-  if (idx !== -1) { currentProduct = PRODUCTS[idx]; navigate('detail'); }
+  if (idx !== -1) {
+    currentProduct = PRODUCTS[idx];
+    if (currentProduct.brand) selectedBrand = currentProduct.brand.toUpperCase();
+    navigate('detail');
+  }
 }
 
 // ─── SYNC MODAL ─────────────────────────────────────

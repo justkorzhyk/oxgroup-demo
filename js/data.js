@@ -197,6 +197,9 @@ const TRANSACTIONS = [
 const TX_PER_PAGE = 10;
 
 // ─── STATE ──────────────────────────────────────────
+const BRANDS = ['OX', 'BORA', 'TRACER', 'SMART', 'UNITEC'];
+let selectedBrand = 'OX';
+let _pendingProductSlug = null;
 let selectedCat = 0;
 let stockOnly = false;
 let currentProduct = PRODUCTS[2];
