@@ -84,16 +84,24 @@
 
   <!-- ── Banner ── -->
   <section class="home-banner">
-    <img src="https://www.figma.com/api/mcp/asset/f4383640-d3ea-45c3-89bb-0a537c187d0e" alt="Hero banner">
-    <div class="home-banner-overlay"></div>
-    <button class="home-banner-arrow prev">&#8592;</button>
-    <button class="home-banner-arrow next">&#8594;</button>
+    <div class="home-banner-slide active" onclick="navigate('listing')">
+      <img src="OX.png" alt="OX">
+      <div class="home-banner-overlay"></div>
+    </div>
+    <div class="home-banner-slide" onclick="navigate('listing')">
+      <img src="BORA.png" alt="BORA">
+      <div class="home-banner-overlay"></div>
+    </div>
+    <div class="home-banner-slide" onclick="navigate('listing')">
+      <img src="TRACER.png" alt="TRACER">
+      <div class="home-banner-overlay"></div>
+    </div>
+    <button class="home-banner-arrow prev" onclick="bannerPrev(event)">&#8592;</button>
+    <button class="home-banner-arrow next" onclick="bannerNext(event)">&#8594;</button>
     <div class="home-banner-dots">
-      <span class="home-banner-dot active"></span>
-      <span class="home-banner-dot"></span>
-      <span class="home-banner-dot"></span>
-      <span class="home-banner-dot"></span>
-      <span class="home-banner-dot"></span>
+      <span class="home-banner-dot active" onclick="bannerGoTo(0,event)"></span>
+      <span class="home-banner-dot" onclick="bannerGoTo(1,event)"></span>
+      <span class="home-banner-dot" onclick="bannerGoTo(2,event)"></span>
     </div>
   </section>
 

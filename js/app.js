@@ -32,6 +32,30 @@ function pageFromPath(path) {
   return PATH_TO_PAGE[path] || PATH_TO_PAGE['/' + path.replace(/^\//, '')] || 'home';
 }
 
+// ─── BANNER SLIDER ───────────────────────────────────
+let _bannerIdx = 0;
+const _BANNER_COUNT = 3;
+let _bannerTimer = null;
+
+function bannerGoTo(i, e) {
+  if (e) e.stopPropagation();
+  const slides = document.querySelectorAll('.home-banner-slide');
+  const dots   = document.querySelectorAll('.home-banner-dot');
+  slides[_bannerIdx]?.classList.remove('active');
+  dots[_bannerIdx]?.classList.remove('active');
+  _bannerIdx = ((i % _BANNER_COUNT) + _BANNER_COUNT) % _BANNER_COUNT;
+  slides[_bannerIdx]?.classList.add('active');
+  dots[_bannerIdx]?.classList.add('active');
+}
+
+function bannerNext(e) { e.stopPropagation(); bannerGoTo(_bannerIdx + 1); _resetBannerTimer(); }
+function bannerPrev(e) { e.stopPropagation(); bannerGoTo(_bannerIdx - 1); _resetBannerTimer(); }
+
+function _resetBannerTimer() {
+  clearInterval(_bannerTimer);
+  _bannerTimer = setInterval(() => bannerGoTo(_bannerIdx + 1), 5000);
+}
+
 function navigate(page, opts = {}) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
@@ -741,3 +765,5 @@ window.addEventListener('popstate', e => {
 navigate(pageFromPath(location.pathname), { skipHistory: true });
 // Preload Salsify products in background so home promo and listing both have real images
 loadSalsifyProducts();
+// Start banner auto-advance
+_resetBannerTimer();
