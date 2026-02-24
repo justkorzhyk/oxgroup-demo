@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OX Group – B2B Trade Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="nav-inner">
+    <img class="nav-logo-img" src="https://www.figma.com/api/mcp/asset/a32548c2-aac7-469e-aff5-18b96f8b6611" alt="OX Group" onclick="navigate('home')">
+    <button class="nav-categories btn" onclick="toggleCategoryDropdown()">
+      Categories
+      <svg class="icon icon-sm" viewBox="0 0 24 24" style="fill:#fff"><circle cx="5.5" cy="5.5" r="1.5"/><circle cx="12" cy="5.5" r="1.5"/><circle cx="18.5" cy="5.5" r="1.5"/><circle cx="5.5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="18.5" cy="12" r="1.5"/><circle cx="5.5" cy="18.5" r="1.5"/><circle cx="12" cy="18.5" r="1.5"/><circle cx="18.5" cy="18.5" r="1.5"/></svg>
+    </button>
+    <div class="nav-search" id="nav-search">
+      <svg class="icon icon-sm" style="color:#868686;flex-shrink:0" viewBox="0 0 24 24" fill="none"><path d="M21 21L16.65 16.65M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <input type="text" id="nav-search-input" placeholder="Search by name, product ID, or keyword"
+        oninput="handleSearch(this.value)"
+        onfocus="openSearchIfValue()"
+        onkeydown="if(event.key==='Enter'){navigate('listing');closeSearch()}else if(event.key==='Escape')closeSearch()">
+      <span class="nav-search-clear" onclick="clearSearch()">
+        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </span>
+      <div class="search-dropdown" id="search-dropdown">
+        <div id="search-products"></div>
+        <div class="search-divider" id="search-divider" style="display:none"></div>
+        <div id="search-cats"></div>
+        <div class="search-footer" onclick="navigate('listing');closeSearch()">
+          All Results
+          <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <div class="nav-icon-btn" title="Orders" onclick="navigate('account-overview')">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M14.5833 9.16667H10.4167M14.5833 12.5H10.4167M14.5833 5.83333H10.4167M7.5 2.5L7.5 17.5M6.5 2.5H13.5C14.9001 2.5 15.6002 2.5 16.135 2.77248C16.6054 3.01217 16.9878 3.39462 17.2275 3.86502C17.5 4.3998 17.5 5.09987 17.5 6.5V13.5C17.5 14.9001 17.5 15.6002 17.2275 16.135C16.9878 16.6054 16.6054 16.9878 16.135 17.2275C15.6002 17.5 14.9001 17.5 13.5 17.5H6.5C5.09987 17.5 4.3998 17.5 3.86502 17.2275C3.39462 16.9878 3.01217 16.6054 2.77248 16.135C2.5 15.6002 2.5 14.9001 2.5 13.5V6.5C2.5 5.09987 2.5 4.3998 2.77248 3.86502C3.01217 3.39462 3.39462 3.01217 3.86502 2.77248C4.3998 2.5 5.09987 2.5 6.5 2.5Z" stroke="#A4A4A4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+      </div>
+      <div class="nav-icon-btn" title="Favourites" onclick="navigate('account-favourites')">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M9.99559 4.27985C8.32947 2.332 5.55109 1.80804 3.46355 3.59168C1.37601 5.37532 1.08211 8.35748 2.72147 10.467C4.08448 12.2209 8.20945 15.9201 9.56139 17.1174C9.71264 17.2513 9.78827 17.3183 9.87648 17.3446C9.95347 17.3676 10.0377 17.3676 10.1147 17.3446C10.2029 17.3183 10.2786 17.2513 10.4298 17.1174C11.7817 15.9201 15.9067 12.2209 17.2697 10.467C18.9091 8.35748 18.6511 5.35656 16.5276 3.59168C14.4042 1.8268 11.6617 2.332 9.99559 4.27985Z" stroke="#A4A4A4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+      </div>
+      <div class="nav-icon-btn" onclick="navigate('account-overview')" title="Account Settings" style="cursor:pointer;padding:8px">
+        <div class="nav-avatar">OR</div>
+      </div>
+      <button class="nav-quick" onclick="navigate('cart')">Quick Order</button>
+      <div class="nav-divider"></div>
+      <div class="nav-icon-btn" onclick="navigate('cart')" style="cursor:pointer">
+        <svg class="icon icon-lg" viewBox="0 0 24 24" fill="none"><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="21" r="1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="21" r="1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="badge" id="cart-badge">3</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── OVERLAYS ─── -->
+<div id="cat-overlay" class="cat-overlay" onclick="closeCategoryDropdown()"></div>
+<div id="search-overlay" class="search-overlay" onclick="closeSearch()"></div>
+<div id="cat-dropdown" class="cat-dropdown">
+  <div class="cat-dropdown-inner">
+    <div class="cat-tabs" id="cat-tabs"></div>
+    <div class="cat-body">
+      <div class="cat-left" id="cat-left"></div>
+      <div class="cat-right" id="cat-right"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     PAGE: HOME
+════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- ── Banner ── -->
+  <section class="home-banner">
+    <img src="https://www.figma.com/api/mcp/asset/f4383640-d3ea-45c3-89bb-0a537c187d0e" alt="Hero banner">
+    <div class="home-banner-overlay"></div>
+    <button class="home-banner-arrow prev">&#8592;</button>
+    <button class="home-banner-arrow next">&#8594;</button>
+    <div class="home-banner-dots">
+      <span class="home-banner-dot active"></span>
+      <span class="home-banner-dot"></span>
+      <span class="home-banner-dot"></span>
+      <span class="home-banner-dot"></span>
+      <span class="home-banner-dot"></span>
+    </div>
+  </section>
+
+  <!-- ── Discover Our Brands ── -->
+  <section class="home-section">
+    <h1>DISCOVER OUR BRANDS</h1>
+    <div class="home-section-sub">High-quality products for your business, trusted by industry experts</div>
+    <div class="home-brands-grid" id="brands-grid" onmouseleave="resetBrands()">
+      <!-- OX Tools (active by default) -->
+      <div class="home-brand-card active" onmouseenter="activateBrand(this)" onclick="navigate('listing')">
+        <img src="https://www.figma.com/api/mcp/asset/2f0ed1c6-b3b4-419c-8c42-01de119d7463" alt="OX Tools">
+        <div class="brand-overlay-narrow"></div>
+        <div class="brand-overlay-featured"></div>
+        <div class="brand-name">OX TOOLS</div>
+        <div class="brand-content">
+          <h3>OX TOOLS</h3>
+          <div class="brand-content-desc">Built from high-quality materials and offering a broader product range designed for demanding trade applications.</div>
+          <button class="brand-content-btn" onclick="event.stopPropagation();navigate('listing')">
+            View Products
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        
+      </div>
+      <!-- Tracer -->
+      <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigate('listing')">
+        <img src="https://www.figma.com/api/mcp/asset/855962de-d3ad-4a59-aec1-1a3e202cd5b5" alt="Tracer">
+        <div class="brand-overlay-narrow"></div>
+        <div class="brand-overlay-featured"></div>
+        <div class="brand-name">TRACER</div>
+        <div class="brand-content">
+          <h3>TRACER</h3>
+          <div class="brand-content-desc">Professional marking and measuring tools trusted by tradespeople worldwide for precision on every job.</div>
+            <button class="brand-content-btn" onclick="event.stopPropagation();navigate('listing')">
+            View Products
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+       
+      </div>
+      <!-- Bora -->
+      <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigate('listing')">
+        <img src="https://www.figma.com/api/mcp/asset/6dd31e5d-cc2d-4993-b166-051a23625601" alt="Bora">
+        <div class="brand-overlay-narrow"></div>
+        <div class="brand-overlay-featured"></div>
+        <div class="brand-name">BORA</div>
+        <div class="brand-content">
+          <h3>BORA</h3>
+          <div class="brand-content-desc">Innovative tool guides and accessories that elevate precision in every cut and joint on site.</div>
+          <button class="brand-content-btn" onclick="event.stopPropagation();navigate('listing')">
+            View Products
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <!-- Smart -->
+      <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigate('listing')">
+        <img src="https://www.figma.com/api/mcp/asset/e3546aef-79e7-4144-b02f-ca6063599810" alt="Smart">
+        <div class="brand-overlay-narrow"></div>
+        <div class="brand-overlay-featured"></div>
+        <div class="brand-name">SMART</div>
+        <div class="brand-content">
+          <div class="brand-content-text">
+          <h3>SMART</h3>
+          <div class="brand-content-desc">Smart solutions for modern tradespeople — where advanced technology meets everyday craftsmanship.</div>
+          </div>>
+          <button class="brand-content-btn" onclick="event.stopPropagation();navigate('listing')">
+            View Products
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <!-- Unitec -->
+      <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigate('listing')">
+        <img src="https://www.figma.com/api/mcp/asset/b5ab2d92-d93c-4c15-ab37-21a304929c81" alt="Unitec">
+        <div class="brand-overlay-narrow"></div>
+        <div class="brand-overlay-featured"></div>
+        <div class="brand-name">UNITEC</div>
+        <div class="brand-content">
+          <h3>UNITEC</h3>
+          <div class="brand-content-desc">Reliable, performance-driven tools engineered to handle the toughest professional environments.</div>
+          <button class="brand-content-btn" onclick="event.stopPropagation();navigate('listing')">
+            View Products
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Promotions ── -->
+  <section class="home-promo-section">
+    <div class="home-promo-header">
+      <h2>Promotions</h2>
+      <button class="home-view-all" onclick="navigate('listing')">
+        View All
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="home-promo-rows" id="home-promo-rows">
+      <!-- filled by renderHome() -->
+    </div>
+  </section>
+
+  <!-- ── New Products Banner ── -->
+  <section class="home-new-banner">
+    <div class="home-new-banner-bg">
+      <img src="https://www.figma.com/api/mcp/asset/02a2cee1-f085-43c1-a248-a90fefa410ae" alt="">
+    </div>
+    <div class="home-new-banner-content">
+      <h2>NEW PRODUCTS</h2>
+      <div class="home-new-banner-body">Explore the latest additions to our catalogue, featuring innovative tools and equipment designed for professional performance and reliability.</div>
+      <div class="home-new-banner-btns">
+        <button class="home-new-btn-white" onclick="navigate('listing')">View Products</button>
+        <button class="home-new-btn-dark">All Catalogues</button>
+      </div>
+    </div>
+    <div class="home-new-banner-product">
+      <img src="https://www.figma.com/api/mcp/asset/8b7ab294-4258-43c5-9ec9-046600b45ad8" alt="New product">
+    </div>
+  </section>
+
+  <!-- ── Frequently Asked Questions ── -->
+  <section class="home-faq-section">
+    <div class="home-faq-grid">
+      <div class="home-faq-left">
+        <h2>Frequently Asked Questions</h2>
+        <div class="home-faq-sub">
+          Can't find the answer you're looking for? Visit our <a href="#">FAQs page</a> for more information or <a href="#">Contact us</a>.
+        </div>
+      </div>
+      <div class="home-faq-accordion" id="home-faq-accordion">
+        <!-- filled by renderHome() -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ── News & Tips (Blog) ── -->
+  <section class="home-blog-section">
+    <div class="home-blog-header">
+      <div class="home-blog-header-left">
+        <h2>News &amp; TIPS</h2>
+        <div class="home-section-sub">Stay up to date with the latest industry news. Visit our <a href="#" style="color:#0ba5ec">Blog page</a> for more.</div>
+      </div>
+      <div class="home-blog-arrows">
+        <button class="home-blog-arrow-btn">&#8592;</button>
+        <button class="home-blog-arrow-btn">&#8594;</button>
+      </div>
+    </div>
+    <div class="home-blog-cards">
+      <article class="home-blog-card">
+        <div class="home-blog-card-img">
+          <img src="https://www.figma.com/api/mcp/asset/2ce0c7e3-9e76-4a85-b90b-7d8d3ca3bc80" alt="Blog article">
+        </div>
+        <div class="home-blog-card-content">
+          <div class="home-blog-card-tags">
+            <span class="home-blog-card-tag">Tools</span>
+            <span class="home-blog-card-tag">Industry</span>
+          </div>
+          <h3>THE ULTIMATE GUIDE TO DIAMOND BLADES</h3>
+          <div class="home-blog-card-body">Learn how to choose the right diamond blade for every cutting application, from masonry to porcelain tile.</div>
+          <div class="home-blog-card-cta">
+            Read More
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </article>
+      <article class="home-blog-card">
+        <div class="home-blog-card-img">
+          <img src="https://www.figma.com/api/mcp/asset/30818197-f80a-4c2d-a2cd-6269a4356cce" alt="Blog article">
+        </div>
+        <div class="home-blog-card-content">
+          <div class="home-blog-card-tags">
+            <span class="home-blog-card-tag">Safety</span>
+            <span class="home-blog-card-tag">Workwear</span>
+          </div>
+          <h3>TOP SAFETY GEAR FOR PROFESSIONAL TRADESPEOPLE</h3>
+          <div class="home-blog-card-body">A comprehensive overview of the most important PPE and safety equipment every tradesperson needs on site.</div>
+          <div class="home-blog-card-cta">
+            Read More
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </article>
+      <article class="home-blog-card">
+        <div class="home-blog-card-img">
+          <img src="https://www.figma.com/api/mcp/asset/f360c72c-c0d6-4751-b8e0-f5202f67c5e7" alt="Blog article">
+        </div>
+        <div class="home-blog-card-content">
+          <div class="home-blog-card-tags">
+            <span class="home-blog-card-tag">News</span>
+            <span class="home-blog-card-tag">Products</span>
+          </div>
+          <h3>BORA ADJUSTABLE SPEEDHORSE XT: IN DEPTH REVIEW</h3>
+          <div class="home-blog-card-body">Our team put the new Bora Adjustable SpeedHorse XT through its paces — here's what we found on site.</div>
+          <div class="home-blog-card-cta">
+            Read More
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="home-footer">
+    <div class="home-footer-bg">
+      <img src="https://www.figma.com/api/mcp/asset/c0bdbd57-e464-4fbc-b0c6-eefa1fff5ac7" alt="">
+    </div>
+    <div class="home-footer-columns">
+      <div class="home-footer-col">
+        <h4>Products</h4>
+        <a onclick="navigate('listing')">OX</a>
+        <a onclick="navigate('listing')">BORA</a>
+        <a onclick="navigate('listing')">TRACER</a>
+        <a onclick="navigate('listing')">SMART</a>
+        <a onclick="navigate('listing')">UNITEC</a>
+      </div>
+      <div class="home-footer-col">
+        <h4>About Us</h4>
+        <a>Blog</a>
+        <a class="blue">News</a>
+        <a>Videos</a>
+        <a>Catalogs</a>
+      </div>
+      <div class="home-footer-col">
+        <h4>Help</h4>
+        <a>Support Requests</a>
+        <a>All Contacts</a>
+        <a>Orders</a>
+        <a>Returns</a>
+        <a>FAQs</a>
+      </div>
+      <div class="home-footer-col">
+        <h4>Social</h4>
+        <a>LinkedIn</a>
+      </div>
+      <div class="home-footer-col">
+        <div class="home-footer-contact">
+          <span class="home-footer-contact-email">hello@oxgroup.com</span>
+          <span class="home-footer-contact-phone">+44 (0) 1522 500 700</span>
+          <div class="home-footer-contact-address">Newland House, Weaver Road, Lincoln, Lincolnshire, England, LN6 3QN</div>
+        </div>
+      </div>
+    </div>
+    <div class="home-footer-bottom">
+      <div class="home-footer-logo-text"><span>OX</span> GROUP</div>
+      <div class="home-footer-bottom-links">
+        <a>Terms &amp; Conditions</a>
+        <a>Privacy Policy</a>
+        <a>Cookies Settings</a>
+        <p>© 2025 OX Group. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: LISTING
+════════════════════════════════════════════ -->
+<div class="page" id="page-listing">
+  <div class="breadcrumb"><a onclick="navigate('home')" style="display:inline-flex;align-items:center"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a> / <a onclick="navigate('home')">OX</a></div>
+  <div class="listing-header">
+    <h1>OX</h1>
+    <span class="product-count" id="prod-count">1387 products found</span>
+  </div>
+  <div class="category-tabs" id="cat-tabs">
+    <!-- filled by JS -->
+  </div>
+  <div class="listing-controls">
+    <div class="toggle-wrap">
+      <div class="toggle" id="stock-toggle" onclick="toggleStock()"><div class="toggle-knob"></div></div>
+      In Stock Only
+    </div>
+    <div class="cust-select" id="listing-sort">
+      <button class="cust-select-trigger" onclick="toggleCustomSelect('listing-sort');event.stopPropagation()">
+        <span class="cust-select-value">Newest First</span>
+        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="cust-select-panel">
+        <div class="cust-select-item active" data-label="Newest First" onclick="pickCustomSelect('listing-sort','Newest First')">Newest First<span class="cust-select-check"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div class="cust-select-item" data-label="Price: Low to High" onclick="pickCustomSelect('listing-sort','Price: Low to High')">Price: Low to High<span class="cust-select-check"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div class="cust-select-item" data-label="Price: High to Low" onclick="pickCustomSelect('listing-sort','Price: High to Low')">Price: High to Low<span class="cust-select-check"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div class="cust-select-item" data-label="Name A–Z" onclick="pickCustomSelect('listing-sort','Name A–Z')">Name A–Z<span class="cust-select-check"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="product-list" id="product-list">
+    <!-- filled by JS -->
+  </div>
+  <div style="padding:0 32px">
+    <button class="show-more">Show More ▾</button>
+  </div>
+  <div class="pagination">
+    <div class="page-btn">←</div>
+    <div class="page-btn active">1</div>
+    <div class="page-btn">2</div>
+    <div class="page-btn">→</div>
+  </div>
+  <footer>
+    <div class="footer-col"><h4>Products</h4><a>OX</a><a>BORA</a><a>Tracer</a><a>Smart</a><a>Unitec</a></div>
+    <div class="footer-col"><h4>About Us</h4><a>Blog</a><a style="color:var(--blue)">News</a><a>Videos</a><a>Catalogs</a></div>
+    <div class="footer-col"><h4>Help</h4><a>Support Requests</a><a>All Contacts</a><a>Orders</a><a>Returns</a><a>FAQs</a></div>
+    <div class="footer-col"><h4>Social</h4><a>LinkedIn</a></div>
+    <div class="footer-col footer-contact"><strong>hello@relume.io</strong>+1 (555) 000-0000</div>
+  </footer>
+  <div class="footer-bottom"><div class="footer-logo"><span>OX</span> GROUP</div><div class="footer-links"><a>Terms & Conditions</a><a>Privacy Policy</a><a>© 2025 OX. All rights reserved.</a></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: PRODUCT DETAIL
+════════════════════════════════════════════ -->
+<div class="page" id="page-detail">
+  <div class="breadcrumb"><a onclick="navigate('home')" style="display:inline-flex;align-items:center"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a> / <a onclick="navigate('listing')">OX</a> / <a onclick="navigate('listing')">Diamond Tools</a> / <span id="detail-breadcrumb">Ultimate Zebra Diamond Blade</span></div>
+  <div class="detail-layout" id="detail-content">
+    <!-- filled by JS -->
+  </div>
+  <div class="related-section">
+    <h2>Related Products</h2>
+    <div id="related-products"></div>
+  </div>
+  <div class="faq-section">
+    <h2 style="margin-bottom:16px">Frequently Asked Questions</h2>
+    <div class="faq-grid">
+      <div class="faq-left"><p>Can't find the answer you're looking for? Visit our <a href="#" style="color:var(--blue)">FAQs page</a>.</p></div>
+      <div class="accordion" id="detail-faq"></div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-col"><h4>Products</h4><a>OX</a><a>BORA</a><a>Tracer</a><a>Smart</a><a>Unitec</a></div>
+    <div class="footer-col"><h4>About Us</h4><a>Blog</a><a style="color:var(--blue)">News</a><a>Videos</a><a>Catalogs</a></div>
+    <div class="footer-col"><h4>Help</h4><a>Support Requests</a><a>All Contacts</a><a>Orders</a><a>Returns</a><a>FAQs</a></div>
+    <div class="footer-col"><h4>Social</h4><a>LinkedIn</a></div>
+    <div class="footer-col footer-contact"><strong>hello@relume.io</strong>+1 (555) 000-0000</div>
+  </footer>
+  <div class="footer-bottom"><div class="footer-logo"><span>OX</span> GROUP</div><div class="footer-links"><a>Terms & Conditions</a><a>Privacy Policy</a><a>© 2025 OX. All rights reserved.</a></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: CART
+════════════════════════════════════════════ -->
+<div class="page" id="page-cart">
+  <div class="cart-layout">
+    <div>
+      <div class="cart-header">
+        <h1>Cart</h1>
+        <div style="color:var(--muted);font-size:13px" id="cart-count-label">3 products &nbsp; 41 items</div>
+        <div class="clear-btn" onclick="openClearModal()">Clear <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="3 6 5 6 21 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <!-- Quick Add -->
+      <div class="quick-add-panel">
+        <div class="quick-add-header" onclick="toggleQuickAdd()">
+          <span class="quick-add-title">Quick Add</span>
+          <span id="quick-add-toggle">−</span>
+        </div>
+        <div class="quick-add-body" id="quick-add-body">
+          <div class="quick-add-row">
+            <div class="quick-search-wrap">
+              <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><path d="M21 21L16.65 16.65M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <input type="text" placeholder="Search by name, product ID, or keyword">
+            </div>
+            <div class="qty-control" style="flex-shrink:0">
+              <div class="qty-btn">−</div>
+              <input class="qty-input" value="1" type="number" min="1" style="width:40px">
+              <div class="qty-btn">+</div>
+            </div>
+            <button class="btn-add-product">Add Product</button>
+          </div>
+        </div>
+      </div>
+      <div class="cart-table" id="cart-table">
+        <!-- filled by JS -->
+      </div>
+    </div>
+    <div>
+      <div class="summary-card">
+        <div class="acc-item acc-header" onclick="toggleAcc(this)" style="font-size:13px">Have a promo code? <span class="acc-toggle">+</span></div>
+        <div class="acc-body" style="padding:0 0 10px;display:none"><input class="form-input" placeholder="Enter promo code" style="margin-top:8px"></div>
+        <div class="summary-row"><span class="summary-label">Subtotal</span><span class="summary-val" id="cart-subtotal">£2,008.00</span></div>
+        <div class="summary-row"><span class="summary-label">Discount</span><span class="summary-val discount" id="cart-discount">-£19</span></div>
+        <div class="summary-row"><span class="summary-label">Shipping</span><span class="summary-val muted">Calculation <svg class="icon icon-sm" style="vertical-align:middle" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="8" x2="12.01" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div class="summary-total"><span class="total-label">Total Amount</span><span class="total-val" id="cart-total">£1,989.00</span></div>
+        <button class="btn-checkout" onclick="navigate('checkout-shipping')">Checkout →</button>
+        <div class="summary-faq" style="margin-top:16px">
+          <div class="accordion" id="cart-faq"></div>
+        </div>
+        <div class="cart-help">Something wrong with this order?<br><a href="#" style="color:var(--blue)">Contact us</a> or submit a <a href="#" style="color:var(--blue)">support request</a></div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-col"><h4>Products</h4><a>OX</a><a>BORA</a><a>Tracer</a><a>Smart</a><a>Unitec</a></div>
+    <div class="footer-col"><h4>About Us</h4><a>Blog</a><a style="color:var(--blue)">News</a><a>Videos</a><a>Catalogs</a></div>
+    <div class="footer-col"><h4>Help</h4><a>Support Requests</a><a>All Contacts</a><a>Orders</a><a>Returns</a><a>FAQs</a></div>
+    <div class="footer-col"><h4>Social</h4><a>LinkedIn</a></div>
+    <div class="footer-col footer-contact"><strong>hello@relume.io</strong>+1 (555) 000-0000</div>
+  </footer>
+  <div class="footer-bottom"><div class="footer-logo"><span>OX</span> GROUP</div><div class="footer-links"><a>Terms &amp; Conditions</a><a>Privacy Policy</a><a>© 2025 OX. All rights reserved.</a></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: CHECKOUT – SHIPPING
+════════════════════════════════════════════ -->
+<div class="page" id="page-checkout-shipping">
+  <div class="checkout-layout">
+    <div>
+      <h1>Checkout</h1>
+      <div class="checkout-breadcrumb">
+        <span class="crumb-active">1. Shipping Address</span>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-link" onclick="navigate('checkout-payment')">2. Payment</span>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-link">3. Order Review</span>
+      </div>
+      <div class="checkout-section">
+        <h2>Delivery Address</h2>
+        <div class="address-options">
+          <div class="addr-card selected" onclick="document.querySelectorAll('#page-checkout-shipping .addr-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected')">
+            <div class="addr-card-inner">
+              <div>
+                <h4>18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</h4>
+                <div style="color:var(--muted);font-size:12px;margin-top:4px">Contact Person:<br>Thomas (+44 34 5467 0123)</div>
+              </div>
+              <div class="radio-dot"></div>
+            </div>
+          </div>
+          <div class="addr-card" onclick="document.querySelectorAll('#page-checkout-shipping .addr-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected')">
+            <div class="addr-card-inner">
+              <div>
+                <h4>18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</h4>
+                <div style="color:var(--muted);font-size:12px;margin-top:4px">Contact Person:<br>Thomas (+44 34 5467 0123)</div>
+              </div>
+              <div class="radio-dot"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkout-section">
+        <h2>Shipping Methods</h2>
+        <div class="ship-options">
+          <div class="ship-option selected" onclick="selectShipping(this,'standard')">
+            <div style="font-weight:600">£100 – UK next day</div>
+            <div class="radio-dot" style="margin-left:auto"></div>
+          </div>
+          <div class="ship-option" onclick="selectShipping(this,'third-party')">
+            <div style="font-weight:600">Third-party shipping</div>
+            <div class="radio-dot" style="margin-left:auto"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="summary-card">
+        <div class="acc-item acc-header" onclick="toggleAcc(this)" style="font-size:13px">Have a promo code? <span class="acc-toggle">+</span></div>
+        <div class="acc-body" style="padding:0 0 10px;display:none"><input class="form-input" placeholder="Enter promo code" style="margin-top:8px"></div>
+        <div class="summary-row"><span class="summary-label">Subtotal</span><span class="summary-val">£2,008.00</span></div>
+        <div class="summary-row"><span class="summary-label">Discount</span><span class="summary-val discount">-£19</span></div>
+        <div class="summary-row"><span class="summary-label">Shipping</span><span class="summary-val">£100<br><span style="font-size:11px;color:var(--muted)">You are £281.30 away from free shipping!</span></span></div>
+        <div class="summary-total"><span class="total-label">Total Amount</span><span class="total-val">£2,089.00</span></div>
+        <button class="btn-checkout" onclick="navigate('checkout-payment')">Continue →</button>
+        <div class="summary-faq" style="margin-top:16px"><div class="accordion" id="checkout-shipping-faq"></div></div>
+        <div class="cart-help">Something wrong with this order?<br><a href="#" style="color:var(--blue)">Contact us</a> or submit a <a href="#" style="color:var(--blue)">support request</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="checkout-minimal-footer">
+    <span>© 2025 OX GROUP. All rights reserved.</span>
+    <div style="display:flex;gap:16px"><a>Privacy Policy</a><a>Terms of Service</a><a>Cookies Settings</a></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: CHECKOUT – PAYMENT
+════════════════════════════════════════════ -->
+<div class="page" id="page-checkout-payment">
+  <div class="checkout-layout">
+    <div>
+      <h1>
+        <span class="checkout-back" onclick="navigate('checkout-shipping')">←</span>Checkout
+      </h1>
+      <div class="checkout-breadcrumb">
+        <span class="crumb-link" onclick="navigate('checkout-shipping')">1. Shipping Address</span>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-active">2. Payment</span>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-link">3. Order Review</span>
+      </div>
+      <div class="checkout-section">
+        <h2>Payment Method</h2>
+        <div class="payment-method-line">
+          Invoice payment method &nbsp;(30days EOM)
+          <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="8" x2="12.01" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="form-field" style="margin-top:16px">
+          <div class="form-label">Purchase Order Number <span style="color:var(--red)">*</span></div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Add any special instructions or requests for your order</div>
+          <input class="form-input" id="po-number" placeholder="E.g. PO2023-06-500T / PO-001 / 00001">
+        </div>
+      </div>
+      <div class="checkout-section">
+        <h2>Billing Address</h2>
+        <label style="display:flex;align-items:center;gap:8px;margin-bottom:16px;cursor:pointer;font-size:13px">
+          <input type="checkbox" id="same-addr-checkbox" checked style="accent-color:var(--blue)"> Same as Shipping Address
+        </label>
+        <div class="addr-card" style="cursor:default">
+          <h4>18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</h4>
+          <div style="color:var(--muted);font-size:12px;margin-top:4px">Contact Person:<br>Thomas (+44 34 5467 0123)</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="summary-card">
+        <div class="acc-item acc-header" onclick="toggleAcc(this)" style="font-size:13px">Have a promo code? <span class="acc-toggle">+</span></div>
+        <div class="acc-body" style="padding:0 0 10px;display:none"><input class="form-input" placeholder="Enter promo code" style="margin-top:8px"></div>
+        <div class="summary-row"><span class="summary-label">Subtotal</span><span class="summary-val">£2,008.00</span></div>
+        <div class="summary-row"><span class="summary-label">Discount</span><span class="summary-val discount">-£19</span></div>
+        <div class="summary-row"><span class="summary-label">Shipping</span><span class="summary-val">£100<br><span style="font-size:11px;color:var(--muted)">You are £281.30 away from free shipping!</span></span></div>
+        <div class="summary-total"><span class="total-label">Total Amount</span><span class="total-val">£2,089.00</span></div>
+        <button class="btn-checkout" onclick="navigate('checkout-review')">Continue →</button>
+        <div class="summary-faq" style="margin-top:16px"><div class="accordion" id="checkout-payment-faq"></div></div>
+        <div class="cart-help">Something wrong with this order?<br><a href="#" style="color:var(--blue)">Contact us</a> or submit a <a href="#" style="color:var(--blue)">support request</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="checkout-minimal-footer">
+    <span>© 2025 OX GROUP. All rights reserved.</span>
+    <div style="display:flex;gap:16px"><a>Privacy Policy</a><a>Terms of Service</a><a>Cookies Settings</a></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: CHECKOUT – ORDER REVIEW
+════════════════════════════════════════════ -->
+<div class="page" id="page-checkout-review">
+  <div class="checkout-layout">
+    <div>
+      <h1>
+        <span class="checkout-back" onclick="navigate('checkout-payment')">←</span>Checkout
+      </h1>
+      <div class="checkout-breadcrumb">
+        <span class="crumb-link" onclick="navigate('checkout-shipping')">1. Shipping Address</span>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-link" onclick="navigate('checkout-payment')">2. Payment</span>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-active">3. Order Review</span>
+      </div>
+      <div class="checkout-section">
+        <div class="review-section-header">
+          <h2 style="margin-bottom:0">Items to Ship</h2>
+          <svg class="icon icon-sm" style="color:var(--muted);cursor:pointer" viewBox="0 0 24 24" fill="none"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div id="checkout-review-items" style="margin-top:12px"><!-- filled by JS --></div>
+      </div>
+      <div class="checkout-section">
+        <h2>Ship To</h2>
+        <div class="form-label" style="margin-bottom:4px">Delivery Address*</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Where your order will be delivered and to whom</div>
+        <div class="review-address-card">
+          <div style="font-weight:600">18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</div>
+          <div style="color:var(--muted);font-size:12px;margin-top:4px">Contact Person:<br>Thomas (+44 34 5467 0123)</div>
+        </div>
+        <div class="form-label" style="margin-bottom:4px;margin-top:12px">Shipping Method*</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">How your order will be delivered</div>
+        <div class="review-ship-method">£100 – UK next day</div>
+        <div class="review-back-link">To update Shipping details, go back to <a onclick="navigate('checkout-shipping')">Shipping Address</a></div>
+      </div>
+      <div class="checkout-section">
+        <h2>Payment</h2>
+        <div class="review-payment-line">
+          Invoice payment method &nbsp;(30days EOM)
+          <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="8" x2="12.01" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="form-label" style="margin-bottom:4px">Purchase Order Number*</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:12px" id="review-po-display">E.g. PO2023-06-500T / PO-001 / 00001</div>
+        <div class="form-label" style="margin-bottom:4px">Billing Address*</div>
+        <div class="review-address-card">
+          <div style="font-weight:600">18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</div>
+          <div style="color:var(--muted);font-size:12px;margin-top:4px">Contact Person:<br>Thomas (+44 34 5467 0123)</div>
+        </div>
+        <div class="review-back-link">To update Payment details, go back to <a onclick="navigate('checkout-payment')">Payment</a></div>
+      </div>
+    </div>
+    <div>
+      <div class="summary-card">
+        <div class="acc-item acc-header" onclick="toggleAcc(this)" style="font-size:13px">Have a promo code? <span class="acc-toggle">+</span></div>
+        <div class="acc-body" style="padding:0 0 10px;display:none"><input class="form-input" placeholder="Enter promo code" style="margin-top:8px"></div>
+        <div class="summary-row"><span class="summary-label">Subtotal</span><span class="summary-val">£2,008.00</span></div>
+        <div class="summary-row"><span class="summary-label">Discount</span><span class="summary-val discount">-£19</span></div>
+        <div class="summary-row"><span class="summary-label">Shipping</span><span class="summary-val">£100<br><span style="font-size:11px;color:var(--muted)">You are £281.30 away from free shipping!</span></span></div>
+        <div class="summary-total"><span class="total-label">Total Amount</span><span class="total-val">£2,089.00</span></div>
+        <button class="btn-place" onclick="placeOrder()">Place Order <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="summary-faq" style="margin-top:16px"><div class="accordion" id="checkout-review-faq"></div></div>
+        <div class="cart-help">Something wrong with this order?<br><a href="#" style="color:var(--blue)">Contact us</a> or submit a <a href="#" style="color:var(--blue)">support request</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="checkout-minimal-footer">
+    <span>© 2025 OX GROUP. All rights reserved.</span>
+    <div style="display:flex;gap:16px"><a>Privacy Policy</a><a>Terms of Service</a><a>Cookies Settings</a></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: CHECKOUT – THANK YOU
+════════════════════════════════════════════ -->
+<div class="page" id="page-checkout-thankyou">
+  <div class="thankyou-page">
+    <div class="thankyou-icon">
+      <svg class="icon" style="width:28px;height:28px" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <h1>Thank You For<br>Choosing Us!</h1>
+    <div class="thankyou-sub">Your order has been successfully placed</div>
+    <div class="thankyou-btns">
+      <button class="thankyou-btn-primary" onclick="navigate('home')">Home Page</button>
+      <button class="thankyou-btn-outline">Cancel Order</button>
+    </div>
+    <div class="thankyou-help">Have any questions? <a href="#" style="color:var(--blue)">Support request</a></div>
+    <div class="order-card">
+      <div class="order-card-header">
+        <div class="order-id">
+          ID: UK433583
+          <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <button class="order-pdf-btn">
+          Order PDF
+          <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="order-meta">
+        <span class="order-meta-label">ORDER DATE:</span><span>02/09/2025 at 09:53</span>
+        <span class="order-meta-label">PAYMENT METHOD:</span><span>Invoice</span>
+        <span class="order-meta-label">ORDER AMOUNT:</span><span id="order-amount">£1,989.00</span>
+        <span class="order-meta-label">DELIVERY DATE:</span><span>—</span>
+        <span class="order-meta-label">DELIVERY METHOD:</span><span>Free – UK Next day</span>
+        <span class="order-meta-label">ORDER BY:</span><span>Acme Corp</span>
+        <span class="order-meta-label">DELIVERY ADDRESS:</span><span>18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</span>
+      </div>
+      <h2 id="order-list-title">Order list (3)</h2>
+      <table class="order-table" id="order-table"><!-- filled by JS --></table>
+      <div class="order-totals">
+        <div class="order-total-row"><span>SUBTOTAL</span><span id="order-subtotal">£2,008.00</span></div>
+        <div class="order-total-row"><span>DISCOUNT</span><span>-£19</span></div>
+        <div class="order-total-row"><span>TAX</span><span>—</span></div>
+        <div class="order-total-row grand"><span>TOTAL AMOUNT</span><span id="order-grand-total">£1,989.00</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="checkout-minimal-footer">
+    <span>© 2025 OX GROUP. All rights reserved.</span>
+    <div style="display:flex;gap:16px"><a>Privacy Policy</a><a>Terms of Service</a><a>Cookies Settings</a></div>
+  </div>
+</div>
+
+<!-- PAGE: TYPOGRAPHY REMOVED -->
+<div class="page" id="page-typography" style="display:none!important">
+  <div class="typo-page">
+
+    <!-- Header -->
+    <div class="typo-header">
+      <div class="typo-header-inner">
+        <h1>Typography</h1>
+      </div>
+    </div>
+
+    <!-- Table body -->
+    <div class="typo-body">
+
+      <!-- Column headers -->
+      <div class="typo-row">
+        <div class="typo-col-label" style="height:92px"></div>
+        <div class="typo-col-header">Desktop</div>
+        <div class="typo-col-header">Tablet</div>
+        <div class="typo-col-header">Mobile</div>
+      </div>
+
+      <!-- H1 -->
+      <div class="typo-row">
+        <div class="typo-col-label">H1</div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-helvetica ts-h1-desktop">Roboto Bold</span>
+          <span class="typo-spec">Bold / 48 / 60</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-helvetica ts-h1-tablet">Roboto Bold</span>
+          <span class="typo-spec">Bold / 40 / 52</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-helvetica ts-h1-mobile">Roboto Bold</span>
+          <span class="typo-spec">Bold / 32 / 40</span>
+        </div>
+      </div>
+
+      <!-- H2 -->
+      <div class="typo-row">
+        <div class="typo-col-label">H2</div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-helvetica ts-h2-desktop">Roboto Bold</span>
+          <span class="typo-spec">Bold / 36 / 44</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-helvetica ts-h2-tablet">Roboto Bold</span>
+          <span class="typo-spec">Bold / 32 / 40</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-helvetica ts-h2-mobile">Roboto Bold</span>
+          <span class="typo-spec">Bold / 28 / 36</span>
+        </div>
+      </div>
+
+      <!-- H3 -->
+      <div class="typo-row">
+        <div class="typo-col-label">H3</div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-helvetica ts-h3-desktop">Roboto Bold</span>
+          <span class="typo-spec">Bold / 24 / 32</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-helvetica ts-h3-tablet">Roboto Bold</span>
+          <span class="typo-spec">Bold / 22 / 30</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-helvetica ts-h3-mobile">Roboto Bold</span>
+          <span class="typo-spec">Bold / 22 / 30</span>
+        </div>
+      </div>
+
+      <!-- H4 -->
+      <div class="typo-row">
+        <div class="typo-col-label">H4</div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-helvetica ts-h4">Roboto Bold</span>
+          <span class="typo-spec">Bold / 16 / 24</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-helvetica ts-h4">Roboto Bold</span>
+          <span class="typo-spec">Bold / 16 / 24</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-helvetica ts-h4">Roboto Bold</span>
+          <span class="typo-spec">Bold / 16 / 24</span>
+        </div>
+      </div>
+
+      <!-- H5 -->
+      <div class="typo-row">
+        <div class="typo-col-label">H5</div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-bold ts-16-24">Roboto</span>
+          <span class="typo-spec">Bold / 16 / 24</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-bold ts-16-24">Roboto</span>
+          <span class="typo-spec">Bold / 16 / 24</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-bold ts-16-24">Roboto</span>
+          <span class="typo-spec">Bold / 16 / 24</span>
+        </div>
+      </div>
+
+      <!-- Medium tag -->
+      <div class="typo-row">
+        <div class="typo-col-label">Medium tag</div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-regular ts-14-20">Roboto</span>
+          <span class="typo-spec">Regular / 14 / 20</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-regular ts-14-20">Roboto</span>
+          <span class="typo-spec">Regular / 14 / 20</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-regular ts-14-20">Roboto</span>
+          <span class="typo-spec">Regular / 14 / 20</span>
+        </div>
+      </div>
+
+      <!-- Small tag -->
+      <div class="typo-row">
+        <div class="typo-col-label">Small tag</div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-regular ts-12-18">Roboto</span>
+          <span class="typo-spec">Regular / 12 / 18</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-regular ts-12-18">Roboto</span>
+          <span class="typo-spec">Regular / 12 / 18</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-regular ts-12-18">Roboto</span>
+          <span class="typo-spec">Regular / 12 / 18</span>
+        </div>
+      </div>
+
+      <!-- Tab -->
+      <div class="typo-row">
+        <div class="typo-col-label">Tab</div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-16-24">Roboto</span>
+          <span class="typo-spec">Semibold / 16 / 24</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-16-24">Roboto</span>
+          <span class="typo-spec">Semibold / 16 / 24</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-16-24">Roboto</span>
+          <span class="typo-spec">Semibold / 16 / 24</span>
+        </div>
+      </div>
+
+      <!-- Big button -->
+      <div class="typo-row">
+        <div class="typo-col-label">Big button</div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-18-28">Roboto</span>
+          <span class="typo-spec">Semibold / 18 / 28</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-18-28">Roboto</span>
+          <span class="typo-spec">Semibold / 18 / 28</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-16-24">Roboto</span>
+          <span class="typo-spec">Semibold / 16 / 24</span>
+        </div>
+      </div>
+
+      <!-- Medium button -->
+      <div class="typo-row">
+        <div class="typo-col-label">Medium button</div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-16-24">Roboto</span>
+          <span class="typo-spec">Semibold / 16 / 24</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-16-24">Roboto</span>
+          <span class="typo-spec">Semibold / 16 / 24</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-16-24">Roboto</span>
+          <span class="typo-spec">Semibold / 16 / 24</span>
+        </div>
+      </div>
+
+      <!-- Small button -->
+      <div class="typo-row">
+        <div class="typo-col-label">Small button</div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-14-20">Roboto</span>
+          <span class="typo-spec">Semibold / 14 / 20</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-14-20">Roboto</span>
+          <span class="typo-spec">Semibold / 14 / 20</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-14-20">Roboto</span>
+          <span class="typo-spec">Semibold / 14 / 20</span>
+        </div>
+      </div>
+
+      <!-- Label -->
+      <div class="typo-row">
+        <div class="typo-col-label">Label</div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-14-20">Roboto</span>
+          <span class="typo-spec">Semibold / 14 / 20</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-14-20">Roboto</span>
+          <span class="typo-spec">Semibold / 14 / 20</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-semibold ts-14-20">Roboto</span>
+          <span class="typo-spec">Semibold / 14 / 20</span>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="typo-row">
+        <div class="typo-col-label">Body</div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-regular ts-16-24">Roboto</span>
+          <span class="typo-spec">Regular / 16 / 24</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-regular ts-16-24">Roboto</span>
+          <span class="typo-spec">Regular / 16 / 24</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-regular ts-16-24">Roboto</span>
+          <span class="typo-spec">Regular / 16 / 24</span>
+        </div>
+      </div>
+
+      <!-- Body Small / Helper -->
+      <div class="typo-row">
+        <div class="typo-col-label" style="font-size:16px">Body Small / Helper</div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-regular ts-14-20">Roboto</span>
+          <span class="typo-spec">Regular / 14 / 20</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-regular ts-14-20">Roboto</span>
+          <span class="typo-spec">Regular / 14 / 20</span>
+        </div>
+        <div class="typo-cell">
+          <span class="typo-sample ts-inter-regular ts-14-20">Roboto</span>
+          <span class="typo-spec">Regular / 14 / 20</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: ACCOUNT OVERVIEW
+════════════════════════════════════════════ -->
+<div class="page" id="page-account-overview"></div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: ACCOUNT PROFILE INFORMATION
+════════════════════════════════════════════ -->
+<div class="page" id="page-account-profile"></div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: ACCOUNT EMAIL PREFERENCES
+════════════════════════════════════════════ -->
+<div class="page" id="page-account-email"></div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: ACCOUNT ADDRESS BOOK
+════════════════════════════════════════════ -->
+<div class="page" id="page-account-address"></div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: ACCOUNT UPDATE PASSWORD
+════════════════════════════════════════════ -->
+<div class="page" id="page-account-password"></div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: ACCOUNT FAVOURITES
+════════════════════════════════════════════ -->
+<div class="page" id="page-account-favourites"></div>
+<div class="page" id="page-account-purchases"></div>
+<div class="page" id="page-account-returns"></div>
+<div class="page" id="page-account-reorder"></div>
+<div class="page" id="page-account-invoices"></div>
+<div class="page" id="page-account-transaction-history"></div>
+<div class="page" id="page-account-print-statement"></div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: ACCOUNT SUPPORT CASES
+════════════════════════════════════════════ -->
+<div class="page" id="page-account-cases"></div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: ACCOUNT SUBMIT NEW CASE
+════════════════════════════════════════════ -->
+<div class="page" id="page-account-newcase"></div>
+
+<!-- ─── TOAST ─── -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+  <span id="toast-msg">Added to cart</span>
+</div>
+
+<!-- ─── CLEAR CART MODAL ─── -->
+<div class="clear-modal-overlay" id="clear-modal">
+  <div class="clear-modal">
+    <div class="clear-modal-close" onclick="closeClearModal()">
+      <svg class="icon" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <h2>Clear</h2>
+    <div class="clear-modal-body">Are you sure you want to remove all items from your cart? This action can't be undone.</div>
+    <div class="clear-modal-btns">
+      <button class="btn-discard" onclick="closeClearModal()">Discard</button>
+      <button class="btn-clear-cart" onclick="clearCart()">
+        Clear Cart
+        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="3 6 5 6 21 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── LOG OUT MODAL ─── -->
+<div class="logout-modal-overlay" id="logout-modal">
+  <div class="logout-modal">
+    <button class="logout-modal-close" onclick="closeLogoutModal()">
+      <svg class="icon" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <h2>Log Out</h2>
+    <div class="logout-modal-body">You will need to sign in again to access your account. Are you sure you want to log out?</div>
+    <div class="logout-modal-btns">
+      <button class="btn-logout-cancel" onclick="closeLogoutModal()">Cancel</button>
+      <button class="btn-logout-confirm" onclick="confirmLogout()">
+        Yes, Log Out
+        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="16 17 21 12 16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SYNC MODAL ─── -->
+<div class="modal-overlay" id="sync-modal">
+  <div class="modal">
+    <h2 style="display:flex;align-items:center;gap:8px"><svg class="icon icon-lg" viewBox="0 0 24 24" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Product Sync</h2>
+    <div class="modal-sub">Connect to your external system to pull the latest product catalogue.</div>
+    <div class="modal-field">
+      <div class="modal-label">API Endpoint</div>
+      <input class="modal-input" id="api-url" value="https://api.yoursystem.com/products" placeholder="https://api.yoursystem.com/products">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">API Key</div>
+      <input class="modal-input" id="api-key" type="password" value="sk-demo-key-••••••••" placeholder="Your API key">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Format</div>
+      <div class="cust-select cust-select--field" id="modal-format">
+        <button class="cust-select-trigger" onclick="toggleCustomSelect('modal-format');event.stopPropagation()">
+          <span class="cust-select-value">JSON (REST)</span>
+          <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="cust-select-panel">
+          <div class="cust-select-item active" data-label="JSON (REST)" onclick="pickCustomSelect('modal-format','JSON (REST)')">JSON (REST)<span class="cust-select-check"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="cust-select-item" data-label="GraphQL" onclick="pickCustomSelect('modal-format','GraphQL')">GraphQL<span class="cust-select-check"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="cust-select-item" data-label="XML / SOAP" onclick="pickCustomSelect('modal-format','XML / SOAP')">XML / SOAP<span class="cust-select-check"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="cust-select-item" data-label="CSV" onclick="pickCustomSelect('modal-format','CSV')">CSV<span class="cust-select-check"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="sync-log" id="sync-log" style="display:none"></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeSyncModal()">Cancel</button>
+      <button class="modal-confirm" id="modal-sync-btn" onclick="runSync()">Run Sync</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/icons.js"></script>
+<script src="js/data.js"></script>
+<script src="js/renders.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
