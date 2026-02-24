@@ -96,10 +96,11 @@ async function loadSalsifyProducts(reset = true) {
 
     _rebuildCategories();
 
-    // If brand returned no products, show 404
+    // If brand returned no products AND we're on the listing page, show 404
     if (reset && PRODUCTS.length === 0) {
       _pendingProductSlug = null;
-      navigate('404', { skipHistory: true });
+      const listingActive = document.getElementById('page-listing')?.classList.contains('active');
+      if (listingActive) navigate('404');
       _loading = false;
       return;
     }

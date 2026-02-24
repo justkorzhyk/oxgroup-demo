@@ -4,6 +4,7 @@ const ACCOUNT_PAGES  = ['account-overview', 'account-profile', 'account-email', 
 
 const ROUTES = {
   home:                 '/',
+  '404':                '/404',
   cart:                 '/cart',
   'checkout-shipping':  '/checkout/shipping',
   'checkout-payment':   '/checkout/payment',
