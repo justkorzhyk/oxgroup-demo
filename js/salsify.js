@@ -34,7 +34,7 @@ function _mapProduct(raw) {
     stock:      0,
     inStock:    raw['Available in UK?'] === true || raw['Available in UK?'] === 'Yes',
     img:        null,
-    imgAssetId: raw['Front View'] || null,
+    imgAssetId: (Array.isArray(raw['Front View']) ? raw['Front View'][0] : raw['Front View']) || null,
     brand:      raw['Brand Name'] || 'OX',
   };
 }
@@ -81,6 +81,13 @@ async function loadSalsifyProducts(reset = true) {
 
     const res  = await fetch(`/api/products?${params}`);
     const json = await res.json();
+
+    // Diagnostic: log first raw product to inspect field names & types
+    if (json.data?.[0]) {
+      console.log('[Salsify] First raw product keys:', Object.keys(json.data[0]));
+      console.log('[Salsify] Front View value:', json.data[0]['Front View']);
+      console.log('[Salsify] Full first product:', json.data[0]);
+    }
 
     const fresh = (json.data || []).map(_mapProduct);
     PRODUCTS.push(...fresh);
@@ -141,14 +148,16 @@ async function _fetchAsset(product) {
   }
 
   try {
-    const res       = await fetch(`/api/asset?id=${id}`);
-    const { url }   = await res.json();
+    const res  = await fetch(`/api/asset?id=${encodeURIComponent(id)}`);
+    const data = await res.json();
+    console.log('[Salsify] Asset', id, '→', data);
+    const url = data.url;
     if (url) {
       _assetCache[id] = url;
       product.img     = url;
       _applyImage(product.id, url);
     }
-  } catch (_) { /* skip */ }
+  } catch (err) { console.warn('[Salsify] Asset fetch failed:', id, err); }
 }
 
 function _applyImage(productId, imgUrl) {
