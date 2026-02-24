@@ -122,17 +122,26 @@ function renderDetail() {
     <span>/</span>
     <span>${p.name}</span>
   `;
+  // Init gallery state (4 slots — reuse product image across all for demo)
+  _galleryImages = [p.img, p.img, p.img, p.img];
+  _galleryIdx    = 0;
+
   const sizes = ['600/25.4mm', '500/25.4mm', '450/25.4mm', '400/25.4mm', '400/20mm'];
 
   document.getElementById('detail-content').innerHTML = `
     <div>
-      <div class="gallery-main" style="color:#555;font-size:80px">
-        ${p.img ? `<img src="${p.img}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain">` : icon('diamond', 'icon-lg')}
-        <div class="gallery-nav prev">${icon('chevronLeft')}</div>
-        <div class="gallery-nav next">${icon('chevronRight')}</div>
+      <div class="gallery-main">
+        <div id="gallery-main-view" class="gallery-main-view">
+          ${p.img ? `<img src="${p.img}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain">` : icon('diamond', 'icon-lg')}
+        </div>
+        <div class="gallery-nav prev" onclick="galleryNav(-1)">${icon('chevronLeft')}</div>
+        <div class="gallery-nav next" onclick="galleryNav(1)">${icon('chevronRight')}</div>
       </div>
       <div class="gallery-thumbs">
-        ${[0, 1, 2, 3].map(i => `<div class="gallery-thumb ${i === 0 ? 'active' : ''}" style="color:#555">${p.img ? `<img src="${p.img}" alt="" style="width:100%;height:100%;object-fit:contain">` : icon('diamond')}</div>`).join('')}
+        ${[0, 1, 2, 3].map(i => `
+          <div class="gallery-thumb ${i === 0 ? 'active' : ''}" onclick="galleryGoTo(${i})">
+            ${p.img ? `<img src="${p.img}" alt="" style="width:100%;height:100%;object-fit:contain">` : icon('diamond')}
+          </div>`).join('')}
       </div>
     </div>
     <div>
@@ -185,13 +194,6 @@ function renderDetail() {
   `).join('');
 
   buildFAQ('detail-faq', FAQS.slice(0, 4));
-
-  document.querySelectorAll('.gallery-thumb').forEach((t, i) => {
-    t.onclick = () => {
-      document.querySelectorAll('.gallery-thumb').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
-    };
-  });
 }
 
 // ─── CART ───────────────────────────────────────────

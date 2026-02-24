@@ -32,6 +32,28 @@ function pageFromPath(path) {
   return PATH_TO_PAGE[path] || PATH_TO_PAGE['/' + path.replace(/^\//, '')] || 'home';
 }
 
+// ─── PRODUCT GALLERY ─────────────────────────────────
+let _galleryImages = [];
+let _galleryIdx    = 0;
+
+function galleryGoTo(idx) {
+  _galleryIdx = idx;
+  const view = document.getElementById('gallery-main-view');
+  if (view) {
+    const img = _galleryImages[idx];
+    view.innerHTML = img
+      ? `<img src="${img}" alt="" style="width:100%;height:100%;object-fit:contain">`
+      : icon('diamond', 'icon-lg');
+  }
+  document.querySelectorAll('.gallery-thumb').forEach((t, i) => {
+    t.classList.toggle('active', i === idx);
+  });
+}
+
+function galleryNav(dir) {
+  galleryGoTo((_galleryIdx + dir + _galleryImages.length) % _galleryImages.length);
+}
+
 // ─── BANNER SLIDER ───────────────────────────────────
 let _bannerIdx = 0;
 const _BANNER_COUNT = 3;
