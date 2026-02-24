@@ -41,7 +41,7 @@ function navigate(page, opts = {}) {
     history.pushState({ page }, '', ROUTES[page] || '/' + page);
   }
   if (page === 'home')                  renderHome();
-  if (page === 'listing')               renderListing();
+  if (page === 'listing')               loadSalsifyProducts();
   if (page === 'detail')                renderDetail();
   if (page === 'cart')                  renderCart();
   if (page === 'checkout-shipping')     renderCheckoutShipping();

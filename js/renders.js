@@ -82,7 +82,7 @@ function renderListing() {
 
   document.getElementById('product-list').innerHTML = filtered.map((p, i) => `
     <div class="product-row ${i === 2 ? 'selected' : ''}" onclick="openProduct(${PRODUCTS.indexOf(p)})">
-      <div class="prod-img" style="color:#868686">${icon(p.img, 'icon-lg')}</div>
+      <div class="prod-img" data-product-img="${p.id}" style="color:#868686">${p.img ? `<img src="${p.img}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px">` : icon('diamond', 'icon-lg')}</div>
       <div>
         <div class="prod-sku-line">
           <span class="sku">${p.id}</span>
@@ -108,12 +108,12 @@ function renderDetail() {
   document.getElementById('detail-content').innerHTML = `
     <div>
       <div class="gallery-main" style="color:#555;font-size:80px">
-        ${icon(p.img, 'icon-lg')}
+        ${p.img ? `<img src="${p.img}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain">` : icon('diamond', 'icon-lg')}
         <div class="gallery-nav prev">${icon('chevronLeft')}</div>
         <div class="gallery-nav next">${icon('chevronRight')}</div>
       </div>
       <div class="gallery-thumbs">
-        ${[0, 1, 2, 3].map(i => `<div class="gallery-thumb ${i === 0 ? 'active' : ''}" style="color:#555">${icon(p.img)}</div>`).join('')}
+        ${[0, 1, 2, 3].map(i => `<div class="gallery-thumb ${i === 0 ? 'active' : ''}" style="color:#555">${p.img ? `<img src="${p.img}" alt="" style="width:100%;height:100%;object-fit:contain">` : icon('diamond')}</div>`).join('')}
       </div>
     </div>
     <div>
