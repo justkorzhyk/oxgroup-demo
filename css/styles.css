@@ -1350,3 +1350,14 @@ body.page-checkout-mode nav .nav-actions { display: none; }
 .salsify-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 80px 40px; color: var(--muted); font-size: 14px; }
 .salsify-spinner { width: 32px; height: 32px; border: 3px solid #2d2d2d; border-top-color: var(--blue); border-radius: 50%; animation: salsify-spin .7s linear infinite; }
 @keyframes salsify-spin { to { transform: rotate(360deg); } }
+
+/* ─── CART & CHECKOUT PAGE HEADINGS ─── */
+#page-cart h1 { font-size: 28px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+#page-checkout-shipping h1,
+#page-checkout-payment h1,
+#page-checkout-review h1 { font-size: 28px; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+#page-checkout-thankyou h1 { font-size: 30px; font-weight: 800; text-transform: uppercase; text-align: center; line-height: 1.2; margin-bottom: 12px; }
+.checkout-section h2 { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
+.review-section-header h2 { margin-bottom: 0; }
+.addr-card h4 { font-family: inherit; font-size: 13px; font-weight: 500; line-height: 1.5; }
+.payment-method-line { justify-content: center; }
