@@ -81,8 +81,10 @@ function renderListing() {
     </div>
   `).join('');
 
+  const useSegments = PRODUCTS.length > 0 && PRODUCTS[0].segment != null;
+  const catName = CATEGORIES[selectedCat];
   const filtered = PRODUCTS.filter(p => {
-    const matchCat = p.cat === CATEGORIES[selectedCat];
+    const matchCat = useSegments ? p.segment === catName : p.cat === catName;
     return matchCat && (!stockOnly || p.inStock);
   });
 

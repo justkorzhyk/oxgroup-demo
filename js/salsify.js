@@ -77,6 +77,16 @@ function _buildDynamicCatData(brand, products) {
         items:   subTypes.size > 0 ? [...subTypes].sort() : [cat],
       })),
     }));
+
+    // Also update the listing-page CATEGORIES to use segment names for this brand
+    if (brand === selectedBrand) {
+      CATEGORIES.length = 0;
+      CAT_ICONS.length  = 0;
+      [...segMap.keys()].sort().forEach(seg => {
+        CATEGORIES.push(seg);
+        CAT_ICONS.push(CAT_ICON_MAP[seg] || 'tag');
+      });
+    }
   } else {
     // 2-level: product type → sub-types (or just the type itself)
     const typeMap = new Map();
@@ -89,6 +99,7 @@ function _buildDynamicCatData(brand, products) {
       icon: CAT_ICON_MAP[cat] || 'tag',
       subs: subTypes.size > 0 ? [{ heading: cat, items: [...subTypes].sort() }] : [],
     }));
+    // CATEGORIES already reflects Product Types from _rebuildCategories — no change needed
   }
 
   _catLoadedBrands.add(brand);
