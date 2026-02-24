@@ -1,1 +1,5 @@
 claude_desktop_config.json
+.DS_Store
+.claude/
+figma_components.json
+serve.ua
