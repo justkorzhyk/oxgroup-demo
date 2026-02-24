@@ -159,8 +159,7 @@
           <div class="brand-content-text">
           <h3>SMART</h3>
           <div class="brand-content-desc">Smart solutions for modern tradespeople — where advanced technology meets everyday craftsmanship.</div>
-          </div>>
-  
+          </div>
           <button class="brand-content-btn" onclick="event.stopPropagation();navigate('listing')">
             View Products
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -356,9 +355,9 @@
      PAGE: LISTING
 ════════════════════════════════════════════ -->
 <div class="page" id="page-listing">
-  <div class="breadcrumb"><a onclick="navigate('home')" style="display:inline-flex;align-items:center"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a> / <a onclick="navigate('home')">OX</a></div>
+  <div class="breadcrumb" id="listing-breadcrumb"><a onclick="navigate('home')" style="display:inline-flex;align-items:center"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a> / <a onclick="navigate('home')">OX</a></div>
   <div class="listing-header">
-    <h1>OX</h1>
+    <h1 id="listing-brand-title">OX</h1>
     <span class="product-count" id="prod-count">1387 products found</span>
   </div>
   <div class="category-tabs" id="cat-tabs">
@@ -408,7 +407,7 @@
      PAGE: PRODUCT DETAIL
 ════════════════════════════════════════════ -->
 <div class="page" id="page-detail">
-  <div class="breadcrumb"><a onclick="navigate('home')" style="display:inline-flex;align-items:center"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a> / <a onclick="navigate('listing')">OX</a> / <a onclick="navigate('listing')">Diamond Tools</a> / <span id="detail-breadcrumb">Ultimate Zebra Diamond Blade</span></div>
+  <div class="breadcrumb" id="detail-breadcrumb-bar"><a onclick="navigate('home')" style="display:inline-flex;align-items:center"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a> / <a onclick="navigate('listing')">OX</a> / <a onclick="navigate('listing')">Diamond Tools</a> / <span id="detail-breadcrumb">Product</span></div>
   <div class="detail-layout" id="detail-content">
     <!-- filled by JS -->
   </div>

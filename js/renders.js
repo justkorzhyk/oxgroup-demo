@@ -66,6 +66,14 @@ function renderHome() {
 
 // ─── LISTING ────────────────────────────────────────
 function renderListing() {
+  // Update brand name in breadcrumb and title
+  const brand = PRODUCTS[0]?.brand || 'OX';
+  const brandUpper = brand.toUpperCase();
+  const titleEl = document.getElementById('listing-brand-title');
+  if (titleEl) titleEl.textContent = brandUpper;
+  const bcEl = document.getElementById('listing-breadcrumb');
+  if (bcEl) bcEl.innerHTML = `<a onclick="navigate('home')" style="display:inline-flex;align-items:center">${icon('home','icon-sm')}</a><span>/</span><span class="bc-active">${brand}</span>`;
+
   // Category tabs
   document.getElementById('cat-tabs').innerHTML = CATEGORIES.map((c, i) => `
     <div class="cat-tab ${i === selectedCat ? 'active' : ''}" onclick="selectCat(${i})">
@@ -102,7 +110,18 @@ function renderListing() {
 // ─── PRODUCT DETAIL ─────────────────────────────────
 function renderDetail() {
   const p = currentProduct;
-  document.getElementById('detail-breadcrumb').textContent = p.name;
+  // Dynamic breadcrumb: Home / Brand / Category / Product name
+  const brand = p.brand || 'OX';
+  const bc = document.getElementById('detail-breadcrumb-bar');
+  if (bc) bc.innerHTML = `
+    <a onclick="navigate('home')" style="display:inline-flex;align-items:center">${icon('home','icon-sm')}</a>
+    <span>/</span>
+    <a onclick="navigate('listing')">${brand}</a>
+    <span>/</span>
+    <a onclick="navigate('listing')">${p.cat}</a>
+    <span>/</span>
+    <span>${p.name}</span>
+  `;
   const sizes = ['600/25.4mm', '500/25.4mm', '450/25.4mm', '400/25.4mm', '400/20mm'];
 
   document.getElementById('detail-content').innerHTML = `
