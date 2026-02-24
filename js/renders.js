@@ -29,7 +29,7 @@ function renderHome() {
   if (promoEl) {
     promoEl.innerHTML = promoRows.map((p, i) => `
       <div class="home-promo-row" onclick="openProduct(${PRODUCTS.indexOf(p)})">
-        <div class="home-promo-thumb" style="display:flex;align-items:center;justify-content:center;color:#868686">${icon(p.img, 'icon-lg')}</div>
+        <div class="home-promo-thumb" data-product-img="${p.id}" style="display:flex;align-items:center;justify-content:center;color:#868686">${p.img ? `<img src="${p.img}" alt="" style="width:100%;height:100%;object-fit:contain">` : icon('diamond', 'icon-lg')}</div>
         <div class="home-promo-info">
           <div class="home-promo-meta">
             <span class="home-promo-sku">${p.id}</span>

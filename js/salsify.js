@@ -97,6 +97,8 @@ async function loadSalsifyProducts(reset = true) {
 
     _rebuildCategories();
     renderListing();
+    // Refresh home promo rows so images appear there too
+    if (document.getElementById('home-promo-rows')) renderHome();
 
     // Show real total in header
     const countEl = document.getElementById('prod-count');

@@ -739,3 +739,5 @@ window.addEventListener('popstate', e => {
   navigate(e.state?.page || pageFromPath(location.pathname), { skipHistory: true });
 });
 navigate(pageFromPath(location.pathname), { skipHistory: true });
+// Preload Salsify products in background so home promo and listing both have real images
+loadSalsifyProducts();
