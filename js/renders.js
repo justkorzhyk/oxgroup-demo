@@ -648,18 +648,18 @@ function buildAccBreadcrumb() {
 }
 
 function buildAccFooter() {
-  return `<footer class="home-footer">
-    <div class="home-footer-bg"></div>
-    <div class="home-footer-columns">
-      <div class="home-footer-col"><h4>Products</h4><a onclick="navigateBrand('OX')">OX</a><a onclick="navigateBrand('BORA')">BORA</a><a onclick="navigateBrand('TRACER')">TRACER</a><a onclick="navigateBrand('SMART')">SMART</a><a onclick="navigateBrand('UNITEC')">UNITEC</a></div>
-      <div class="home-footer-col"><h4>About Us</h4><a>Blog</a><a>News</a><a>Videos</a><a>Catalogs</a></div>
-      <div class="home-footer-col"><h4>Help</h4><a>Support Requests</a><a>All Contacts</a><a>Orders</a><a>Returns</a><a>FAQs</a></div>
-      <div class="home-footer-col"><h4>Social</h4><a>LinkedIn</a></div>
-      <div class="home-footer-col"><div class="home-footer-contact"><span class="home-footer-contact-email">hello@oxgroup.com</span><span class="home-footer-contact-phone">+44 (0) 1522 500 700</span><div class="home-footer-contact-address">Newland House, Weaver Road, Lincoln, Lincolnshire, England, LN6 3QN</div></div></div>
+  return `<footer class="footer">
+    <div class="footer-bg"></div>
+    <div class="footer-columns">
+      <div class="footer-col"><h4>Products</h4><a onclick="navigateBrand('OX')">OX</a><a onclick="navigateBrand('BORA')">BORA</a><a onclick="navigateBrand('TRACER')">TRACER</a><a onclick="navigateBrand('SMART')">SMART</a><a onclick="navigateBrand('UNITEC')">UNITEC</a></div>
+      <div class="footer-col"><h4>About Us</h4><a>Blog</a><a>News</a><a>Videos</a><a>Catalogs</a></div>
+      <div class="footer-col"><h4>Help</h4><a>Support Requests</a><a>All Contacts</a><a>Orders</a><a>Returns</a><a>FAQs</a></div>
+      <div class="footer-col"><h4>Social</h4><a>LinkedIn</a></div>
+      <div class="footer-col"><div class="footer-contact"><span class="footer-contact-email">hello@oxgroup.com</span><span class="footer-contact-phone">+44 (0) 1522 500 700</span><div class="footer-contact-address">Newland House, Weaver Road, Lincoln, Lincolnshire, England, LN6 3QN</div></div></div>
     </div>
-    <div class="home-footer-bottom">
-      <div class="home-footer-logo-text"><span>OX</span> GROUP</div>
-      <div class="home-footer-bottom-links"><a>Terms &amp; Conditions</a><a>Privacy Policy</a><a>Cookies Settings</a><a>© 2025 OX Group. All rights reserved.</a></div>
+    <div class="footer-bottom">
+      <div class="footer-logo-text"><span>OX</span> GROUP</div>
+      <div class="footer-bottom-links"><a href="/waitlist">Terms &amp; Conditions</a><a href="/waitlist">Privacy Policy</a><a href="/waitlist">Cookies Settings</a><span>© 2025 OX. All rights reserved.</span></div>
     </div>
   </footer>`;
 }
