@@ -596,7 +596,7 @@ footer a:hover { color: var(--white); }
 
   renderCountryList();
 
-  function joinWaitlist() {
+  async function joinWaitlist() {
     const input = document.getElementById('email-input');
     const btn   = document.getElementById('submit-btn');
     const email = input.value.trim();
@@ -616,13 +616,41 @@ footer a:hover { color: var(--white); }
     }
     if (!valid) return;
 
-    btn.textContent = 'You\'re in! ✓';
-    btn.classList.add('success');
+    btn.textContent = 'Joining…';
     btn.disabled = true;
-    input.disabled = true;
-    input.style.opacity = '0.5';
-    document.getElementById('country-trigger').style.opacity = '0.5';
-    document.getElementById('country-trigger').style.pointerEvents = 'none';
+
+    try {
+      const res = await fetch('https://a.klaviyo.com/client/profiles/?company_id=Wi8Zpq', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'revision': '2024-10-15' },
+        body: JSON.stringify({
+          data: {
+            type: 'profile',
+            attributes: {
+              email,
+              properties: {
+                country: selectedCountry.name,
+                country_code: selectedCountry.code,
+                waitlist: true,
+              }
+            }
+          }
+        })
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      btn.textContent = 'You\'re in! ✓';
+      btn.classList.add('success');
+      input.disabled = true;
+      input.style.opacity = '0.5';
+      document.getElementById('country-trigger').style.opacity = '0.5';
+      document.getElementById('country-trigger').style.pointerEvents = 'none';
+    } catch (e) {
+      console.error('[Klaviyo]', e);
+      btn.textContent = 'Try again';
+      btn.disabled = false;
+    }
   }
 </script>
 </body>
