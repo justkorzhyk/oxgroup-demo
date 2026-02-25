@@ -435,11 +435,14 @@ function renderDetail() {
 
 // ─── CART ───────────────────────────────────────────
 function renderCart() {
-  // Always reset quick-add to closed when entering cart normally
+  // Preserve quick-add open/closed state; only close it when it's not already open
   const _qaBody   = document.getElementById('quick-add-body');
   const _qaToggle = document.getElementById('quick-add-toggle');
-  if (_qaBody)   _qaBody.style.display = 'none';
-  if (_qaToggle) _qaToggle.textContent = '+';
+  const _qaOpen   = _qaBody && _qaBody.style.display !== 'none';
+  if (!_qaOpen) {
+    if (_qaBody)   _qaBody.style.display = 'none';
+    if (_qaToggle) _qaToggle.textContent = '+';
+  }
 
   const totalQty = CART_ITEMS.reduce((sum, item) => sum + item.qty, 0);
   document.getElementById('cart-count-label').textContent = `${CART_ITEMS.length} products \u00a0 ${totalQty} items`;
