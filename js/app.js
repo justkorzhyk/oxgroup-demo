@@ -1,6 +1,6 @@
 // ─── NAVIGATION ─────────────────────────────────────
 const CHECKOUT_PAGES = ['checkout-shipping', 'checkout-payment', 'checkout-review', 'checkout-thankyou'];
-const ACCOUNT_PAGES  = ['account-overview', 'account-profile', 'account-email', 'account-address', 'account-password', 'account-cases', 'account-newcase', 'account-favourites', 'account-purchases', 'account-returns', 'account-reorder', 'account-invoices', 'account-transaction-history', 'account-print-statement'];
+const ACCOUNT_PAGES  = ['account-overview', 'account-profile', 'account-email', 'account-address', 'account-password', 'account-cases', 'account-newcase', 'account-favourites', 'account-purchases', 'account-returns', 'account-reorder', 'account-invoices', 'account-invoice-detail', 'account-transaction-history', 'account-tx-detail', 'account-print-statement'];
 
 const ROUTES = {
   home:                 '/',
@@ -22,7 +22,9 @@ const ROUTES = {
   'account-returns':    '/account/returns',
   'account-reorder':    '/account/reorder',
   'account-invoices':             '/account/invoices',
+  'account-invoice-detail':      '/account/invoices/detail',
   'account-transaction-history': '/account/transaction-history',
+  'account-tx-detail':           '/account/transaction-history/detail',
   'account-print-statement':     '/account/print-statement',
 };
 const PATH_TO_PAGE = Object.fromEntries(Object.entries(ROUTES).map(([k, v]) => [v, k]));
@@ -176,7 +178,9 @@ function navigate(page, opts = {}) {
   if (page === 'account-returns')       renderAccountReturns();
   if (page === 'account-reorder')       renderAccountReorder();
   if (page === 'account-invoices')             renderAccountInvoices();
+  if (page === 'account-invoice-detail')       renderAccountInvoiceDetail();
   if (page === 'account-transaction-history')  renderAccountTransactionHistory();
+  if (page === 'account-tx-detail')            renderAccountTransactionDetail();
   if (page === 'account-print-statement')      renderAccountPrintStatement();
 }
 
@@ -684,6 +688,10 @@ function toggleAllInvoices(el) {
 function copyInvoiceId(id) {
   navigator.clipboard?.writeText(id).then(() => showToast('Copied to clipboard', 'copy'));
 }
+function openInvoiceDetail(id) {
+  currentInvoice = INVOICES.find(inv => inv.id === id) || null;
+  navigate('account-invoice-detail');
+}
 
 // ─── TRANSACTION HISTORY ──────────────────────────────
 function setTxPage(n) {
@@ -692,6 +700,10 @@ function setTxPage(n) {
 }
 function copyTxId(id) {
   navigator.clipboard?.writeText(id).then(() => showToast('Copied to clipboard', 'copy'));
+}
+function openTransactionDetail(id) {
+  currentTransaction = TRANSACTIONS.find(tx => tx.id === id) || null;
+  navigate('account-tx-detail');
 }
 
 // ─── PRINT A STATEMENT ───────────────────────────────
@@ -1116,12 +1128,68 @@ function renderDpCalendar() {
   `;
 }
 
+// ─── PHONE COUNTRY PICKER ────────────────────────────
+function _renderPhoneCountryList(q) {
+  const list = document.getElementById('phoneCountryList');
+  if (!list) return;
+  const filtered = q
+    ? PHONE_COUNTRIES.filter(c => c.name.toLowerCase().includes(q.toLowerCase()) || c.code.includes(q))
+    : PHONE_COUNTRIES;
+  list.innerHTML = filtered.map(c => `
+    <div class="acct-phone-country-item" onclick="selectPhoneCountry('${c.code}','${c.flag}')">
+      <span class="acct-phone-country-flag">${c.flag}</span>
+      <span class="acct-phone-country-name">${c.name}</span>
+      <span class="acct-phone-country-code">${c.code}</span>
+    </div>`).join('');
+}
+
+function togglePhonePicker(e) {
+  e.stopPropagation();
+  const dd     = document.getElementById('phoneDropdown');
+  const picker = document.getElementById('phonePicker');
+  if (!dd) return;
+  const isOpen = dd.classList.contains('open');
+  if (isOpen) {
+    closePhonePicker();
+  } else {
+    dd.classList.add('open');
+    picker.classList.add('active');
+    document.getElementById('pickerChevron').innerHTML = icon('chevronUp','icon-xs');
+    const inp = document.getElementById('countrySearchInput');
+    inp.value = '';
+    _renderPhoneCountryList('');
+    inp.focus();
+  }
+}
+
+function closePhonePicker() {
+  const dd     = document.getElementById('phoneDropdown');
+  const picker = document.getElementById('phonePicker');
+  const chev   = document.getElementById('pickerChevron');
+  if (dd)     dd.classList.remove('open');
+  if (picker) picker.classList.remove('active');
+  if (chev)   chev.innerHTML = icon('chevronDown','icon-xs');
+}
+
+function filterPhoneCountries(q) {
+  _renderPhoneCountryList(q);
+}
+
+function selectPhoneCountry(code, flag) {
+  const f = document.getElementById('pickerFlag');
+  const c = document.getElementById('pickerCode');
+  if (f) f.textContent = flag;
+  if (c) c.textContent = code;
+  closePhonePicker();
+}
+
 // ─── INIT ────────────────────────────────────────────
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCategoryDropdown(); closeSearch(); closeAllCustomSelects(); closeAllAttrFilters(); closeDp(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCategoryDropdown(); closeSearch(); closeAllCustomSelects(); closeAllAttrFilters(); closeDp(); closePhonePicker(); } });
 document.addEventListener('click', e => {
   if (!e.target.closest('.cust-select')) closeAllCustomSelects();
   if (!e.target.closest('.attr-filter')) closeAllAttrFilters();
   if (!e.target.closest('.dp-field-wrap')) closeDp();
+  if (!e.target.closest('#phonePickerWrap')) closePhonePicker();
 });
 window.addEventListener('popstate', e => {
   navigate(e.state?.page || pageFromPath(location.pathname), { skipHistory: true });

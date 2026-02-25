@@ -649,7 +649,7 @@ function buildAccFooter() {
     <div class="home-footer-bg"></div>
     <div class="home-footer-columns">
       <div class="home-footer-col"><h4>Products</h4><a onclick="navigateBrand('OX')">OX</a><a onclick="navigateBrand('BORA')">BORA</a><a onclick="navigateBrand('TRACER')">TRACER</a><a onclick="navigateBrand('SMART')">SMART</a><a onclick="navigateBrand('UNITEC')">UNITEC</a></div>
-      <div class="home-footer-col"><h4>About Us</h4><a>Blog</a><a class="blue">News</a><a>Videos</a><a>Catalogs</a></div>
+      <div class="home-footer-col"><h4>About Us</h4><a>Blog</a><a>News</a><a>Videos</a><a>Catalogs</a></div>
       <div class="home-footer-col"><h4>Help</h4><a>Support Requests</a><a>All Contacts</a><a>Orders</a><a>Returns</a><a>FAQs</a></div>
       <div class="home-footer-col"><h4>Social</h4><a>LinkedIn</a></div>
       <div class="home-footer-col"><div class="home-footer-contact"><span class="home-footer-contact-email">hello@oxgroup.com</span><span class="home-footer-contact-phone">+44 (0) 1522 500 700</span><div class="home-footer-contact-address">Newland House, Weaver Road, Lincoln, Lincolnshire, England, LN6 3QN</div></div></div>
@@ -754,8 +754,21 @@ function renderAccountProfile() {
             <div class="acct-section-desc">Your main contact number</div>
           </div>
           <div class="acct-section-control">
-            <div class="acct-phone-wrap">
-              <div class="acct-phone-flag">🇬🇧 +44</div>
+            <div class="acct-phone-wrap" id="phonePickerWrap">
+              <button class="acct-phone-picker" id="phonePicker" type="button" onclick="togglePhonePicker(event)">
+                <span class="acct-phone-picker-flag" id="pickerFlag">${selectedPhoneCountry.flag}</span>
+                <span class="acct-phone-picker-code" id="pickerCode">${selectedPhoneCountry.code}</span>
+                <span class="acct-phone-picker-chevron" id="pickerChevron">${icon('chevronDown','icon-xs')}</span>
+              </button>
+              <div class="acct-phone-dropdown" id="phoneDropdown">
+                <div class="acct-phone-search-wrap">
+                  ${icon('search','icon-sm')}
+                  <input class="acct-phone-search" id="countrySearchInput" type="text"
+                    placeholder="Search country" autocomplete="off"
+                    oninput="filterPhoneCountries(this.value)">
+                </div>
+                <div class="acct-phone-country-list" id="phoneCountryList"></div>
+              </div>
               <input class="acct-phone-num" type="tel" value="34 5467 0123" placeholder="Phone number">
             </div>
           </div>
@@ -766,15 +779,18 @@ function renderAccountProfile() {
             <div class="acct-section-desc">Receive important notification about your orders, requests, promotions, etc</div>
           </div>
           <div class="acct-section-control">
-            <div class="acct-input-wrap">
-              <span class="acct-input-icon">${icon('mail','icon-sm')}</span>
-              <input class="acct-input" type="email" value="hello@gmail.com" placeholder="Email address">
-            </div>
-            <div class="acct-btn-row">
-              <button class="acct-btn-cancel">Cancel</button>
-              <button class="acct-btn-update" onclick="showToast('Profile updated','check')">Update</button>
+            <div class="acct-email-display">
+              <div class="acct-email-display-left">
+                <span class="acct-email-display-icon">${icon('mail','icon-sm')}</span>
+                <span class="acct-email-display-text">hello@gmail.com</span>
+              </div>
+              <button class="acct-email-change-btn" onclick="showToast('Check your email to confirm the change','mail')">Change Email</button>
             </div>
           </div>
+        </div>
+        <div class="acct-btn-row acct-btn-row-end">
+          <button class="acct-btn-cancel">Cancel</button>
+          <button class="acct-btn-update" onclick="showToast('Profile updated','check')">Update</button>
         </div>
       </div>
     </div>
@@ -1208,15 +1224,15 @@ function renderAccountInvoices() {
          <td style="color:var(--muted)">${inv.paymentDate || '—'}</td>`
       : `<td>${inv.dueDate}</td>`;
     return `
-      <tr${isSel ? ' class="selected"' : ''}>
-        <td class="inv-cb-cell">
+      <tr${isSel ? ' class="selected"' : ''} style="cursor:pointer" onclick="openInvoiceDetail('${inv.id}')">
+        <td class="inv-cb-cell" onclick="event.stopPropagation()">
           <input type="checkbox" class="inv-checkbox"${isSel ? ' checked' : ''}
             onclick="toggleInvoiceCheck('${inv.id}',this)">
         </td>
         <td>
           <span style="display:flex;align-items:center;gap:6px">
             Invoice #${inv.id}
-            <button class="acct-icon-btn" onclick="copyInvoiceId('${inv.id}')" title="Copy">${icon('copy','icon-sm')}</button>
+            <button class="acct-icon-btn" onclick="event.stopPropagation();copyInvoiceId('${inv.id}')" title="Copy">${icon('copy','icon-sm')}</button>
           </span>
         </td>
         <td>${inv.date}</td>
@@ -1286,6 +1302,211 @@ function renderAccountInvoices() {
   `;
 }
 
+// ─── ACCOUNT INVOICE DETAIL ──────────────────────────
+function renderAccountInvoiceDetail() {
+  const el = document.getElementById('page-account-invoice-detail');
+  if (!currentInvoice) { navigate('account-invoices'); return; }
+  const inv = currentInvoice;
+
+  // Derive summary figures from amount (split for demo)
+  const total    = inv.amount;
+  const amtNum   = parseFloat(inv.amount.replace(/[^0-9.]/g,'')) || 0;
+  const subtotal = '£' + (amtNum * 0.75).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const tax      = '£' + (amtNum * 0.17).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const shipping = '£' + (amtNum * 0.05).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const handling = '£' + (amtNum * 0.03).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  const isPaid = inv.status === 'paid';
+  const statusBadge = isPaid
+    ? `<span class="acct-status inv-paid">Paid in Full</span>`
+    : `<span class="acct-status inv-open">Open</span>`;
+
+  // Sample product line for the invoice
+  const sampleProduct = PRODUCTS[0] || {};
+
+  // Billing section differs: paid = two cards (company + terms/memo), open = simple grid
+  const billingBody = isPaid ? `
+    <div class="inv-billing-card">
+      <div class="inv-billing-card-name">Acme Corporation</div>
+      <div class="inv-billing-card-addr">18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</div>
+      <div class="inv-billing-card-contact">
+        <span>Contact Person:</span>
+        <span>Thomas (+44 34 5467 0123)</span>
+      </div>
+    </div>
+    <div class="inv-billing-cards-row">
+      <div class="inv-billing-card">
+        <div class="inv-billing-card-label">Terms:</div>
+        <div class="inv-billing-card-muted">30 Days EOM</div>
+      </div>
+      <div class="inv-billing-card">
+        <div class="inv-billing-card-label">Memo:</div>
+        <div class="inv-billing-card-muted">139-UK${inv.id.replace('INV','')}</div>
+      </div>
+    </div>` : `
+    <div class="inv-detail-billing-grid">
+      <div class="inv-detail-billing-row">
+        <span class="inv-detail-info-label">Company</span>
+        <span class="inv-detail-info-value">OX Tools Ltd</span>
+      </div>
+      <div class="inv-detail-billing-row">
+        <span class="inv-detail-info-label">Address</span>
+        <span class="inv-detail-info-value">123 Trade St, Birmingham, B1 1AA, UK</span>
+      </div>
+      <div class="inv-detail-billing-row">
+        <span class="inv-detail-info-label">Contact</span>
+        <span class="inv-detail-info-value">John Smith</span>
+      </div>
+      <div class="inv-detail-billing-row">
+        <span class="inv-detail-info-label">Terms</span>
+        <span class="inv-detail-info-value">Net 30</span>
+      </div>
+      <div class="inv-detail-billing-row">
+        <span class="inv-detail-info-label">Memo</span>
+        <span class="inv-detail-info-value inv-detail-memo">Standard billing terms apply. Payment due within 30 days of invoice date.</span>
+      </div>
+    </div>`;
+
+  // Summary sidebar: paid adds Adjustments + Amount Due; open adds action buttons
+  const summaryExtra = isPaid ? `
+    <div class="inv-detail-summary-divider"></div>
+    <div class="inv-detail-summary-row inv-detail-adjustments-title">
+      <span>Adjustments</span>
+    </div>
+    <div class="inv-detail-summary-row">
+      <span class="inv-detail-link" onclick="navigate('account-transaction-history')">Payment #UK${inv.id.replace('INV','')}</span>
+      <span>${total}</span>
+    </div>
+    <div class="inv-detail-summary-row inv-detail-summary-total">
+      <span>Amount Due</span><span>£0.00</span>
+    </div>` : `
+    <div class="inv-detail-summary-divider"></div>
+    <div class="inv-detail-summary-row inv-detail-summary-total">
+      <span>Total Amount</span><span>${total}</span>
+    </div>`;
+
+  const actionButtons = isPaid ? `
+    <button class="inv-action-btn inv-action-pay" onclick="showToast('Downloading PDF','download')">${icon('download','icon-sm')} Download as PDF</button>` : `
+    <button class="inv-action-btn inv-action-pay" onclick="showToast('Payment initiated','check')">Make a Payment</button>
+    <button class="inv-action-btn inv-action-pdf" onclick="showToast('Downloading PDF','download')">${icon('download','icon-sm')} Download as PDF</button>
+    <button class="inv-action-btn inv-action-return" onclick="navigate('account-returns')">${icon('refresh','icon-sm')} Request Return</button>`;
+
+  el.innerHTML = `
+    ${buildAccBreadcrumb()}
+    <div class="acct-layout">
+      <aside class="acct-sidebar">${buildAccSidebar('account-invoices')}</aside>
+      <div class="acct-content inv-detail-content">
+
+        <!-- Header -->
+        <div class="inv-detail-header">
+          <div class="inv-detail-header-left">
+            <button class="inv-detail-back" onclick="navigate('account-invoices')">${icon('chevronLeft','icon-sm')} Back</button>
+            <h1 class="inv-detail-title">INVOICE #${inv.id}</h1>
+            <button class="acct-icon-btn" onclick="copyInvoiceId('${inv.id}')" title="Copy">${icon('copy','icon-sm')}</button>
+          </div>
+          <div class="inv-detail-total">${total}</div>
+        </div>
+
+        <div class="inv-detail-body">
+          <div class="inv-detail-main">
+
+            <!-- Info panel -->
+            <div class="inv-detail-info-panel">
+              <div class="inv-detail-info-row">
+                <span class="inv-detail-info-label">Date</span>
+                <span class="inv-detail-info-value">${inv.date}</span>
+              </div>
+              <div class="inv-detail-info-row">
+                <span class="inv-detail-info-label">Created From</span>
+                <span class="inv-detail-info-value inv-detail-link" onclick="navigate('account-purchases')">Purchase #UK${inv.id.replace('INV','')}</span>
+              </div>
+              <div class="inv-detail-info-row">
+                <span class="inv-detail-info-label">Status</span>
+                <span class="inv-detail-info-value">${statusBadge}</span>
+              </div>
+              <div class="inv-detail-info-row">
+                <span class="inv-detail-info-label">Due Date</span>
+                <span class="inv-detail-info-value">${inv.dueDate}</span>
+              </div>
+              ${inv.paymentDate ? `<div class="inv-detail-info-row">
+                <span class="inv-detail-info-label">Payment Date</span>
+                <span class="inv-detail-info-value">${inv.paymentDate}</span>
+              </div>` : ''}
+            </div>
+
+            <!-- Products section -->
+            <div class="inv-detail-section">
+              <button class="inv-detail-section-header" onclick="toggleAcc(this)">
+                <span>Product (1)</span>
+                <span class="acc-toggle">−</span>
+              </button>
+              <div class="inv-detail-section-body open" style="display:block">
+                <div class="inv-detail-product-row">
+                  <div class="inv-detail-product-img">
+                    <div class="inv-detail-img-placeholder">${icon('package','icon-sm')}</div>
+                  </div>
+                  <div class="inv-detail-product-info">
+                    <div class="inv-detail-product-sku-row">
+                      <span class="inv-detail-product-sku">${sampleProduct.id || 'PM-4550'}</span>
+                      <span class="inv-detail-product-stock-dot ${sampleProduct.inStock ? 'in' : 'out'}"></span>
+                      <span class="inv-detail-product-stock-count">${sampleProduct.stock || 2}</span>
+                    </div>
+                    <div class="inv-detail-product-name">${sampleProduct.name || 'BORA Adjustable Speedhorse XT'}</div>
+                  </div>
+                  <div class="inv-detail-product-qty">
+                    <span class="inv-detail-qty-val">1</span>
+                  </div>
+                  <div class="inv-detail-product-pricing">
+                    <span class="inv-detail-price-orig">${sampleProduct.orig ? '£'+sampleProduct.orig.toFixed(2) : '£2,000.00'}</span>
+                    <span class="inv-detail-price-sale">£${sampleProduct.price ? sampleProduct.price.toFixed(2) : '1,400.00'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Billing section -->
+            <div class="inv-detail-section">
+              <button class="inv-detail-section-header" onclick="toggleAcc(this)">
+                <span>Billing</span>
+                <span class="acc-toggle">−</span>
+              </button>
+              <div class="inv-detail-section-body open" style="display:block">
+                ${billingBody}
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Sidebar -->
+          <div class="inv-detail-sidebar">
+            <div class="inv-detail-summary">
+              <h3 class="inv-detail-summary-title">Summary</h3>
+              <div class="inv-detail-summary-row">
+                <span>Subtotal</span><span>${subtotal}</span>
+              </div>
+              <div class="inv-detail-summary-row">
+                <span>Tax Total</span><span>${tax}</span>
+              </div>
+              <div class="inv-detail-summary-row">
+                <span>Shipping</span><span>${shipping}</span>
+              </div>
+              <div class="inv-detail-summary-row">
+                <span>Handling</span><span>${handling}</span>
+              </div>
+              ${summaryExtra}
+            </div>
+            <div class="inv-detail-actions">
+              ${actionButtons}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    ${buildAccFooter()}
+  `;
+}
+
 // ─── ACCOUNT TRANSACTION HISTORY ─────────────────────
 function renderAccountTransactionHistory() {
   const el = document.getElementById('page-account-transaction-history');
@@ -1296,11 +1517,11 @@ function renderAccountTransactionHistory() {
   const STATUS_LABEL = { 'paid-full': 'Paid in Full', 'deposited': 'Deposited', 'fully-applied': 'Fully Applied' };
 
   const rows = items.map(tx => `
-    <tr>
+    <tr style="cursor:pointer" onclick="openTransactionDetail('${tx.id}')">
       <td>
         <span style="display:flex;align-items:center;gap:6px">
           ${tx.type} #${tx.id}
-          <button class="acct-icon-btn" onclick="copyTxId('${tx.id}')" title="Copy">${icon('copy','icon-sm')}</button>
+          <button class="acct-icon-btn" onclick="event.stopPropagation();copyTxId('${tx.id}')" title="Copy">${icon('copy','icon-sm')}</button>
         </span>
       </td>
       <td>${tx.date}</td>
@@ -1341,6 +1562,273 @@ function renderAccountTransactionHistory() {
             <button class="inv-page-btn"${nextOff} onclick="setTxPage(${txPage + 1})">${icon('chevronRight','icon-sm')}</button>
           </div>
         </div>
+      </div>
+    </div>
+    ${buildAccFooter()}
+  `;
+}
+
+// ─── ACCOUNT TRANSACTION DETAIL ──────────────────────
+function renderAccountTransactionDetail() {
+  const el = document.getElementById('page-account-tx-detail');
+  if (!currentTransaction) { navigate('account-transaction-history'); return; }
+  const tx = currentTransaction;
+
+  const STATUS_LABEL = { 'paid-full': 'Paid in Full', 'deposited': 'Deposited', 'fully-applied': 'Fully Applied' };
+  const STATUS_CLASS  = { 'paid-full': 'inv-paid', 'deposited': 'tx-deposited', 'fully-applied': 'tx-fully-applied' };
+  const statusLabel = STATUS_LABEL[tx.status] || tx.status;
+  const statusClass = STATUS_CLASS[tx.status] || '';
+
+  const amtNum   = parseFloat(tx.amount.replace(/[^0-9.]/g,'')) || 0;
+  const fmtGbp   = n => '£' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const subtotal = fmtGbp(amtNum);
+  const tax      = '£0.00';
+  const shipping = '£0.00';
+  const handling = '£0.00';
+
+  // Two sample products used in the Credit Memo design
+  const prod1 = PRODUCTS.find(p => p.id === 'OX-S248930') || PRODUCTS[0] || {};
+  const prod2 = PRODUCTS.find(p => p.id === 'ZX11-501/26') || PRODUCTS[1] || {};
+
+  // Products section — shown for Credit Memo and Invoice types
+  const showProducts = tx.type === 'Credit Memo' || tx.type === 'Invoice';
+  const productCount = showProducts ? 2 : 0;
+  const productsSection = showProducts ? `
+    <div class="inv-detail-section">
+      <button class="inv-detail-section-header" onclick="toggleAcc(this)">
+        <span>Products (${productCount})</span>
+        <span class="acc-toggle">−</span>
+      </button>
+      <div class="inv-detail-section-body open" style="display:block">
+        <div class="inv-detail-product-row">
+          <div class="inv-detail-product-img">
+            <div class="inv-detail-img-placeholder">${icon('package','icon-sm')}</div>
+          </div>
+          <div class="inv-detail-product-info">
+            <div class="inv-detail-product-sku-row">
+              <span class="inv-detail-product-sku">${prod1.id || 'PM-4550'}</span>
+              <span class="inv-detail-product-stock-dot ${prod1.inStock ? 'in' : 'out'}"></span>
+              <span class="inv-detail-product-stock-count">${prod1.stock || 2}</span>
+            </div>
+            <div class="inv-detail-product-name">${prod1.name || 'BORA Adjustable Speedhorse XT'}</div>
+          </div>
+          <div class="inv-detail-product-qty"><span class="inv-detail-qty-val">1</span></div>
+          <div class="inv-detail-product-pricing">
+            <span class="inv-detail-price-orig">${prod1.orig ? '£'+prod1.orig.toFixed(2) : '£1,200.00'}</span>
+            <span class="inv-detail-price-sale">${prod1.price ? fmtGbp(prod1.price) : '£1,000.00'}</span>
+          </div>
+        </div>
+        <div class="tx-detail-divider"></div>
+        <div class="inv-detail-product-row">
+          <div class="inv-detail-product-img">
+            <div class="inv-detail-img-placeholder">${icon('package','icon-sm')}</div>
+          </div>
+          <div class="inv-detail-product-info">
+            <div class="inv-detail-product-sku-row">
+              <span class="inv-detail-product-sku">${prod2.id || 'OX-S248930'}</span>
+              <span class="inv-detail-product-stock-dot ${prod2.inStock ? 'in' : 'out'}"></span>
+              <span class="inv-detail-product-stock-count">${prod2.stock || 2}</span>
+            </div>
+            <div class="inv-detail-product-name">${prod2.name || 'OX Folding Collapsible Ear Defenders'}</div>
+          </div>
+          <div class="inv-detail-product-qty"><span class="inv-detail-qty-val">1</span></div>
+          <div class="inv-detail-product-pricing">
+            <span class="inv-detail-price-orig"></span>
+            <span class="inv-detail-price-sale">${fmtGbp(amtNum - (prod1.price || 1000))}</span>
+          </div>
+        </div>
+      </div>
+    </div>` : '';
+
+  const isPayment = tx.type === 'Payment';
+
+  // "Applied to Invoices" — Credit Memo only (3-col table)
+  const appliedSection = tx.type === 'Credit Memo' ? `
+    <div class="inv-detail-section">
+      <button class="inv-detail-section-header" onclick="toggleAcc(this)">
+        <span>Applied to Invoices</span>
+        <span class="acc-toggle">−</span>
+      </button>
+      <div class="inv-detail-section-body open" style="display:block">
+        <table class="tx-applied-table">
+          <thead>
+            <tr>
+              <th>Number</th>
+              <th>Date</th>
+              <th style="text-align:right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>US${tx.id.replace(/\D/g,'')}</td>
+              <td>${tx.date}</td>
+              <td style="text-align:right">${tx.amount}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="tx-applied-totals">
+          <div class="tx-applied-total-row">
+            <span>Applied Subtotal</span><span>${subtotal}</span>
+          </div>
+          <div class="tx-applied-total-row">
+            <span>Remaining Subtotal</span><span>£0.00</span>
+          </div>
+        </div>
+      </div>
+    </div>` : '';
+
+  // "Invoices" — Payment only (4-col table + Payment Total)
+  const invoicesSection = isPayment ? `
+    <div class="inv-detail-section">
+      <button class="inv-detail-section-header" onclick="toggleAcc(this)">
+        <span>Invoices</span>
+        <span class="acc-toggle">−</span>
+      </button>
+      <div class="inv-detail-section-body open" style="display:block">
+        <table class="tx-applied-table">
+          <thead>
+            <tr>
+              <th>Invoice ID</th>
+              <th>Date</th>
+              <th>Discount</th>
+              <th style="text-align:right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>US${tx.id.replace(/\D/g,'')}</td>
+              <td>${tx.date}</td>
+              <td>£0.00</td>
+              <td style="text-align:right">${tx.amount}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="tx-applied-totals">
+          <div class="tx-applied-total-row tx-payment-total-row">
+            <span>Payment Total</span><span>${tx.amount}</span>
+          </div>
+        </div>
+      </div>
+    </div>` : '';
+
+  // "Billing & Payment Methods" — Payment only
+  const billingPaymentSection = isPayment ? `
+    <div class="inv-detail-section">
+      <button class="inv-detail-section-header" onclick="toggleAcc(this)">
+        <span>Billing &amp; Payment Methods</span>
+        <span class="acc-toggle">−</span>
+      </button>
+      <div class="inv-detail-section-body open" style="display:block">
+        <div class="tx-payment-card">
+          <div class="tx-payment-card-info">
+            <div class="tx-payment-card-ending">Ending in 1117</div>
+            <div class="tx-payment-card-expires">Expires 10.2025</div>
+            <div class="tx-payment-card-name">Nicholas Anderson</div>
+          </div>
+          <div class="tx-payment-card-visual">
+            <div class="tx-payment-card-chip"></div>
+            <div class="tx-payment-card-number">•••• •••• •••• 1117</div>
+            <div class="tx-payment-card-brand">VISA</div>
+          </div>
+        </div>
+      </div>
+    </div>` : '';
+
+  // Body: Payment = full-width (no sidebar); others = sidebar layout
+  const bodyHtml = isPayment ? `
+        <div class="inv-detail-body">
+          <div class="inv-detail-main inv-detail-main-full">
+
+            <!-- Info panel -->
+            <div class="inv-detail-info-panel">
+              <div class="inv-detail-info-row">
+                <span class="inv-detail-info-label">Date</span>
+                <span class="inv-detail-info-value">${tx.date}</span>
+              </div>
+              <div class="inv-detail-info-row">
+                <span class="inv-detail-info-label">Status</span>
+                <span class="inv-detail-info-value">
+                  <span class="acct-status ${statusClass}">${statusLabel}</span>
+                </span>
+              </div>
+            </div>
+
+            ${invoicesSection}
+            ${billingPaymentSection}
+
+            <div class="tx-pdf-row">
+              <button class="inv-action-btn inv-action-pay tx-pdf-btn" onclick="showToast('Downloading PDF','download')">${icon('download','icon-sm')} Download as PDF</button>
+            </div>
+
+          </div>
+        </div>` : `
+        <div class="inv-detail-body">
+          <div class="inv-detail-main">
+
+            <!-- Info panel -->
+            <div class="inv-detail-info-panel">
+              <div class="inv-detail-info-row">
+                <span class="inv-detail-info-label">Date</span>
+                <span class="inv-detail-info-value">${tx.date}</span>
+              </div>
+              <div class="inv-detail-info-row">
+                <span class="inv-detail-info-label">Status</span>
+                <span class="inv-detail-info-value">
+                  <span class="acct-status ${statusClass}">${statusLabel}</span>
+                </span>
+              </div>
+            </div>
+
+            ${productsSection}
+            ${appliedSection}
+
+          </div>
+
+          <!-- Sidebar -->
+          <div class="inv-detail-sidebar">
+            <div class="inv-detail-summary">
+              <h3 class="inv-detail-summary-title">Summary</h3>
+              <div class="inv-detail-summary-row">
+                <span>Subtotal</span><span>${subtotal}</span>
+              </div>
+              <div class="inv-detail-summary-row">
+                <span>Tax Total</span><span>${tax}</span>
+              </div>
+              <div class="inv-detail-summary-row">
+                <span>Shipping</span><span>${shipping}</span>
+              </div>
+              <div class="inv-detail-summary-row">
+                <span>Handling</span><span>${handling}</span>
+              </div>
+              <div class="inv-detail-summary-divider"></div>
+              <div class="inv-detail-summary-row inv-detail-summary-total">
+                <span>Total Amount</span><span>${tx.amount}</span>
+              </div>
+            </div>
+            <div class="inv-detail-actions">
+              <button class="inv-action-btn inv-action-pay" onclick="showToast('Downloading PDF','download')">${icon('download','icon-sm')} Download as PDF</button>
+            </div>
+          </div>
+        </div>`;
+
+  el.innerHTML = `
+    ${buildAccBreadcrumb()}
+    <div class="acct-layout">
+      <aside class="acct-sidebar">${buildAccSidebar('account-transaction-history')}</aside>
+      <div class="acct-content inv-detail-content">
+
+        <!-- Header -->
+        <div class="inv-detail-header">
+          <div class="inv-detail-header-left">
+            <button class="inv-detail-back" onclick="navigate('account-transaction-history')">${icon('chevronLeft','icon-sm')} Back</button>
+            <h1 class="inv-detail-title">${tx.type.toUpperCase()} #${tx.id}</h1>
+            <button class="acct-icon-btn" onclick="copyTxId('${tx.id}')" title="Copy">${icon('copy','icon-sm')}</button>
+          </div>
+          <div class="inv-detail-total">${tx.amount}</div>
+        </div>
+
+        ${bodyHtml}
+
       </div>
     </div>
     ${buildAccFooter()}

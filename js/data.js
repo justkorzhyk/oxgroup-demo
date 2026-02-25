@@ -422,6 +422,7 @@ const INVOICES = [
   { id:'INV33603', date:'01.05.2025', amount:'£430.50',   dueDate:'01.06.2025', paymentDate:'31.05.2025', status:'paid' },
 ];
 const INV_PER_PAGE = 10;
+let currentInvoice = null;
 
 const TRANSACTIONS = [
   { id:'INV40968',  type:'Invoice',     date:'01.12.2025', amount:'£1,068.80', status:'paid-full'     },
@@ -438,6 +439,15 @@ const TRANSACTIONS = [
   { id:'PYMT21800', type:'Payment',     date:'01.05.2025', amount:'£1,100.00', status:'deposited'     },
 ];
 const TX_PER_PAGE = 10;
+let currentTransaction = null;
+
+// ─── PHONE COUNTRIES ────────────────────────────────
+const PHONE_COUNTRIES = [
+  { flag:'🇬🇧', name:'United Kingdom', code:'+44' },
+  { flag:'🇺🇸', name:'United States',  code:'+1'  },
+  { flag:'🇦🇺', name:'Australia',      code:'+61' },
+];
+let selectedPhoneCountry = PHONE_COUNTRIES[0];
 
 // ─── UTILS ──────────────────────────────────────────
 function slugify(name) {
