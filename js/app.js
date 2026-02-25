@@ -508,7 +508,8 @@ function toggleWish(id) {
     FAV_ITEMS.splice(idx, 1);
     showToast('Removed from favourites', 'heart');
   }
-  renderListing();
+  if (document.getElementById('home-promo-rows')) renderHome();
+  else renderListing();
   _updateFavBadge();
 }
 

@@ -42,7 +42,7 @@ function renderHome() {
           <div class="home-promo-price">£${p.price.toFixed(2)}</div>
         </div>
         <div class="home-promo-actions">
-          <button class="home-promo-heart" onclick="event.stopPropagation();addToWish()" title="Wishlist">${icon('heart')}</button>
+          <button class="home-promo-heart${FAV_ITEMS.includes(p.id) ? ' fav-active' : ''}" onclick="event.stopPropagation();toggleWish('${p.id}')" title="${FAV_ITEMS.includes(p.id) ? 'Remove from favourites' : 'Add to favourites'}">${icon(FAV_ITEMS.includes(p.id) ? 'heartFilled' : 'heart')}</button>
           <button class="home-promo-cart" onclick="event.stopPropagation();addToCart(${PRODUCTS.indexOf(p)})" title="Add to cart">${icon('cart')}</button>
         </div>
       </div>
@@ -425,7 +425,7 @@ function renderDetail() {
         <div class="prod-name">${r.name}</div>
       </div>
       <div class="prod-price">£${r.price.toFixed(2)}</div>
-      <button class="icon-btn" onclick="event.stopPropagation();addToWish()">${icon('heart')}</button>
+      <button class="icon-btn${FAV_ITEMS.includes(r.id) ? ' fav-active' : ''}" onclick="event.stopPropagation();toggleWish('${r.id}')">${icon(FAV_ITEMS.includes(r.id) ? 'heartFilled' : 'heart')}</button>
       <button class="icon-btn icon-btn--cart" onclick="event.stopPropagation();addToCart(${PRODUCTS.indexOf(r)})">${icon('cart')}</button>
     </div>
   `).join('');
