@@ -27,19 +27,50 @@ const ROUTES = {
 };
 const PATH_TO_PAGE = Object.fromEntries(Object.entries(ROUTES).map(([k, v]) => [v, k]));
 
-function slugify(name) {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-}
-
 function pageFromPath(path) {
   if (PATH_TO_PAGE[path]) return PATH_TO_PAGE[path];
 
   const parts = path.replace(/^\//, '').split('/').filter(Boolean);
   if (parts.length >= 1 && BRANDS.map(b => b.toLowerCase()).includes(parts[0].toLowerCase())) {
     selectedBrand = parts[0].toUpperCase();
+
     if (parts.length >= 2) {
-      _pendingProductSlug = parts.slice(1).join('-');
+      const catSlug  = parts[1];
+      const subSlug  = parts[2] || null;
+
+      // Try to match a product by name slug (/{brand}/{product-slug})
+      if (!subSlug) {
+        const prodMatch = PRODUCTS.find(p => slugify(p.name) === catSlug);
+        if (prodMatch) { currentProduct = prodMatch; return 'detail'; }
+      }
+
+      // Try Level1 (p.cat) first, then Level2 (p.segment)
+      const allCats = [...new Set(PRODUCTS.map(p => p.cat).filter(Boolean))];
+      const catMatch = allCats.find(c => slugify(c) === catSlug);
+      if (catMatch) {
+        selectedSegment = catMatch;
+        selectedCat     = -1;
+        selectedSubCat  = null;
+      } else {
+        const allSegs = [...new Set(PRODUCTS.map(p => p.segment).filter(Boolean))].sort();
+        const segIdx  = allSegs.findIndex(s => slugify(s) === catSlug);
+        if (segIdx >= 0) {
+          selectedCat    = segIdx;
+          selectedSubCat = subSlug
+            ? (PRODUCTS.map(p => p.subType).find(s => s && slugify(s) === subSlug) || null)
+            : null;
+        } else {
+          selectedCat    = 0;
+          selectedSubCat = null;
+        }
+        selectedSegment = null;
+      }
+    } else {
+      selectedSegment = null;
+      selectedCat     = -1;   // brand root — show category cards
+      selectedSubCat  = null;
     }
+
     return 'listing';
   }
 
@@ -54,11 +85,8 @@ function galleryGoTo(idx) {
   _galleryIdx = idx;
   const view = document.getElementById('gallery-main-view');
   if (view) {
-    // Use latest loaded image from currentProduct (set by Salsify async loader)
-    const img = currentProduct?.img || _galleryImages[idx];
-    view.innerHTML = img
-      ? `<img src="${img}" alt="" style="width:100%;height:100%;object-fit:contain">`
-      : icon('diamond', 'icon-lg');
+    const img = _galleryImages[idx] || currentProduct?.img || '/img/placeholder.svg';
+    view.innerHTML = `<img src="${img}" alt="" style="width:100%;height:100%;object-fit:contain">`;
   }
   document.querySelectorAll('.gallery-thumb').forEach((t, i) => {
     t.classList.toggle('active', i === idx);
@@ -94,7 +122,10 @@ function _resetBannerTimer() {
 }
 
 function navigateBrand(brand) {
-  selectedBrand = brand.toUpperCase();
+  selectedBrand   = brand.toUpperCase();
+  selectedSegment = null;
+  selectedCat     = -1;   // brand root — show category cards
+  selectedSubCat  = null;
   navigate('listing');
 }
 
@@ -106,7 +137,14 @@ function navigate(page, opts = {}) {
   if (!opts.skipHistory) {
     let path;
     if (page === 'listing') {
-      path = '/' + selectedBrand.toLowerCase();
+      if (selectedSegment) {
+        path = '/' + selectedBrand.toLowerCase() + '/' + slugify(selectedSegment);
+      } else {
+        const cats = [...new Set(PRODUCTS.map(p => p.segment).filter(Boolean))].sort();
+        const catSlug = selectedCat >= 0 && cats[selectedCat] ? '/' + slugify(cats[selectedCat]) : '';
+        const subSlug = selectedSubCat ? '/' + slugify(selectedSubCat) : '';
+        path = '/' + selectedBrand.toLowerCase() + catSlug + subSlug;
+      }
     } else if (page === 'detail' && currentProduct) {
       const brand = (currentProduct.brand || selectedBrand).toLowerCase();
       path = '/' + brand + '/' + slugify(currentProduct.name);
@@ -116,7 +154,10 @@ function navigate(page, opts = {}) {
     history.pushState({ page }, '', path);
   }
   if (page === 'home')                  renderHome();
-  if (page === 'listing')               loadSalsifyProducts();
+  if (page === 'listing') {
+    if (_brandCache[selectedBrand.toLowerCase()]) renderListing();
+    else loadBrandProducts(selectedBrand);
+  }
   if (page === 'detail')                renderDetail();
   if (page === 'cart')                  renderCart();
   if (page === 'checkout-shipping')     renderCheckoutShipping();
@@ -177,12 +218,25 @@ function toggleHomeFaq(header) {
 }
 
 // ─── QUICK ADD ───────────────────────────────────────
+function navigateCartQuickOrder() {
+  navigate('cart');
+  const body   = document.getElementById('quick-add-body');
+  const toggle = document.getElementById('quick-add-toggle');
+  if (body)   body.style.display = 'block';
+  if (toggle) toggle.textContent = '−';
+}
+
 function toggleQuickAdd() {
   const body = document.getElementById('quick-add-body');
   const toggle = document.getElementById('quick-add-toggle');
   const isOpen = body.style.display !== 'none';
   body.style.display = isOpen ? 'none' : 'block';
   toggle.textContent = isOpen ? '+' : '−';
+}
+
+function quickAddQty(delta) {
+  const inp = document.getElementById('quick-add-qty');
+  inp.value = Math.max(1, parseInt(inp.value || 1) + delta);
 }
 
 // ─── ADD CSV ─────────────────────────────────────────
@@ -260,13 +314,111 @@ function csvDownloadTemplate() {
 }
 
 // ─── LISTING ACTIONS ────────────────────────────────
+function goToListingPage(n) {
+  listingPage = n;
+  renderListing();
+  window.scrollTo(0, 0);
+}
+
 function selectCat(i) {
-  selectedCat = i;
+  selectedCat    = i;
+  selectedSubCat = null;
+  listingPage    = 0;
+  renderListing();
+  const cats = [...new Set(PRODUCTS.map(p => p.segment).filter(Boolean))].sort();
+  const catSlug = cats[i] ? '/' + slugify(cats[i]) : '';
+  history.replaceState({page:'listing'}, '', '/' + selectedBrand.toLowerCase() + catSlug);
+}
+
+function selectSubCat(name) {
+  selectedSubCat  = name;
+  selectedFilters = {};
+  listingPage     = 0;
+  renderListing();
+  const cats = [...new Set(PRODUCTS.map(p => p.segment).filter(Boolean))].sort();
+  const catSlug = cats[selectedCat] ? '/' + slugify(cats[selectedCat]) : '';
+  const subSlug = name ? '/' + slugify(name) : '';
+  history.replaceState({page:'listing'}, '', '/' + selectedBrand.toLowerCase() + catSlug + subSlug);
+}
+
+function toggleAttrFilter(id, key) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const isOpen = el.classList.contains('open');
+  closeAllCustomSelects();
+  closeAllAttrFilters();
+  if (!isOpen) {
+    pendingFilters[key] = [...(selectedFilters[key] || [])];
+    _syncAttrFilterCheckboxes(id, key);
+    el.classList.add('open');
+    const panel = el.querySelector('.attr-filter-panel');
+    if (panel) {
+      panel.style.left  = '0';
+      panel.style.right = 'auto';
+      const rect = panel.getBoundingClientRect();
+      if (rect.right > window.innerWidth - 8) {
+        panel.style.left  = 'auto';
+        panel.style.right = '0';
+      }
+    }
+  }
+}
+
+function closeAllAttrFilters() {
+  document.querySelectorAll('.attr-filter.open').forEach(el => el.classList.remove('open'));
+}
+
+function _syncAttrFilterCheckboxes(id, key) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const pending = pendingFilters[key] || [];
+  el.querySelectorAll('.attr-filter-item').forEach(item => {
+    const val = item.querySelector('.attr-filter-item-label')?.textContent;
+    const checked = val != null && pending.includes(val);
+    item.classList.toggle('checked', checked);
+    item.querySelector('.attr-filter-cb')?.classList.toggle('checked', checked);
+  });
+}
+
+function toggleAttrFilterItem(key, val) {
+  if (!pendingFilters[key]) pendingFilters[key] = [];
+  const idx = pendingFilters[key].indexOf(val);
+  if (idx >= 0) pendingFilters[key].splice(idx, 1);
+  else pendingFilters[key].push(val);
+  const safeId = 'attr-f-' + key.toLowerCase().replace(/[^a-z0-9]/g, '-');
+  _syncAttrFilterCheckboxes(safeId, key);
+}
+
+function applyAttrFilter(key, id) {
+  const vals = pendingFilters[key] || [];
+  if (vals.length === 0) delete selectedFilters[key];
+  else selectedFilters[key] = [...vals];
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.remove('open');
+    const selCount = (selectedFilters[key] || []).length;
+    const labelEl = el.querySelector('.attr-filter-label');
+    if (labelEl) labelEl.innerHTML = selCount > 0 ? `${key} <span class="attr-filter-count">(${selCount})</span>` : key;
+    el.classList.toggle('has-selection', selCount > 0);
+  }
+  listingPage = 0;
   renderListing();
 }
 
+function cancelAttrFilter(key, id) {
+  pendingFilters[key] = [...(selectedFilters[key] || [])];
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
+
+function clearAttrFilter(key, id) {
+  pendingFilters[key] = [];
+  _syncAttrFilterCheckboxes(id, key);
+}
+
 function toggleStock() {
-  stockOnly = !stockOnly;
+  stockOnly   = !stockOnly;
+  listingPage = 0;
   const t = document.getElementById('stock-toggle');
   t.classList.toggle('on', stockOnly);
   renderListing();
@@ -290,9 +442,34 @@ function selectSize(el) {
 }
 
 // ─── CART ACTIONS ───────────────────────────────────
+function _fmtGBP(n) {
+  return '£' + n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function _updateCartSummary() {
+  const subtotal = CART_ITEMS.reduce((s, it) => s + it.orig  * it.qty, 0);
+  const total    = CART_ITEMS.reduce((s, it) => s + it.price * it.qty, 0);
+  const discount = subtotal - total;
+  const totalQty = CART_ITEMS.reduce((s, it) => s + it.qty, 0);
+
+  const subEl  = document.getElementById('cart-subtotal');
+  const discEl = document.getElementById('cart-discount');
+  const totEl  = document.getElementById('cart-total');
+  const cntEl  = document.getElementById('cart-count-label');
+
+  if (subEl)  subEl.textContent  = _fmtGBP(subtotal);
+  if (discEl) discEl.textContent = discount > 0 ? '-' + _fmtGBP(discount) : _fmtGBP(discount);
+  if (totEl)  totEl.textContent  = _fmtGBP(total);
+  if (cntEl)  cntEl.textContent  = `${CART_ITEMS.length} products \u00a0 ${totalQty} items`;
+}
+
 function cartQty(i, delta) {
-  CART_ITEMS[i].qty = Math.max(1, CART_ITEMS[i].qty + delta);
-  document.getElementById('cart-qty-' + i).value = CART_ITEMS[i].qty;
+  const item = CART_ITEMS[i];
+  item.qty   = Math.max(1, item.qty + delta);
+  document.getElementById('cart-qty-'   + i).value       = item.qty;
+  document.getElementById('cart-price-' + i).textContent = _fmtGBP(item.price * item.qty);
+  document.getElementById('cart-orig-'  + i).textContent = _fmtGBP(item.orig  * item.qty);
+  _updateCartSummary();
 }
 
 function removeCartItem(i) {
@@ -308,9 +485,17 @@ function clearCart() {
   showToast('Cart cleared', 'trash');
 }
 
-function addToCart() {
-  const badge = document.getElementById('cart-badge');
-  badge.textContent = parseInt(badge.textContent) + 1;
+function addToCart(idx) {
+  const product  = (idx !== undefined) ? PRODUCTS[idx] : currentProduct;
+  if (!product) return;
+  const qty      = (idx !== undefined) ? 1 : Math.max(1, parseInt(document.getElementById('qty-val')?.value || 1));
+  const existing = CART_ITEMS.find(it => it.id === product.id);
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    CART_ITEMS.push({ ...product, qty });
+  }
+  renderCart();
   showToast('Added to cart', 'cart');
 }
 
@@ -488,8 +673,6 @@ function openCategoryDropdown() {
   document.getElementById('cat-overlay').classList.add('open');
   document.getElementById('cat-dropdown').classList.add('open');
   renderCatDropdown();
-  // Kick off lazy loading for all brand tabs in the background
-  CAT_BRANDS.forEach(b => loadCatDataForBrand(b));
 }
 
 function closeCategoryDropdown() {
@@ -505,37 +688,90 @@ function renderCatDropdown() {
     `<div class="cat-tab${i === catActiveBrand ? ' active' : ''}" onclick="selectCatBrand(${i})">${b}</div>`
   ).join('');
 
+  if (cats.length === 0) {
+    document.getElementById('cat-left').innerHTML  = `<div class="cat-loading">${icon('loader', 'icon-sm')} Loading…</div>`;
+    document.getElementById('cat-right').innerHTML = '';
+    return;
+  }
+
   document.getElementById('cat-left').innerHTML = cats.map((cat, i) =>
-    `<div class="cat-item${i === catActiveItem ? ' active' : ''}" onclick="selectCatItem(${i})">
+    `<div class="cat-item${i === catActiveItem ? ' active' : ''}" onmouseenter="highlightCatItem(${i})" onclick="selectCatItem(${i})">
        ${icon(cat.icon, 'icon-sm')}
        <span class="cat-item-label">${cat.name}</span>
        ${cat.subs && cat.subs.length ? `<span class="cat-item-chevron">${icon('chevronRight', 'icon-sm')}</span>` : ''}
      </div>`
   ).join('');
 
-  const activeCat = cats[catActiveItem];
+  _renderCatRight(cats[catActiveItem]);
+}
+
+function highlightCatItem(i) {
+  catActiveItem = i;
+  document.querySelectorAll('#cat-left .cat-item').forEach((el, idx) => {
+    el.classList.toggle('active', idx === i);
+  });
+  const brand = CAT_BRANDS[catActiveBrand];
+  const cats  = CAT_DATA[brand] || [];
+  _renderCatRight(cats[i]);
+}
+
+function _renderCatRight(activeCat) {
   if (activeCat && activeCat.subs && activeCat.subs.length) {
-    document.getElementById('cat-right').innerHTML = activeCat.subs.map(sub =>
-      `<div class="cat-subgroup">
-         <div class="cat-subgroup-title">${sub.heading}</div>
-         ${sub.items.map(item => `<div class="cat-subitem" onclick="navigateBrand('${CAT_BRANDS[catActiveBrand]}');closeCategoryDropdown()">${item}</div>`).join('')}
-       </div>`
-    ).join('');
+    const brand      = CAT_BRANDS[catActiveBrand];
+    const safeBrand  = brand.replace(/'/g, "\\'");
+    const safeCatName = (activeCat.name || '').replace(/'/g, "\\'");
+    document.getElementById('cat-right').innerHTML = activeCat.subs.map(sub => {
+      const safeHeading = (sub.heading || '').replace(/'/g, "\\'");
+      const itemLinks = sub.items.map(item => {
+        const safeItem = item.replace(/'/g, "\\'");
+        return `<div class="cat-subitem" onclick="navigateToCatSub('${safeBrand}','${safeCatName}','${safeHeading}','${safeItem}')">${item}</div>`;
+      }).join('');
+      return `<div class="cat-subgroup">
+        <div class="cat-subgroup-title" onclick="navigateToCatSub('${safeBrand}','${safeCatName}','${safeHeading}',null)">${sub.heading}</div>
+        ${itemLinks}
+      </div>`;
+    }).join('');
   } else {
     document.getElementById('cat-right').innerHTML = '';
   }
+}
+
+function navigateToCatSub(brand, catName, subHeading, item) {
+  selectedBrand = brand.toUpperCase();
+  selectedSegment = null;
+
+  // Resolve selectedCat: find the p.segment value that matches
+  // Salsify layout:  cat.name = p.segment  → match catName
+  // Loader layout:   sub.heading = p.segment → match subHeading
+  const allSegs = [...new Set(PRODUCTS.map(p => p.segment).filter(Boolean))].sort();
+  let segIdx = allSegs.findIndex(s => s === catName);
+  if (segIdx < 0) segIdx = allSegs.findIndex(s => s === subHeading);
+  selectedCat    = segIdx >= 0 ? segIdx : 0;
+  selectedSubCat = item; // null when clicking group title, subType when clicking leaf item
+
+  closeCategoryDropdown();
+  navigate('listing');
 }
 
 function selectCatBrand(i) {
   catActiveBrand = i;
   catActiveItem  = 0;
   renderCatDropdown();
-  loadCatDataForBrand(CAT_BRANDS[i]); // no-op if already loaded
 }
 
 function selectCatItem(i) {
-  catActiveItem = i;
-  renderCatDropdown();
+  const brand = CAT_BRANDS[catActiveBrand];
+  const cats  = CAT_DATA[brand] || [];
+  const cat   = cats[i];
+  if (!cat) return;
+
+  catActiveItem   = i;
+  selectedBrand   = brand;
+  selectedSegment = cat.name;
+  selectedCat     = -1;
+  selectedSubCat  = null;
+  closeCategoryDropdown();
+  navigate('listing');
 }
 
 // ─── SEARCH ──────────────────────────────────────────
@@ -694,7 +930,22 @@ function toggleCustomSelect(id) {
   const el = document.getElementById(id);
   const isOpen = el.classList.contains('open');
   closeAllCustomSelects();
-  if (!isOpen) el.classList.add('open');
+  if (!isOpen) {
+    el.classList.add('open');
+    const panel = el.querySelector('.cust-select-panel');
+    if (panel) {
+      panel.style.right = '0';
+      panel.style.left  = 'auto';
+      const rect = panel.getBoundingClientRect();
+      if (rect.left < 8) {
+        panel.style.right = 'auto';
+        panel.style.left  = '0';
+      } else if (rect.right > window.innerWidth - 8) {
+        panel.style.left  = 'auto';
+        panel.style.right = '0';
+      }
+    }
+  }
 }
 function closeAllCustomSelects() {
   document.querySelectorAll('.cust-select.open').forEach(el => el.classList.remove('open'));
@@ -813,16 +1064,15 @@ function renderDpCalendar() {
 }
 
 // ─── INIT ────────────────────────────────────────────
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCategoryDropdown(); closeSearch(); closeAllCustomSelects(); closeDp(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCategoryDropdown(); closeSearch(); closeAllCustomSelects(); closeAllAttrFilters(); closeDp(); } });
 document.addEventListener('click', e => {
   if (!e.target.closest('.cust-select')) closeAllCustomSelects();
+  if (!e.target.closest('.attr-filter')) closeAllAttrFilters();
   if (!e.target.closest('.dp-field-wrap')) closeDp();
 });
 window.addEventListener('popstate', e => {
   navigate(e.state?.page || pageFromPath(location.pathname), { skipHistory: true });
 });
 navigate(pageFromPath(location.pathname), { skipHistory: true });
-// Preload Salsify products in background so home promo and listing both have real images
-loadSalsifyProducts();
 // Start banner auto-advance
 _resetBannerTimer();

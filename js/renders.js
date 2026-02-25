@@ -27,9 +27,9 @@ function renderHome() {
   const promoRows = PRODUCTS.slice(0, 8);
   const promoEl = document.getElementById('home-promo-rows');
   if (promoEl) {
-    promoEl.innerHTML = promoRows.map((p, i) => `
+    promoEl.innerHTML = promoRows.map(p => `
       <div class="home-promo-row" onclick="openProduct(${PRODUCTS.indexOf(p)})">
-        <div class="home-promo-thumb" data-product-img="${p.id}" style="display:flex;align-items:center;justify-content:center;color:#868686">${p.img ? `<img src="${p.img}" alt="" style="width:100%;height:100%;object-fit:contain">` : icon('diamond', 'icon-lg')}</div>
+        <div class="home-promo-thumb" data-product-img="${p.id}" style="display:flex;align-items:center;justify-content:center;color:#868686"><img src="${p.img?.startsWith('http') ? p.img : '/img/placeholder.svg'}" alt="" style="width:100%;height:100%;object-fit:contain"></div>
         <div class="home-promo-info">
           <div class="home-promo-meta">
             <span class="home-promo-sku">${p.id}</span>
@@ -43,7 +43,7 @@ function renderHome() {
         </div>
         <div class="home-promo-actions">
           <button class="home-promo-heart" onclick="event.stopPropagation();addToWish()" title="Wishlist">${icon('heart')}</button>
-          <button class="home-promo-cart" onclick="event.stopPropagation();addToCart()" title="Add to cart">${icon('cart')}</button>
+          <button class="home-promo-cart" onclick="event.stopPropagation();addToCart(${PRODUCTS.indexOf(p)})" title="Add to cart">${icon('cart')}</button>
         </div>
       </div>
     `).join('');
@@ -64,47 +64,283 @@ function renderHome() {
   }
 }
 
+// ─── ATTR FILTER HELPERS ─────────────────────────────
+function _getProductAttrs(p) {
+  const id = p.id || '';
+  const attrs = {};
+  // diameter/bore: e.g. DX10-350/25 → Blade Diameter=350mm, Bore Size=25.4mm
+  const sl = id.match(/(\d{3,4})\/(\d{2,3}(?:\.\d+)?)/);
+  if (sl) {
+    attrs['Blade Diameter'] = sl[1] + 'mm';
+    const b = sl[2];
+    attrs['Bore Size'] = (b === '25' ? '25.4' : b === '22' ? '22.23' : b) + 'mm';
+    return attrs;
+  }
+  // trailing 2-digit inch size: e.g. OX-PAF-20 → Blade Diameter=20"
+  const ti = id.match(/-(\d{2})$/);
+  if (ti) {
+    const n = parseInt(ti[1]);
+    if (n >= 10 && n <= 60) { attrs['Blade Diameter'] = n + '"'; return attrs; }
+  }
+  // 3-digit mm size after letter/dash: e.g. BZX162, BX10-182, PCX-N122 → Blade Diameter=162mm
+  const tm = id.match(/[-A-Za-z]0?(\d{3})(?:[-A-Za-z]|$)/);
+  if (tm) {
+    const n = parseInt(tm[1]);
+    if (n >= 20 && n <= 999) attrs['Blade Diameter'] = n + 'mm';
+  }
+  return attrs;
+}
+
+function _extractAttrFilters(products) {
+  // Collect all attr values with counts
+  const diamMm = new Map();
+  const boreMm = new Map();
+  const diamIn = new Map();
+  products.forEach(p => {
+    const a = _getProductAttrs(p);
+    if (a['Blade Diameter']) {
+      const v = a['Blade Diameter'];
+      if (v.endsWith('"')) diamIn.set(v, (diamIn.get(v) || 0) + 1);
+      else diamMm.set(v, (diamMm.get(v) || 0) + 1);
+    }
+    if (a['Bore Size']) {
+      const v = a['Bore Size'];
+      boreMm.set(v, (boreMm.get(v) || 0) + 1);
+    }
+  });
+
+  const result = {};
+  const toSorted = map => [...map.entries()].sort((a, b) => parseFloat(a[0]) - parseFloat(b[0])).map(([val, count]) => ({ val, count }));
+  const da = toSorted(diamMm);
+  const ba = toSorted(boreMm);
+  const ia = [...diamIn.entries()].sort((a, b) => parseInt(a[0]) - parseInt(b[0])).map(([val, count]) => ({ val, count }));
+  if (da.length >= 2) result['Blade Diameter'] = da;
+  else if (ia.length >= 2) result['Blade Diameter'] = ia;
+  if (ba.length >= 2) result['Bore Size'] = ba;
+
+  // Fallback: price range filter when no dimensional data exists
+  if (Object.keys(result).length === 0 && products.length >= 4) {
+    const prices = [...new Set(products.map(p => p.price || 0).filter(Boolean))].sort((a, b) => a - b);
+    if (prices.length >= 3 && prices[prices.length - 1] > prices[0] * 1.5) {
+      const p33 = prices[Math.floor(prices.length / 3)];
+      const p67 = prices[Math.floor(prices.length * 2 / 3)];
+      const fmt = n => `£${n % 1 === 0 ? n : n.toFixed(2)}`;
+      const bands = [`Under ${fmt(p33)}`, `${fmt(p33)} to ${fmt(p67)}`, `Over ${fmt(p67)}`];
+      result['Price'] = bands.map(band => {
+        let count = 0;
+        products.forEach(p => {
+          const price = p.price || 0;
+          if (band.startsWith('Under ')) { if (price < parseFloat(band.replace(/[^0-9.]/g, ''))) count++; }
+          else if (band.startsWith('Over ')) { if (price > parseFloat(band.replace(/[^0-9.]/g, ''))) count++; }
+          else { const parts = band.split(' to ').map(s => parseFloat(s.replace(/[^0-9.]/g, ''))); if (price >= parts[0] && price <= parts[1]) count++; }
+        });
+        return { val: band, count };
+      });
+    }
+  }
+
+  return result;
+}
+
+function buildAttrFilter(key, valCounts) {
+  const safeId  = 'attr-f-' + key.toLowerCase().replace(/[^a-z0-9]/g, '-');
+  const safeKey = key.replace(/'/g, "\\'");
+  const selected = selectedFilters[key] || [];
+  const selCount = selected.length;
+
+  const items = valCounts.map(({ val, count }) => {
+    const isChecked = selected.includes(val);
+    const safeVal = val.replace(/'/g, "\\'");
+    return `<div class="attr-filter-item${isChecked ? ' checked' : ''}" onclick="toggleAttrFilterItem('${safeKey}','${safeVal}')">
+      <div class="attr-filter-cb${isChecked ? ' checked' : ''}"></div>
+      <span class="attr-filter-item-label">${val}</span>
+      <span class="attr-filter-item-count">(${count})</span>
+    </div>`;
+  }).join('');
+
+  const triggerLabel = selCount > 0
+    ? `${key} <span class="attr-filter-count">(${selCount})</span>`
+    : key;
+
+  return `<div class="attr-filter${selCount > 0 ? ' has-selection' : ''}" id="${safeId}">
+    <button class="attr-filter-trigger" onclick="toggleAttrFilter('${safeId}','${safeKey}');event.stopPropagation()">
+      <span class="attr-filter-label">${triggerLabel}</span>${icon('chevronDown', 'icon-sm attr-filter-chevron')}
+    </button>
+    <div class="attr-filter-panel">
+      <div class="attr-filter-items">${items}</div>
+      <div class="attr-filter-footer">
+        <button class="attr-filter-cancel" onclick="clearAttrFilter('${safeKey}','${safeId}')">Clear</button>
+        <button class="attr-filter-apply" onclick="applyAttrFilter('${safeKey}','${safeId}')">Apply</button>
+      </div>
+    </div>
+  </div>`;
+}
+
 // ─── LISTING ────────────────────────────────────────
 function renderListing() {
-  // Update brand name in breadcrumb and title
   const brand = PRODUCTS[0]?.brand || 'OX';
   const brandUpper = brand.toUpperCase();
+
+  // Category tabs = Level2 segments
+  // If a Level1 scope (selectedSegment) is active, only show segments within it
+  let baseProds = selectedSegment
+    ? PRODUCTS.filter(p => p.cat === selectedSegment)
+    : PRODUCTS;
+  if (selectedSegment && baseProds.length === 0) baseProds = PRODUCTS;
+
+  const contextCats = [...new Set(baseProds.map(p => p.segment).filter(Boolean))].sort();
+  if (contextCats.length === 0) contextCats.push(...CATEGORIES);
+  if (selectedCat >= contextCats.length) selectedCat = -1;
+
+  // activeSeg is set only when a category is explicitly selected (selectedCat >= 0)
+  const activeSeg = selectedCat >= 0 ? (contextCats[selectedCat] || '') : '';
+
+  // Page title: deepest active level matches the URL slug
   const titleEl = document.getElementById('listing-brand-title');
-  if (titleEl) titleEl.textContent = brandUpper;
+  if (titleEl) titleEl.textContent = selectedSubCat ? selectedSubCat.toUpperCase() : activeSeg ? activeSeg.toUpperCase() : selectedSegment ? selectedSegment.toUpperCase() : brandUpper;
+
+  // Breadcrumb: Home / Brand [/ Category [/ SubCat]]
   const bcEl = document.getElementById('listing-breadcrumb');
-  if (bcEl) bcEl.innerHTML = `<a onclick="navigate('home')" style="display:inline-flex;align-items:center">${icon('home','icon-sm')}</a><span>/</span><span class="bc-active">${brand}</span>`;
+  if (bcEl) {
+    let bc = `<a onclick="navigate('home')" style="display:inline-flex;align-items:center">${icon('home','icon-sm')}</a><span>/</span>`;
+    bc += `<a onclick="navigateBrand('${brand}')">${brandUpper}</a>`;
+    if (selectedSegment && !activeSeg) {
+      bc += `<span>/</span><span class="bc-active">${selectedSegment}</span>`;
+    }
+    if (activeSeg) {
+      bc += `<span>/</span><a onclick="selectCat(${selectedCat})" class="bc-active">${activeSeg}</a>`;
+    }
+    if (selectedSubCat) {
+      bc += `<span>/</span><span class="bc-active">${selectedSubCat}</span>`;
+    }
+    bcEl.innerHTML = bc;
+  }
 
-  // Category tabs
-  document.getElementById('cat-tabs').innerHTML = CATEGORIES.map((c, i) => `
-    <div class="cat-tab ${i === selectedCat ? 'active' : ''}" onclick="selectCat(${i})">
-      <span class="cat-icon">${icon(CAT_ICONS[i], 'icon-lg')}</span>${c}
-    </div>
-  `).join('');
+  const tabsEl       = document.getElementById('listing-cat-tabs');
+  const attrFiltersEl = document.getElementById('listing-attr-filters');
 
-  const useSegments = PRODUCTS.length > 0 && PRODUCTS[0].segment != null;
-  const catName = CATEGORIES[selectedCat];
-  const filtered = PRODUCTS.filter(p => {
-    const matchCat = useSegments ? p.segment === catName : p.cat === catName;
-    return matchCat && (!stockOnly || p.inStock);
+  if (selectedSubCat) {
+    // ── Subcategory page: hide tabs, show attribute filters ──
+    tabsEl.style.display = 'none';
+    if (attrFiltersEl) {
+      const subProds = baseProds.filter(p => (!activeSeg || p.segment === activeSeg) && p.subType === selectedSubCat);
+      const attrs = _extractAttrFilters(subProds);
+      // Remove stale filters that no longer apply
+      Object.keys(selectedFilters).forEach(k => { if (!attrs[k]) delete selectedFilters[k]; });
+      if (Object.keys(attrs).length > 0) {
+        attrFiltersEl.innerHTML = Object.entries(attrs).map(([k, vs]) => buildAttrFilter(k, vs)).join('');
+        attrFiltersEl.style.display = 'flex';
+      } else {
+        attrFiltersEl.innerHTML = '';
+        attrFiltersEl.style.display = 'none';
+      }
+    }
+  } else {
+    // ── Category or brand root: show cat tabs, clear filters ──
+    tabsEl.style.display = '';
+    selectedFilters = {};
+    if (attrFiltersEl) { attrFiltersEl.innerHTML = ''; attrFiltersEl.style.display = 'none'; }
+
+    if (!activeSeg) {
+      // Brand root: Level2 category cards
+      tabsEl.innerHTML = contextCats.map((c, i) => `
+        <div class="cat-tab" onclick="selectCat(${i})">
+          <div class="cat-tab-icon">${icon(CAT_ICON_MAP?.[c] || 'tag', 'icon-xl')}</div>
+          <span class="cat-tab-label">${c}</span>
+        </div>
+      `).join('');
+    } else {
+      // Category page: Level3 subcategory cards
+      const subCats = [...new Set(
+        baseProds.filter(p => p.segment === activeSeg).map(p => p.subType).filter(Boolean)
+      )].sort();
+      tabsEl.innerHTML = subCats.map(s => `
+        <div class="cat-tab" onclick="selectSubCat('${s.replace(/'/g, "\\'")}')">
+          <div class="cat-tab-icon">${icon(CAT_ICON_MAP?.[s] || 'tag', 'icon-xl')}</div>
+          <span class="cat-tab-label">${s}</span>
+        </div>`).join('');
+    }
+  }
+
+  const filtered = baseProds.filter(p => {
+    if (activeSeg && p.segment !== activeSeg) return false;
+    if (selectedSubCat && p.subType !== selectedSubCat) return false;
+    if (stockOnly && !p.inStock) return false;
+    // Attribute filters (multi-select: selectedFilters[key] is an array)
+    if (Object.keys(selectedFilters).length > 0) {
+      const attrs = _getProductAttrs(p);
+      for (const [key, vals] of Object.entries(selectedFilters)) {
+        if (!vals || vals.length === 0) continue;
+        if (key === 'Price') {
+          const price = p.price || 0;
+          const inAnyBand = vals.some(val => {
+            if (val.startsWith('Under ')) return price < parseFloat(val.replace(/[^0-9.]/g, ''));
+            if (val.startsWith('Over '))  return price > parseFloat(val.replace(/[^0-9.]/g, ''));
+            const parts = val.split(' to ').map(s => parseFloat(s.replace(/[^0-9.]/g, '')));
+            return price >= parts[0] && price <= parts[1];
+          });
+          if (!inAnyBand) return false;
+        } else {
+          if (!vals.includes(attrs[key])) return false;
+        }
+      }
+    }
+    return true;
   });
 
   document.getElementById('prod-count').textContent = `${filtered.length} products found`;
 
-  document.getElementById('product-list').innerHTML = filtered.map((p, i) => `
-    <div class="product-row ${i === 2 ? 'selected' : ''}" onclick="openProduct(${PRODUCTS.indexOf(p)})">
-      <div class="prod-img" data-product-img="${p.id}" style="color:#868686">${p.img ? `<img src="${p.img}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px">` : icon('diamond', 'icon-lg')}</div>
+  const totalPages = Math.ceil(filtered.length / LISTING_PER_PAGE);
+  if (listingPage >= totalPages) listingPage = Math.max(0, totalPages - 1);
+  const pageProds = filtered.slice(listingPage * LISTING_PER_PAGE, (listingPage + 1) * LISTING_PER_PAGE);
+
+  const pagEl = document.getElementById('listing-pagination');
+  if (pagEl) {
+    if (totalPages <= 1) {
+      pagEl.style.display = 'none';
+      pagEl.innerHTML = '';
+    } else {
+      // Build visible page indices: always first + last, window of ±2 around current, ellipsis gaps
+      const visible = new Set([0, totalPages - 1]);
+      for (let i = Math.max(1, listingPage - 2); i <= Math.min(totalPages - 2, listingPage + 2); i++) visible.add(i);
+      const sorted = [...visible].sort((a, b) => a - b);
+      const items = [];
+      for (let i = 0; i < sorted.length; i++) {
+        if (i > 0 && sorted[i] - sorted[i - 1] > 1) items.push('…');
+        items.push(sorted[i]);
+      }
+
+      let btns = `<button class="page-btn" onclick="goToListingPage(${listingPage - 1})" ${listingPage === 0 ? 'disabled' : ''}>←</button>`;
+      for (const item of items) {
+        if (item === '…') {
+          btns += `<span class="page-ellipsis">…</span>`;
+        } else {
+          btns += `<button class="page-btn${item === listingPage ? ' active' : ''}" onclick="goToListingPage(${item})">${item + 1}</button>`;
+        }
+      }
+      btns += `<button class="page-btn" onclick="goToListingPage(${listingPage + 1})" ${listingPage === totalPages - 1 ? 'disabled' : ''}>→</button>`;
+      pagEl.style.display = 'flex';
+      pagEl.innerHTML = btns;
+    }
+  }
+
+  document.getElementById('product-list').innerHTML = pageProds.map(p => `
+    <div class="product-row" onclick="openProduct(${PRODUCTS.indexOf(p)})">
+      <div class="prod-img" data-product-img="${p.id}" style="color:#868686"><img src="${p.img?.startsWith('http') ? p.img : '/img/placeholder.svg'}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px"></div>
       <div>
         <div class="prod-sku-line">
           <span class="sku">${p.id}</span>
           <div class="stock-dot ${p.stock > 10 ? 'green' : p.stock > 0 ? 'orange' : 'red'}"></div>
-          <span class="stock-count">${p.stock}</span>
           ${!p.inStock ? '<span class="out-badge">Out of Stock</span>' : ''}
         </div>
         <div class="prod-name">${p.name}</div>
       </div>
-      <div class="prod-price">£${p.price.toFixed(2)}</div>
+      <div class="prod-price-wrap">
+        ${p.orig > p.price ? `<span class="prod-orig">£${p.orig.toFixed(2)}</span>` : ''}
+        <span class="prod-price">£${p.price.toFixed(2)}</span>
+      </div>
       <button class="icon-btn" onclick="event.stopPropagation();addToWish()">${icon('heart')}</button>
-      <button class="icon-btn" onclick="event.stopPropagation();addToCart()">${icon('cart')}</button>
+      <button class="icon-btn icon-btn--cart" onclick="event.stopPropagation();addToCart(${PRODUCTS.indexOf(p)})">${icon('cart')}</button>
     </div>
   `).join('') || '<div style="padding:40px;text-align:center;color:var(--muted)">No products found in this category.</div>';
 }
@@ -118,14 +354,13 @@ function renderDetail() {
   if (bc) bc.innerHTML = `
     <a onclick="navigate('home')" style="display:inline-flex;align-items:center">${icon('home','icon-sm')}</a>
     <span>/</span>
-    <a onclick="navigate('listing')">${brand}</a>
-    <span>/</span>
-    <a onclick="navigate('listing')">${p.cat}</a>
+    <a onclick="navigateBrand('${brand}')">${brand.toUpperCase()}</a>
+    ${p.segment ? `<span>/</span><a onclick="navigate('listing')">${p.segment}</a>` : ''}
+    ${p.subType ? `<span>/</span><a onclick="navigate('listing')">${p.subType}</a>` : ''}
     <span>/</span>
     <span>${p.name}</span>
   `;
-  // Init gallery state (4 slots — reuse product image across all for demo)
-  _galleryImages = [p.img, p.img, p.img, p.img];
+  _galleryImages = p.images?.length > 0 ? p.images : (p.img ? [p.img] : []);
   _galleryIdx    = 0;
 
   const sizes = ['600/25.4mm', '500/25.4mm', '450/25.4mm', '400/25.4mm', '400/20mm'];
@@ -134,15 +369,15 @@ function renderDetail() {
     <div>
       <div class="gallery-main">
         <div id="gallery-main-view" class="gallery-main-view" data-product-img="${p.id}">
-          ${p.img ? `<img src="${p.img}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain">` : icon('diamond', 'icon-lg')}
+          <img src="${_galleryImages[0] || '/img/placeholder.svg'}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain">
         </div>
         <div class="gallery-nav prev" onclick="galleryNav(-1)">${icon('chevronLeft')}</div>
         <div class="gallery-nav next" onclick="galleryNav(1)">${icon('chevronRight')}</div>
       </div>
       <div class="gallery-thumbs">
-        ${[0, 1, 2, 3].map(i => `
-          <div class="gallery-thumb ${i === 0 ? 'active' : ''}" data-product-img="${p.id}" onclick="galleryGoTo(${i})">
-            ${p.img ? `<img src="${p.img}" alt="" style="width:100%;height:100%;object-fit:contain">` : icon('diamond')}
+        ${_galleryImages.slice(0, 8).map((imgUrl, i) => `
+          <div class="gallery-thumb ${i === 0 ? 'active' : ''}" onclick="galleryGoTo(${i})">
+            <img src="${imgUrl}" alt="" style="width:100%;height:100%;object-fit:contain">
           </div>`).join('')}
       </div>
     </div>
@@ -175,7 +410,7 @@ function renderDetail() {
       </div>
       <div style="border-top:1px solid var(--border);padding-top:16px">
         <h3 class="desc-title">Description</h3>
-        <div class="desc-text">The ${p.name} is a dual-purpose blade that perfectly cuts through both asphalt and concrete. It comes with a 10mm segment height, wedge segment undercut protection and a narrow gullet.</div>
+        <div class="desc-text">${p.desc || `${p.name} — a quality ${p.cat} product by ${p.brand || 'OX'}.`}</div>
       </div>
     </div>
   `;
@@ -184,14 +419,14 @@ function renderDetail() {
   const related = PRODUCTS.filter(r => r.cat === p.cat && r.id !== p.id).slice(0, 5);
   document.getElementById('related-products').innerHTML = related.map(r => `
     <div class="product-row" onclick="openProduct(${PRODUCTS.indexOf(r)})">
-      <div class="prod-img" style="color:#868686">${icon(r.img, 'icon-lg')}</div>
+      <div class="prod-img" style="color:#868686"><img src="${r.img?.startsWith('http') ? r.img : '/img/placeholder.svg'}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px"></div>
       <div>
-        <div class="prod-sku-line"><span class="sku">${r.id}</span><div class="stock-dot ${r.stock > 10 ? 'green' : 'orange'}"></div><span class="stock-count">${r.stock}</span></div>
+        <div class="prod-sku-line"><span class="sku">${r.id}</span><div class="stock-dot ${r.stock > 10 ? 'green' : r.stock > 0 ? 'orange' : 'red'}"></div>${!r.inStock ? '<span class="out-badge">Out of Stock</span>' : ''}</div>
         <div class="prod-name">${r.name}</div>
       </div>
       <div class="prod-price">£${r.price.toFixed(2)}</div>
       <button class="icon-btn" onclick="event.stopPropagation();addToWish()">${icon('heart')}</button>
-      <button class="icon-btn" onclick="event.stopPropagation();addToCart()">${icon('cart')}</button>
+      <button class="icon-btn icon-btn--cart" onclick="event.stopPropagation();addToCart(${PRODUCTS.indexOf(r)})">${icon('cart')}</button>
     </div>
   `).join('');
 
@@ -200,6 +435,12 @@ function renderDetail() {
 
 // ─── CART ───────────────────────────────────────────
 function renderCart() {
+  // Always reset quick-add to closed when entering cart normally
+  const _qaBody   = document.getElementById('quick-add-body');
+  const _qaToggle = document.getElementById('quick-add-toggle');
+  if (_qaBody)   _qaBody.style.display = 'none';
+  if (_qaToggle) _qaToggle.textContent = '+';
+
   const totalQty = CART_ITEMS.reduce((sum, item) => sum + item.qty, 0);
   document.getElementById('cart-count-label').textContent = `${CART_ITEMS.length} products \u00a0 ${totalQty} items`;
   document.getElementById('cart-badge').textContent = CART_ITEMS.length;
@@ -220,14 +461,14 @@ function renderCart() {
   } else {
     document.getElementById('cart-table').innerHTML = CART_ITEMS.map((item, i) => `
       <div class="cart-row">
-        <div class="prod-img" style="color:#868686">${icon(item.img, 'icon-lg')}</div>
+        <div class="prod-img" style="color:#868686"><img src="${item.img?.startsWith('http') ? item.img : '/img/placeholder.svg'}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px"></div>
         <div>
-          <div class="prod-sku-line"><span class="sku">${item.id}</span><div class="stock-dot ${item.stock > 10 ? 'green' : 'orange'}"></div><span class="stock-count">${item.stock}</span></div>
+          <div class="prod-sku-line"><span class="sku">${item.id}</span><div class="stock-dot ${item.stock > 10 ? 'green' : item.stock > 0 ? 'orange' : 'red'}"></div>${!item.inStock ? '<span class="out-badge">Out of Stock</span>' : ''}</div>
           <div class="prod-name">${item.name}</div>
         </div>
         <div>
-          <div class="cart-orig">${item.lineOrig}</div>
-          <div class="cart-price">${item.linePrice}</div>
+          <div class="cart-orig"  id="cart-orig-${i}">${_fmtGBP(item.orig  * item.qty)}</div>
+          <div class="cart-price" id="cart-price-${i}">${_fmtGBP(item.price * item.qty)}</div>
         </div>
         <div class="qty-control">
           <div class="qty-btn" onclick="cartQty(${i},-1)">${icon('minus')}</div>
@@ -241,6 +482,7 @@ function renderCart() {
   }
 
   buildCartFAQ('cart-faq');
+  _updateCartSummary();
 }
 
 // ─── CHECKOUT RENDERS ────────────────────────────────
@@ -257,9 +499,9 @@ function renderCheckoutReview() {
   if (itemsEl) {
     itemsEl.innerHTML = CART_ITEMS.map(item => `
       <div class="review-item-row">
-        <div class="prod-img" style="color:#868686">${icon(item.img, 'icon-lg')}</div>
+        <div class="prod-img" style="color:#868686"><img src="${item.img?.startsWith('http') ? item.img : '/img/placeholder.svg'}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px"></div>
         <div>
-          <div class="prod-sku-line"><span class="sku">${item.id}</span><div class="stock-dot orange"></div><span class="stock-count">${item.stock}</span></div>
+          <div class="prod-sku-line"><span class="sku">${item.id}</span><div class="stock-dot ${item.stock > 10 ? 'green' : item.stock > 0 ? 'orange' : 'red'}"></div>${!item.inStock ? '<span class="out-badge">Out of Stock</span>' : ''}</div>
           <div class="prod-name">${item.name}</div>
         </div>
         <div class="review-qty">${item.qty}</div>
@@ -767,7 +1009,7 @@ function renderAccountFavourites() {
     return `
       <div class="fav-row">
         <div class="fav-img-cell">
-          <span class="fav-img-icon">${icon(p.img, 'icon')}</span>
+          <img src="${p.img?.startsWith('http') ? p.img : '/img/placeholder.svg'}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px">
         </div>
         <div class="fav-info">
           <div class="fav-meta">
@@ -779,7 +1021,7 @@ function renderAccountFavourites() {
         <div class="fav-price-cell">£${p.price.toFixed(2)}</div>
         <div class="fav-actions">
           <button class="fav-icon-btn" title="Remove from favourites" onclick="removeFromFav('${p.id}')">${icon('heart','icon')}</button>
-          <button class="fav-icon-btn" title="Add to cart" onclick="addFavToCart('${p.id}')">${icon('cart','icon')}</button>
+          <button class="fav-icon-btn fav-icon-btn--cart" title="Add to cart" onclick="addFavToCart('${p.id}')">${icon('cart','icon')}</button>
         </div>
       </div>`;
   }).join('');
@@ -832,7 +1074,7 @@ function renderAccountReturns() {
       <td>
         <span style="display:flex;align-items:center;gap:6px">
           ${r.id}
-          <button class="icon-btn" onclick="copyReturnId('${r.id}')" title="Copy ID">${icon('copy','icon-sm')}</button>
+          <button class="acct-icon-btn" onclick="copyReturnId('${r.id}')" title="Copy ID">${icon('copy','icon-sm')}</button>
         </span>
       </td>
       <td>${r.date}</td>
@@ -949,7 +1191,7 @@ function renderAccountInvoices() {
         <td>
           <span style="display:flex;align-items:center;gap:6px">
             Invoice #${inv.id}
-            <button class="icon-btn" onclick="copyInvoiceId('${inv.id}')" title="Copy">${icon('copy','icon-sm')}</button>
+            <button class="acct-icon-btn" onclick="copyInvoiceId('${inv.id}')" title="Copy">${icon('copy','icon-sm')}</button>
           </span>
         </td>
         <td>${inv.date}</td>
@@ -1033,7 +1275,7 @@ function renderAccountTransactionHistory() {
       <td>
         <span style="display:flex;align-items:center;gap:6px">
           ${tx.type} #${tx.id}
-          <button class="icon-btn" onclick="copyTxId('${tx.id}')" title="Copy">${icon('copy','icon-sm')}</button>
+          <button class="acct-icon-btn" onclick="copyTxId('${tx.id}')" title="Copy">${icon('copy','icon-sm')}</button>
         </span>
       </td>
       <td>${tx.date}</td>
@@ -1179,7 +1421,7 @@ function renderAccountPurchases() {
       <td>
         <span style="display:flex;align-items:center;gap:6px">
           ${p.id}
-          <button class="icon-btn" onclick="copyPurchaseId('${p.id}')" title="Copy ID">${icon('copy','icon-sm')}</button>
+          <button class="acct-icon-btn" onclick="copyPurchaseId('${p.id}')" title="Copy ID">${icon('copy','icon-sm')}</button>
         </span>
       </td>
       <td><span class="acct-status ${statusClass(p.status)}">${p.status}</span></td>

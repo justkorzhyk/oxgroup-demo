@@ -7,13 +7,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
+<script>
+  (function(){
+    var ua = navigator.userAgent;
+    var isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+    var isSmall  = window.innerWidth <= 1024;
+    if (isMobile || isSmall) window.location.replace('/waitlist/');
+  })();
+</script>
 </head>
 <body>
 
 <!-- ─── NAV ─── -->
 <nav>
   <div class="nav-inner">
-    <img class="nav-logo-img" src="https://www.figma.com/api/mcp/asset/a32548c2-aac7-469e-aff5-18b96f8b6611" alt="OX Group" onclick="navigate('home')">
+    <img class="nav-logo-img" src="/img/logo.png" alt="OX Group" onclick="navigate('home')">
     <button class="nav-categories btn" onclick="toggleCategoryDropdown()">
       Categories
       <svg class="icon icon-sm" viewBox="0 0 24 24" style="fill:#fff"><circle cx="5.5" cy="5.5" r="1.5"/><circle cx="12" cy="5.5" r="1.5"/><circle cx="18.5" cy="5.5" r="1.5"/><circle cx="5.5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="18.5" cy="12" r="1.5"/><circle cx="5.5" cy="18.5" r="1.5"/><circle cx="12" cy="18.5" r="1.5"/><circle cx="18.5" cy="18.5" r="1.5"/></svg>
@@ -53,7 +61,7 @@
       <div class="nav-icon-btn" onclick="navigate('account-overview')" title="Account Settings" style="cursor:pointer;padding:8px">
         <div class="nav-avatar">OR</div>
       </div>
-      <button class="nav-quick" onclick="navigate('cart')">Quick Order</button>
+      <button class="nav-quick" onclick="navigateCartQuickOrder()">Quick Order</button>
       <div class="nav-divider"></div>
       <div class="nav-icon-btn" onclick="navigate('cart')" style="cursor:pointer">
         <svg class="icon icon-lg" viewBox="0 0 24 24" fill="none"><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="21" r="1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="21" r="1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -112,7 +120,7 @@
     <div class="home-brands-grid" id="brands-grid" onmouseleave="resetBrands()">
       <!-- OX Tools (active by default) -->
       <div class="home-brand-card active" onmouseenter="activateBrand(this)" onclick="navigateBrand('OX')">
-        <img src="https://www.figma.com/api/mcp/asset/2f0ed1c6-b3b4-419c-8c42-01de119d7463" alt="OX Tools">
+        <img src="/img/brand/ox.jpg" alt="OX Tools">
         <div class="brand-overlay-narrow"></div>
         <div class="brand-overlay-featured"></div>
         <div class="brand-name">OX TOOLS</div>
@@ -128,7 +136,7 @@
       </div>
       <!-- Tracer -->
       <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigateBrand('TRACER')">
-        <img src="https://www.figma.com/api/mcp/asset/855962de-d3ad-4a59-aec1-1a3e202cd5b5" alt="Tracer">
+        <img src="/img/brand/tracer.jpg" alt="Tracer">
         <div class="brand-overlay-narrow"></div>
         <div class="brand-overlay-featured"></div>
         <div class="brand-name">TRACER</div>
@@ -144,7 +152,7 @@
       </div>
       <!-- Bora -->
       <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigateBrand('BORA')">
-        <img src="https://www.figma.com/api/mcp/asset/6dd31e5d-cc2d-4993-b166-051a23625601" alt="Bora">
+        <img src="/img/brand/bora.jpg" alt="Bora">
         <div class="brand-overlay-narrow"></div>
         <div class="brand-overlay-featured"></div>
         <div class="brand-name">BORA</div>
@@ -159,7 +167,7 @@
       </div>
       <!-- Smart -->
       <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigateBrand('SMART')">
-        <img src="https://www.figma.com/api/mcp/asset/e3546aef-79e7-4144-b02f-ca6063599810" alt="Smart">
+        <img src="/img/brand/smart.jpg" alt="Smart">
         <div class="brand-overlay-narrow"></div>
         <div class="brand-overlay-featured"></div>
         <div class="brand-name">SMART</div>
@@ -176,7 +184,7 @@
       </div>
       <!-- Unitec -->
       <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigateBrand('UNITEC')">
-        <img src="https://www.figma.com/api/mcp/asset/b5ab2d92-d93c-4c15-ab37-21a304929c81" alt="Unitec">
+        <img src="/img/brand/unitec.jpg" alt="Unitec">
         <div class="brand-overlay-narrow"></div>
         <div class="brand-overlay-featured"></div>
         <div class="brand-name">UNITEC</div>
@@ -206,23 +214,7 @@
     </div>
   </section>
 
-  <!-- ── New Products Banner ── -->
-  <section class="home-new-banner">
-    <div class="home-new-banner-bg">
-      <img src="https://www.figma.com/api/mcp/asset/02a2cee1-f085-43c1-a248-a90fefa410ae" alt="">
-    </div>
-    <div class="home-new-banner-content">
-      <h2>NEW PRODUCTS</h2>
-      <div class="home-new-banner-body">Explore the latest additions to our catalogue, featuring innovative tools and equipment designed for professional performance and reliability.</div>
-      <div class="home-new-banner-btns">
-        <button class="home-new-btn-white" onclick="navigate('listing')">View Products</button>
-        <button class="home-new-btn-dark">All Catalogues</button>
-      </div>
-    </div>
-    <div class="home-new-banner-product">
-      <img src="https://www.figma.com/api/mcp/asset/8b7ab294-4258-43c5-9ec9-046600b45ad8" alt="New product">
-    </div>
-  </section>
+ 
 
   <!-- ── Frequently Asked Questions ── -->
   <section class="home-faq-section">
@@ -254,7 +246,7 @@
     <div class="home-blog-cards">
       <article class="home-blog-card">
         <div class="home-blog-card-img">
-          <img src="https://www.figma.com/api/mcp/asset/2ce0c7e3-9e76-4a85-b90b-7d8d3ca3bc80" alt="Blog article">
+          <img src="/img/blog/blog1.jpg" alt="Blog article">
         </div>
         <div class="home-blog-card-content">
           <div class="home-blog-card-tags">
@@ -271,7 +263,7 @@
       </article>
       <article class="home-blog-card">
         <div class="home-blog-card-img">
-          <img src="https://www.figma.com/api/mcp/asset/30818197-f80a-4c2d-a2cd-6269a4356cce" alt="Blog article">
+          <img src="/img/blog/blog2.jpg" alt="Blog article">
         </div>
         <div class="home-blog-card-content">
           <div class="home-blog-card-tags">
@@ -288,7 +280,7 @@
       </article>
       <article class="home-blog-card">
         <div class="home-blog-card-img">
-          <img src="https://www.figma.com/api/mcp/asset/f360c72c-c0d6-4751-b8e0-f5202f67c5e7" alt="Blog article">
+          <img src="/img/blog/blog3.jpg" alt="Blog article">
         </div>
         <div class="home-blog-card-content">
           <div class="home-blog-card-tags">
@@ -309,7 +301,7 @@
   <!-- ── Footer ── -->
   <footer class="home-footer">
     <div class="home-footer-bg">
-      <img src="https://www.figma.com/api/mcp/asset/c0bdbd57-e464-4fbc-b0c6-eefa1fff5ac7" alt="">
+      <img src="/img/brand/footer-bg.jpg" alt="">
     </div>
     <div class="home-footer-columns">
       <div class="home-footer-col">
@@ -323,7 +315,7 @@
       <div class="home-footer-col">
         <h4>About Us</h4>
         <a>Blog</a>
-        <a class="blue">News</a>
+        <a>News</a>
         <a>Videos</a>
         <a>Catalogs</a>
       </div>
@@ -368,10 +360,12 @@
     <h1 id="listing-brand-title">OX</h1>
     <span class="product-count" id="prod-count">1387 products found</span>
   </div>
-  <div class="category-tabs" id="cat-tabs">
+  <div class="category-tabs" id="listing-cat-tabs">
     <!-- filled by JS -->
   </div>
+
   <div class="listing-controls">
+    <div id="listing-attr-filters" style="display:none"></div>
     <div class="toggle-wrap">
       <div class="toggle" id="stock-toggle" onclick="toggleStock()"><div class="toggle-knob"></div></div>
       In Stock Only
@@ -392,15 +386,7 @@
   <div class="product-list" id="product-list">
     <!-- filled by JS -->
   </div>
-  <div style="padding:0 32px">
-    <button class="show-more">Show More ▾</button>
-  </div>
-  <div class="pagination">
-    <div class="page-btn">←</div>
-    <div class="page-btn active">1</div>
-    <div class="page-btn">2</div>
-    <div class="page-btn">→</div>
-  </div>
+  <div class="pagination" id="listing-pagination" style="display:none"></div>
   <footer>
     <div class="footer-col"><h4>Products</h4><a>OX</a><a>BORA</a><a>Tracer</a><a>Smart</a><a>Unitec</a></div>
     <div class="footer-col"><h4>About Us</h4><a>Blog</a><a style="color:var(--blue)">News</a><a>Videos</a><a>Catalogs</a></div>
@@ -466,9 +452,9 @@
               <input type="text" placeholder="Search by name, product ID, or keyword">
             </div>
             <div class="qty-control" style="flex-shrink:0">
-              <div class="qty-btn">−</div>
-              <input class="qty-input" value="1" type="number" min="1" style="width:40px">
-              <div class="qty-btn">+</div>
+              <div class="qty-btn" onclick="quickAddQty(-1)">−</div>
+              <input class="qty-input" id="quick-add-qty" value="1" type="number" min="1" style="width:40px">
+              <div class="qty-btn" onclick="quickAddQty(1)">+</div>
             </div>
             <button class="btn-add-product">Add Product</button>
           </div>
@@ -1106,6 +1092,7 @@
 ════════════════════════════════════════════ -->
 <div class="page" id="page-account-newcase"></div>
 
+
 <!-- ─── 404 ─── -->
 <div class="page" id="page-404">
   <div class="page-404-inner">
@@ -1165,46 +1152,12 @@
   </div>
 </div>
 
-<!-- ─── SYNC MODAL ─── -->
-<div class="modal-overlay" id="sync-modal">
-  <div class="modal">
-    <h2 style="display:flex;align-items:center;gap:8px"><svg class="icon icon-lg" viewBox="0 0 24 24" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Product Sync</h2>
-    <div class="modal-sub">Connect to your external system to pull the latest product catalogue.</div>
-    <div class="modal-field">
-      <div class="modal-label">API Endpoint</div>
-      <input class="modal-input" id="api-url" value="https://api.yoursystem.com/products" placeholder="https://api.yoursystem.com/products">
-    </div>
-    <div class="modal-field">
-      <div class="modal-label">API Key</div>
-      <input class="modal-input" id="api-key" type="password" value="sk-demo-key-••••••••" placeholder="Your API key">
-    </div>
-    <div class="modal-field">
-      <div class="modal-label">Format</div>
-      <div class="cust-select cust-select--field" id="modal-format">
-        <button class="cust-select-trigger" onclick="toggleCustomSelect('modal-format');event.stopPropagation()">
-          <span class="cust-select-value">JSON (REST)</span>
-          <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="cust-select-panel">
-          <div class="cust-select-item active" data-label="JSON (REST)" onclick="pickCustomSelect('modal-format','JSON (REST)')">JSON (REST)<span class="cust-select-check"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-          <div class="cust-select-item" data-label="GraphQL" onclick="pickCustomSelect('modal-format','GraphQL')">GraphQL<span class="cust-select-check"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-          <div class="cust-select-item" data-label="XML / SOAP" onclick="pickCustomSelect('modal-format','XML / SOAP')">XML / SOAP<span class="cust-select-check"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-          <div class="cust-select-item" data-label="CSV" onclick="pickCustomSelect('modal-format','CSV')">CSV<span class="cust-select-check"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-        </div>
-      </div>
-    </div>
-    <div class="sync-log" id="sync-log" style="display:none"></div>
-    <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeSyncModal()">Cancel</button>
-      <button class="modal-confirm" id="modal-sync-btn" onclick="runSync()">Run Sync</button>
-    </div>
-  </div>
-</div>
+
 
 <script src="/js/icons.js"></script>
 <script src="/js/data.js"></script>
 <script src="/js/renders.js"></script>
-<script src="/js/salsify.js"></script>
+<script src="/js/products-loader.js"></script>
 <script src="/js/app.js"></script>
 </body>
 </html>
