@@ -1039,6 +1039,15 @@ function renderAccountFavourites() {
       <button class="fav-page-btn"${nextOff} onclick="setFavPage(${favPage + 1})">${icon('chevronRight','icon-sm')}</button>
     </div>` : '';
 
+  const emptyState = FAV_ITEMS.length === 0 ? `
+    <div class="fav-empty-overlay">
+      <div class="fav-empty-box">
+        <div class="fav-empty-title">NO FAVOURITES YET</div>
+        <div class="fav-empty-sub">Save products for faster ordering.</div>
+        <button class="fav-empty-btn" onclick="navigate('listing')">Explore Products</button>
+      </div>
+    </div>` : '';
+
   el.innerHTML = `
     ${buildAccBreadcrumb()}
     <div class="acct-layout">
@@ -1048,8 +1057,8 @@ function renderAccountFavourites() {
           <h1 class="acct-title">Favourites</h1>
           <button class="fav-clear-btn" onclick="clearFavourites()">${icon('trash','icon-sm')} Clear</button>
         </div>
-        <div>
-          <div class="fav-filters">
+        <div style="position:relative">
+          <div class="fav-filters" style="${FAV_ITEMS.length === 0 ? 'pointer-events:none;opacity:0.4' : ''}">
             <div class="fav-toggle-wrap" onclick="toggleFavStock()">
               <div class="fav-toggle${favStockOnly ? ' on' : ''}"><div class="fav-toggle-knob"></div></div>
               <span class="fav-toggle-label">In Stock Only</span>
@@ -1057,7 +1066,22 @@ function renderAccountFavourites() {
             ${buildCustomSelect('fav-sort', ['Newest First', 'Price: Low to High', 'Price: High to Low'])}
           </div>
           <div class="fav-divider"></div>
-          <div class="fav-rows">${rows}</div>
+          <div style="position:relative">
+            <div class="fav-rows${FAV_ITEMS.length === 0 ? ' fav-rows--blurred' : ''}">${FAV_ITEMS.length === 0 ? Array(5).fill(`
+              <div class="fav-row fav-skeleton">
+                <div class="fav-img-cell fav-skel-block"></div>
+                <div class="fav-info">
+                  <div class="fav-skel-line" style="width:40%"></div>
+                  <div class="fav-skel-line" style="width:70%;margin-top:8px"></div>
+                </div>
+                <div class="fav-skel-line" style="width:60px;flex-shrink:0"></div>
+                <div class="fav-actions">
+                  <div class="fav-skel-block" style="width:32px;height:32px;border-radius:4px"></div>
+                  <div class="fav-skel-block" style="width:32px;height:32px;border-radius:4px"></div>
+                </div>
+              </div>`).join('') : rows}</div>
+            ${emptyState}
+          </div>
           ${pagination}
         </div>
       </div>
