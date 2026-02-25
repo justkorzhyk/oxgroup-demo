@@ -604,7 +604,7 @@ function buildAccSidebar(activePage) {
       ${subtab('account-returns', 'Returns')}
       ${subtab('account-reorder', 'Reorder Items')}
     </div>
-    ${tab('account-favourites', 'Favourites', { badge: '25' })}
+    ${tab('account-favourites', 'Favourites', { badge: PRODUCTS.length })}
     <div class="acct-tab${billingOpen ? ' open' : ''}" onclick="toggleAccSection(this)">
       <span>Billing</span>
       <span class="acct-tab-right"><span class="acct-tab-chevron">${icon('chevronDown','icon-sm')}</span></span>
