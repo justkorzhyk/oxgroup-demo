@@ -1846,3 +1846,52 @@ body.page-checkout-mode nav .nav-actions { display: none; }
   #page-waitlist .wl-submit-btn { width: 100%; }
   #page-waitlist .wl-social { flex-direction: column; gap: 10px; }
 }
+
+/* ─── DROPDOWN GRADIENT OVERLAY ─── */
+#dropdown-gradient-overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, rgba(23, 23, 23, 0.00) 0%, #171717 100%);
+  pointer-events: none;
+  z-index: 96;
+  display: none;
+}
+
+/* ─── CASE DETAIL PAGE ─── */
+.acct-status.not-started { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
+.case-detail-title { font-family: var(--font-display); font-size: 24px; font-weight: 900; text-transform: uppercase; color: var(--white); letter-spacing: 0.02em; }
+.case-close-btn { background: var(--blue); color: #fff; border: none; font-size: 14px; font-weight: 600; font-family: inherit; padding: 10px 14px; cursor: pointer; transition: opacity .15s; }
+.case-close-btn:hover { opacity: .85; }
+
+/* Info panel */
+.case-info-panel { background: #1c1c1c; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.case-info-row { display: flex; align-items: center; gap: 16px; }
+.case-info-label { font-size: 14px; color: var(--muted); text-transform: uppercase; width: 130px; flex-shrink: 0; }
+.case-info-value { font-size: 14px; font-weight: 600; color: var(--white); }
+
+/* Reply panel */
+.case-reply-panel { background: #1c1c1c; padding: 24px; }
+.case-reply-content { display: flex; flex-direction: column; gap: 16px; align-items: flex-end; }
+.case-reply-field { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.case-reply-label { font-size: 14px; font-weight: 600; color: #e2e2e2; }
+.case-reply-textarea { min-height: 140px; resize: vertical; }
+.case-reply-btn { background: #202020; border: 2px solid #2d2d2d; color: #e2e2e2; font-size: 14px; font-weight: 600; font-family: inherit; padding: 10px 14px; cursor: pointer; transition: border-color .15s, color .15s; }
+.case-reply-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+/* Messages panel */
+.case-msgs-panel { background: #1c1c1c; padding: 24px; display: flex; flex-direction: column; gap: 24px; }
+.case-msgs-header { display: flex; align-items: center; gap: 10px; }
+.case-msgs-title { flex: 1; font-family: var(--font-display); font-size: 16px; font-weight: 900; text-transform: uppercase; color: var(--white); }
+.case-msgs-toggle { background: var(--bg3); border: 1px solid var(--border); color: var(--white); padding: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 4px; transition: background .15s; flex-shrink: 0; }
+.case-msgs-toggle:hover { background: #2d2d2d; }
+.case-msgs-body { display: flex; flex-direction: column; gap: 16px; }
+.case-msgs-date-divider { display: flex; align-items: center; gap: 10px; }
+.case-msgs-divider-line { flex: 1; height: 2px; background: #2d2d2d; }
+.case-msgs-divider-label { font-size: 16px; color: var(--muted); flex-shrink: 0; }
+.case-msg-item { display: flex; flex-direction: column; gap: 4px; }
+.case-msg-meta { display: flex; align-items: center; gap: 4px; }
+.case-msg-author { font-size: 14px; font-weight: 600; color: #e2e2e2; }
+.case-msg-time { font-size: 14px; color: var(--muted); }
+.case-msg-text { font-size: 14px; color: var(--white); }

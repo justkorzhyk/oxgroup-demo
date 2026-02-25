@@ -569,7 +569,7 @@ function buildAccSidebar(activePage) {
   const purchasesSub = ['account-purchases', 'account-returns', 'account-reorder'];
   const billingSub   = ['account-invoices', 'account-transaction-history', 'account-print-statement'];
   const settingsSub  = ['account-profile','account-email','account-address','account-password'];
-  const casesSub     = ['account-cases','account-newcase'];
+  const casesSub     = ['account-cases','account-newcase','account-case-detail'];
   const purchasesOpen = purchasesSub.includes(activePage);
   const billingOpen   = billingSub.includes(activePage);
   const settingsOpen  = settingsSub.includes(activePage);
@@ -910,13 +910,13 @@ function renderAccountPassword() {
 }
 
 function renderAccountCases() {
-  const rows = SUPPORT_CASES.map((c, i) => `
-    <tr${i === 0 ? ' class="selected"' : ''}>
+  const rows = SUPPORT_CASES.map(c => `
+    <tr style="cursor:pointer" onclick="openCaseDetail('${c.id}')">
       <td>${c.id}</td>
       <td>${c.subject}</td>
       <td>${c.created}</td>
       <td>${c.lastMsg || '—'}</td>
-      <td><span class="acct-status ${c.status.toLowerCase()}">${c.status}</span></td>
+      <td><span class="acct-status ${c.status.toLowerCase().replace(/\s+/g,'-')}">${c.status}</span></td>
     </tr>
   `).join('');
 
@@ -1006,6 +1006,103 @@ function renderAccountNewCase() {
             <button class="btn-submit-case" onclick="showToast('Case submitted successfully','check')">Submit</button>
           </div>
         </div>
+      </div>
+    </div>
+    ${buildAccFooter()}
+  `;
+}
+
+function renderAccountCaseDetail() {
+  const el = document.getElementById('page-account-case-detail');
+  if (!el) return;
+  const c = currentCase;
+  if (!c) { navigate('account-cases'); return; }
+
+  const statusClass = c.status.toLowerCase().replace(/\s+/g, '-');
+
+  // Group messages by date
+  const byDate = {};
+  (c.messages || []).forEach(m => {
+    if (!byDate[m.date]) byDate[m.date] = [];
+    byDate[m.date].push(m);
+  });
+  const msgCount = (c.messages || []).length;
+
+  const msgsHtml = Object.entries(byDate).map(([date, msgs]) => `
+    <div class="case-msgs-date-divider">
+      <div class="case-msgs-divider-line"></div>
+      <span class="case-msgs-divider-label">${date}</span>
+      <div class="case-msgs-divider-line"></div>
+    </div>
+    ${msgs.map(m => `
+      <div class="case-msg-item">
+        <div class="case-msg-meta">
+          <span class="case-msg-author">${m.author}</span>
+          <span class="case-msg-time">${m.time}</span>
+        </div>
+        <div class="case-msg-text">${m.text}</div>
+      </div>
+    `).join('')}
+  `).join('');
+
+  el.innerHTML = `
+    ${buildAccBreadcrumb()}
+    <div class="acct-layout">
+      <aside class="acct-sidebar">${buildAccSidebar('account-cases')}</aside>
+      <div class="acct-content inv-detail-content">
+
+        <!-- Header -->
+        <div class="inv-detail-header">
+          <div class="inv-detail-header-left">
+            <button class="inv-detail-back" onclick="navigate('account-cases')">${icon('arrowLeft','icon-sm')}</button>
+            <h1 class="case-detail-title">CASE #${c.id}</h1>
+            <button class="acct-icon-btn" title="Copy" onclick="navigator.clipboard?.writeText('${c.id}').then(()=>showToast('Copied to clipboard','copy'))">${icon('copy','icon-sm')}</button>
+          </div>
+          <button class="case-close-btn" onclick="showToast('Case closed','check')">Close Case</button>
+        </div>
+
+        <!-- Top info panel -->
+        <div class="case-info-panel">
+          <div class="case-info-row">
+            <span class="case-info-label">TYPE OF INQUIRY</span>
+            <span class="case-info-value">${c.type || '—'}</span>
+          </div>
+          <div class="case-info-row">
+            <span class="case-info-label">STATUS</span>
+            <span class="acct-status ${statusClass}">${c.status}</span>
+          </div>
+          <div class="case-info-row">
+            <span class="case-info-label">CREATION DATE</span>
+            <span class="case-info-value">${c.created}</span>
+          </div>
+          <div class="case-info-row">
+            <span class="case-info-label">LAST MESSAGE</span>
+            <span class="case-info-value">${c.lastMsg || '—'}</span>
+          </div>
+        </div>
+
+        <!-- Reply section -->
+        <div class="case-reply-panel">
+          <div class="case-reply-content">
+            <div class="case-reply-field">
+              <label class="case-reply-label">Reply with a message</label>
+              <textarea class="acct-textarea case-reply-textarea" id="caseReplyText" placeholder="E.g. I want to change my account email address."></textarea>
+            </div>
+            <button class="case-reply-btn" onclick="submitCaseReply()">Reply</button>
+          </div>
+        </div>
+
+        <!-- Messages section -->
+        <div class="case-msgs-panel">
+          <div class="case-msgs-header">
+            <span class="case-msgs-title">MESSAGES (${msgCount})</span>
+            <button class="case-msgs-toggle" onclick="toggleCaseMsgs(this)">${icon('chevronUp','icon-sm')}</button>
+          </div>
+          <div class="case-msgs-body" id="caseMsgsBody">
+            ${msgsHtml || '<p style="color:var(--muted);font-size:14px;padding:8px 0">No messages yet.</p>'}
+          </div>
+        </div>
+
       </div>
     </div>
     ${buildAccFooter()}

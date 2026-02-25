@@ -1,6 +1,6 @@
 // ─── NAVIGATION ─────────────────────────────────────
 const CHECKOUT_PAGES = ['checkout-shipping', 'checkout-payment', 'checkout-review', 'checkout-thankyou'];
-const ACCOUNT_PAGES  = ['account-overview', 'account-profile', 'account-email', 'account-address', 'account-password', 'account-cases', 'account-newcase', 'account-favourites', 'account-purchases', 'account-returns', 'account-reorder', 'account-invoices', 'account-invoice-detail', 'account-transaction-history', 'account-tx-detail', 'account-print-statement'];
+const ACCOUNT_PAGES  = ['account-overview', 'account-profile', 'account-email', 'account-address', 'account-password', 'account-cases', 'account-newcase', 'account-case-detail', 'account-favourites', 'account-purchases', 'account-returns', 'account-reorder', 'account-invoices', 'account-invoice-detail', 'account-transaction-history', 'account-tx-detail', 'account-print-statement'];
 
 const ROUTES = {
   home:                 '/',
@@ -15,8 +15,9 @@ const ROUTES = {
   'account-email':      '/account/email',
   'account-address':    '/account/address',
   'account-password':   '/account/password',
-  'account-cases':      '/account/cases',
-  'account-newcase':    '/account/cases/new',
+  'account-cases':       '/account/cases',
+  'account-newcase':     '/account/cases/new',
+  'account-case-detail': '/account/cases/detail',
   'account-favourites': '/account/favourites',
   'account-purchases':  '/account/purchases',
   'account-returns':    '/account/returns',
@@ -173,6 +174,7 @@ function navigate(page, opts = {}) {
   if (page === 'account-password')      renderAccountPassword();
   if (page === 'account-cases')         renderAccountCases();
   if (page === 'account-newcase')       renderAccountNewCase();
+  if (page === 'account-case-detail')   renderAccountCaseDetail();
   if (page === 'account-favourites')    renderAccountFavourites();
   if (page === 'account-purchases')     renderAccountPurchases();
   if (page === 'account-returns')       renderAccountReturns();
@@ -364,12 +366,14 @@ function toggleAttrFilter(id, key) {
         panel.style.left  = 'auto';
         panel.style.right = '0';
       }
+      _showDropdownGradient(panel);
     }
   }
 }
 
 function closeAllAttrFilters() {
   document.querySelectorAll('.attr-filter.open').forEach(el => el.classList.remove('open'));
+  _hideDropdownGradient();
 }
 
 function _syncAttrFilterCheckboxes(id, key) {
@@ -561,8 +565,20 @@ function toggleAccSection(tab) {
   const sublist = tab.nextElementSibling;
   if (!sublist || !sublist.classList.contains('acct-sublist')) return;
   const isOpen = sublist.classList.contains('open');
-  tab.classList.toggle('open', !isOpen);
-  sublist.classList.toggle('open', !isOpen);
+  // Close all other open sections first
+  const sidebar = tab.closest('.acct-sidebar');
+  if (sidebar) {
+    sidebar.querySelectorAll('.acct-tab.open').forEach(t => {
+      t.classList.remove('open');
+      const sl = t.nextElementSibling;
+      if (sl?.classList.contains('acct-sublist')) sl.classList.remove('open');
+    });
+  }
+  // Open the clicked section only if it was previously closed
+  if (!isOpen) {
+    tab.classList.add('open');
+    sublist.classList.add('open');
+  }
 }
 
 function togglePwd(btn) {
@@ -706,6 +722,26 @@ function openTransactionDetail(id) {
   navigate('account-tx-detail');
 }
 
+// ─── SUPPORT CASES ────────────────────────────────────
+function openCaseDetail(id) {
+  currentCase = SUPPORT_CASES.find(c => c.id === id) || null;
+  navigate('account-case-detail');
+}
+function submitCaseReply() {
+  const t = document.getElementById('caseReplyText');
+  if (t && t.value.trim()) {
+    showToast('Reply sent', 'check');
+    t.value = '';
+  }
+}
+function toggleCaseMsgs(btn) {
+  const body = document.getElementById('caseMsgsBody');
+  if (!body) return;
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  btn.innerHTML = icon(isOpen ? 'chevronDown' : 'chevronUp', 'icon-sm');
+}
+
 // ─── PRINT A STATEMENT ───────────────────────────────
 function toggleStmtPref(pref, el) {
   if (el.checked) { if (!stmtPrefs.includes(pref)) stmtPrefs.push(pref); }
@@ -723,6 +759,19 @@ function resetBrands() {
   if (first) first.classList.add('active');
 }
 
+// ─── DROPDOWN GRADIENT OVERLAY ───────────────────────
+function _showDropdownGradient(panelEl) {
+  const ov = document.getElementById('dropdown-gradient-overlay');
+  if (!ov || !panelEl) return;
+  const rect = panelEl.getBoundingClientRect();
+  ov.style.top = rect.top + 'px';
+  ov.style.display = 'block';
+}
+function _hideDropdownGradient() {
+  const ov = document.getElementById('dropdown-gradient-overlay');
+  if (ov) ov.style.display = 'none';
+}
+
 // ─── CATEGORIES DROPDOWN ─────────────────────────────
 const CAT_BRANDS = ['OX', 'BORA', 'TRACER', 'SMART', 'UNITEC'];
 let catActiveBrand = 0;
@@ -738,11 +787,13 @@ function openCategoryDropdown() {
   document.getElementById('cat-overlay').classList.add('open');
   document.getElementById('cat-dropdown').classList.add('open');
   renderCatDropdown();
+  _showDropdownGradient(document.getElementById('cat-dropdown'));
 }
 
 function closeCategoryDropdown() {
   document.getElementById('cat-overlay').classList.remove('open');
   document.getElementById('cat-dropdown').classList.remove('open');
+  _hideDropdownGradient();
 }
 
 function renderCatDropdown() {
@@ -849,6 +900,7 @@ function closeSearch() {
   document.getElementById('search-dropdown').classList.remove('open');
   document.getElementById('search-overlay').classList.remove('open');
   document.getElementById('nav-search').classList.remove('open');
+  _hideDropdownGradient();
 }
 
 function clearSearch() {
@@ -920,6 +972,8 @@ function renderSearchResults(query) {
   document.getElementById('search-dropdown').classList.toggle('open', hasResults);
   document.getElementById('search-overlay').classList.toggle('open', hasResults);
   document.getElementById('nav-search').classList.toggle('open', hasResults);
+  if (hasResults) _showDropdownGradient(document.getElementById('search-dropdown'));
+  else _hideDropdownGradient();
 }
 
 function openProductFromSearch(id) {
@@ -1009,11 +1063,13 @@ function toggleCustomSelect(id) {
         panel.style.left  = 'auto';
         panel.style.right = '0';
       }
+      _showDropdownGradient(panel);
     }
   }
 }
 function closeAllCustomSelects() {
   document.querySelectorAll('.cust-select.open').forEach(el => el.classList.remove('open'));
+  _hideDropdownGradient();
 }
 function pickCustomSelect(id, label) {
   const el = document.getElementById(id);
@@ -1159,6 +1215,7 @@ function togglePhonePicker(e) {
     inp.value = '';
     _renderPhoneCountryList('');
     inp.focus();
+    _showDropdownGradient(dd);
   }
 }
 
@@ -1169,6 +1226,7 @@ function closePhonePicker() {
   if (dd)     dd.classList.remove('open');
   if (picker) picker.classList.remove('active');
   if (chev)   chev.innerHTML = icon('chevronDown','icon-xs');
+  _hideDropdownGradient();
 }
 
 function filterPhoneCountries(q) {

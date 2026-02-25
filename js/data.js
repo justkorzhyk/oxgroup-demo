@@ -57,14 +57,20 @@ const RETURNS = [
 ];
 
 const SUPPORT_CASES = [
-  { id:'433590', subject:'Testing',               created:'18.12.2025', lastMsg:'19.12.2025', status:'Open' },
-  { id:'433589', subject:'Missing Goods - Frei...', created:'15.12.2025', lastMsg:'',          status:'Open' },
-  { id:'433588', subject:'Picked Incorrectly',    created:'26.11.2025', lastMsg:'',          status:'Open' },
-  { id:'433587', subject:'Short-Supplied Goods',  created:'22.11.2025', lastMsg:'',          status:'Closed' },
-  { id:'433586', subject:'Warranty',              created:'16.11.2025', lastMsg:'',          status:'Closed' },
-  { id:'433585', subject:'Warranty',              created:'23.10.2025', lastMsg:'',          status:'Closed' },
-  { id:'433594', subject:'Product Issue',         created:'10.10.2025', lastMsg:'',          status:'Closed' },
+  { id:'433590', subject:'Testing',                 created:'18.12.2025', lastMsg:'19.12.2025', status:'Not Started', type:'Customer Error - OX',
+    messages:[
+      { author:'You',     time:'10:48 pm', text:'Testing',  date:'Today' },
+      { author:'OX Team', time:'10:50 pm', text:'Ok',       date:'Today' },
+    ]
+  },
+  { id:'433589', subject:'Missing Goods - Frei...', created:'15.12.2025', lastMsg:'',          status:'Open',        type:'Missing Goods',         messages:[] },
+  { id:'433588', subject:'Picked Incorrectly',      created:'26.11.2025', lastMsg:'',          status:'Open',        type:'Product Issue',          messages:[] },
+  { id:'433587', subject:'Short-Supplied Goods',    created:'22.11.2025', lastMsg:'',          status:'Closed',      type:'Short-Supplied Goods',   messages:[] },
+  { id:'433586', subject:'Warranty',                created:'16.11.2025', lastMsg:'',          status:'Closed',      type:'Warranty',               messages:[] },
+  { id:'433585', subject:'Warranty',                created:'23.10.2025', lastMsg:'',          status:'Closed',      type:'Warranty',               messages:[] },
+  { id:'433594', subject:'Product Issue',           created:'10.10.2025', lastMsg:'',          status:'Closed',      type:'Product Issue',          messages:[] },
 ];
+let currentCase = null;
 
 const CAT_DATA = {
   OX: [
