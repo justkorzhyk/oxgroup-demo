@@ -499,7 +499,34 @@ function addToCart(idx) {
   showToast('Added to cart', 'cart');
 }
 
-function addToWish() { showToast('Added to wishlist', 'heart'); }
+function toggleWish(id) {
+  const idx = FAV_ITEMS.indexOf(id);
+  if (idx === -1) {
+    FAV_ITEMS.push(id);
+    showToast('Added to favourites', 'heartFilled');
+  } else {
+    FAV_ITEMS.splice(idx, 1);
+    showToast('Removed from favourites', 'heart');
+  }
+  renderListing();
+  _updateFavBadge();
+}
+
+function addToWish() {
+  if (!currentProduct) return;
+  const id = currentProduct.id;
+  const idx = FAV_ITEMS.indexOf(id);
+  if (idx === -1) {
+    FAV_ITEMS.push(id);
+    showToast('Added to favourites', 'heartFilled');
+  } else {
+    FAV_ITEMS.splice(idx, 1);
+    showToast('Removed from favourites', 'heart');
+  }
+  // Re-render to update heart icon state
+  if (currentProduct) renderDetail();
+  _updateFavBadge();
+}
 
 // ─── CLEAR CART MODAL ───────────────────────────────
 function openClearModal() { document.getElementById('clear-modal').classList.add('open'); }
@@ -546,20 +573,45 @@ function selectCaseEmail(label) {
 }
 
 // ─── FAVOURITES ──────────────────────────────────────
+function _updateFavBadge() {
+  // Re-render sidebar badge without full page re-render
+  document.querySelectorAll('.acct-tab-badge').forEach(el => {
+    if (el.closest('[data-page="account-favourites"]')) el.textContent = FAV_ITEMS.length;
+  });
+}
+
 function toggleFavStock() {
   favStockOnly = !favStockOnly;
   favPage = 1;
   renderAccountFavourites();
 }
 function setFavPage(n) {
-  const total = Math.ceil((favStockOnly ? PRODUCTS.filter(p => p.inStock) : PRODUCTS).length / FAV_PER_PAGE);
+  const all = favStockOnly
+    ? PRODUCTS.filter(p => FAV_ITEMS.includes(p.id) && p.inStock)
+    : PRODUCTS.filter(p => FAV_ITEMS.includes(p.id));
+  const total = Math.ceil(all.length / FAV_PER_PAGE);
   if (n < 1 || n > total) return;
   favPage = n;
   renderAccountFavourites();
 }
-function removeFromFav(_id) { showToast('Removed from favourites', 'heart'); }
-function addFavToCart(_id) { showToast('Added to cart', 'check'); }
-function clearFavourites() { showToast('Favourites cleared', 'trash'); }
+function removeFromFav(id) {
+  const idx = FAV_ITEMS.indexOf(id);
+  if (idx !== -1) FAV_ITEMS.splice(idx, 1);
+  favPage = 1;
+  renderAccountFavourites();
+  showToast('Removed from favourites', 'heart');
+}
+function addFavToCart(id) {
+  const p = PRODUCTS.find(pr => pr.id === id);
+  if (p) { CART_ITEMS.push({...p, qty: 1}); renderCart(); }
+  showToast('Added to cart', 'cart');
+}
+function clearFavourites() {
+  FAV_ITEMS.length = 0;
+  favPage = 1;
+  renderAccountFavourites();
+  showToast('Favourites cleared', 'trash');
+}
 function copyFavCode(text) {
   navigator.clipboard?.writeText(text).then(() => showToast('Copied to clipboard', 'copy'));
 }

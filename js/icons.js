@@ -3,6 +3,7 @@ const S = 'stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-
 const ICONS = {
   search:       `<svg class="icon" viewBox="0 0 24 24"><path d="M21 21L16.65 16.65M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0z" ${S}/></svg>`,
   heart:        `<svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" ${S}/></svg>`,
+  heartFilled:  `<svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   cart:         `<svg class="icon" viewBox="0 0 24 24"><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" ${S}/><circle cx="9" cy="21" r="1" ${S}/><circle cx="20" cy="21" r="1" ${S}/></svg>`,
   home:         `<svg class="icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" ${S}/><polyline points="9 22 9 12 15 12 15 22" ${S}/></svg>`,
   trash:        `<svg class="icon" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6" ${S}/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" ${S}/></svg>`,

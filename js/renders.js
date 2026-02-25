@@ -339,7 +339,7 @@ function renderListing() {
         ${p.orig > p.price ? `<span class="prod-orig">£${p.orig.toFixed(2)}</span>` : ''}
         <span class="prod-price">£${p.price.toFixed(2)}</span>
       </div>
-      <button class="icon-btn" onclick="event.stopPropagation();addToWish()">${icon('heart')}</button>
+      <button class="icon-btn${FAV_ITEMS.includes(p.id) ? ' fav-active' : ''}" onclick="event.stopPropagation();toggleWish('${p.id}')">${icon(FAV_ITEMS.includes(p.id) ? 'heartFilled' : 'heart')}</button>
       <button class="icon-btn icon-btn--cart" onclick="event.stopPropagation();addToCart(${PRODUCTS.indexOf(p)})">${icon('cart')}</button>
     </div>
   `).join('') || '<div style="padding:40px;text-align:center;color:var(--muted)">No products found in this category.</div>';
@@ -396,7 +396,7 @@ function renderDetail() {
           <div class="qty-btn" onclick="changeQty(1)">+</div>
         </div>
         <button class="btn-atc" onclick="addToCart()">Add to Cart ${icon('cart')}</button>
-        <button class="btn-wish" onclick="addToWish()">${icon('heart')}</button>
+        <button class="btn-wish${FAV_ITEMS.includes(p.id) ? ' active' : ''}" onclick="addToWish()" title="${FAV_ITEMS.includes(p.id) ? 'Remove from favourites' : 'Add to favourites'}">${icon(FAV_ITEMS.includes(p.id) ? 'heartFilled' : 'heart')}</button>
       </div>
       ${p.cat === 'Diamond Tools' ? `
       <div class="size-label">Available Size</div>
@@ -604,7 +604,7 @@ function buildAccSidebar(activePage) {
       ${subtab('account-returns', 'Returns')}
       ${subtab('account-reorder', 'Reorder Items')}
     </div>
-    ${tab('account-favourites', 'Favourites', { badge: PRODUCTS.length })}
+    ${tab('account-favourites', 'Favourites', { badge: FAV_ITEMS.length })}
     <div class="acct-tab${billingOpen ? ' open' : ''}" onclick="toggleAccSection(this)">
       <span>Billing</span>
       <span class="acct-tab-right"><span class="acct-tab-chevron">${icon('chevronDown','icon-sm')}</span></span>
@@ -998,7 +998,8 @@ function renderAccountNewCase() {
 
 function renderAccountFavourites() {
   const el = document.getElementById('page-account-favourites');
-  const all = favStockOnly ? PRODUCTS.filter(p => p.inStock) : PRODUCTS;
+  const favProds = PRODUCTS.filter(p => FAV_ITEMS.includes(p.id));
+  const all = favStockOnly ? favProds.filter(p => p.inStock) : favProds;
   const totalPages = Math.ceil(all.length / FAV_PER_PAGE);
   const items = all.slice((favPage - 1) * FAV_PER_PAGE, favPage * FAV_PER_PAGE);
 

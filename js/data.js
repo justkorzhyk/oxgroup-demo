@@ -458,6 +458,7 @@ let stockOnly = false;
 let selectedFilters = {};
 let pendingFilters  = {};
 let currentProduct = PRODUCTS[2];
+const FAV_ITEMS = []; // array of product IDs
 let favStockOnly = false;
 let favPage = 1;
 const FAV_PER_PAGE = 10;
