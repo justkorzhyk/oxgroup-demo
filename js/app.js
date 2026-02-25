@@ -245,6 +245,88 @@ function quickAddQty(delta) {
   inp.value = Math.max(1, parseInt(inp.value || 1) + delta);
 }
 
+// ─── QUICK ADD SEARCH ────────────────────────────────
+let _qaSelectedProduct = null;
+
+function handleQuickAddSearch(val) {
+  const dd  = document.getElementById('qa-dropdown');
+  const btn = document.getElementById('qa-clear-btn');
+  if (!dd) return;
+
+  if (btn) btn.classList.toggle('visible', val.length > 0);
+  _qaSelectedProduct = null;
+
+  if (!val.trim()) {
+    dd.classList.remove('open');
+    dd.innerHTML = '';
+    _hideDropdownGradient();
+    return;
+  }
+
+  const q       = val.toLowerCase();
+  const escaped = val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const results = PRODUCTS.filter(p =>
+    p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q)
+  ).slice(0, 6);
+
+  if (!results.length) {
+    dd.classList.remove('open');
+    dd.innerHTML = '';
+    _hideDropdownGradient();
+    return;
+  }
+
+  dd.innerHTML = results.map(p => {
+    const src  = p.img?.startsWith('http') ? p.img : '/img/placeholder.svg';
+    const name = p.name.replace(new RegExp(`(${escaped})`, 'gi'),
+      '<strong class="qa-match">$1</strong>');
+    return `<div class="qa-result-row" onclick="qaSelectProduct('${p.id}')">
+      <div class="qa-result-thumb"><img src="${src}" alt=""></div>
+      <span class="qa-result-name">${name}</span>
+      <span class="qa-result-id">${p.id}</span>
+    </div>`;
+  }).join('');
+
+  dd.classList.add('open');
+  _showDropdownGradient(dd);
+}
+
+function qaSelectProduct(id) {
+  const p = PRODUCTS.find(pr => pr.id === id);
+  if (!p) return;
+  _qaSelectedProduct = p;
+  const inp = document.getElementById('qa-input');
+  const dd  = document.getElementById('qa-dropdown');
+  if (inp) inp.value = p.name;
+  if (dd)  { dd.classList.remove('open'); dd.innerHTML = ''; }
+  _hideDropdownGradient();
+}
+
+function clearQaSearch() {
+  const inp = document.getElementById('qa-input');
+  const dd  = document.getElementById('qa-dropdown');
+  const btn = document.getElementById('qa-clear-btn');
+  if (inp) inp.value = '';
+  if (dd)  { dd.classList.remove('open'); dd.innerHTML = ''; }
+  if (btn) btn.classList.remove('visible');
+  _qaSelectedProduct = null;
+  _hideDropdownGradient();
+  inp?.focus();
+}
+
+function addProductFromQuickAdd() {
+  if (!_qaSelectedProduct) { showToast('Select a product first', 'alert'); return; }
+  const qty = Math.max(1, parseInt(document.getElementById('quick-add-qty')?.value || 1));
+  const existing = CART_ITEMS.find(c => c.id === _qaSelectedProduct.id);
+  if (existing) existing.qty += qty;
+  else CART_ITEMS.push({ ..._qaSelectedProduct, qty });
+  renderCart();
+  showToast('Added to cart', 'cart');
+  clearQaSearch();
+  const qtyInp = document.getElementById('quick-add-qty');
+  if (qtyInp) qtyInp.value = 1;
+}
+
 // ─── ADD CSV ─────────────────────────────────────────
 let _csvFile = null;
 let _csvUploading = false;
@@ -1242,12 +1324,16 @@ function selectPhoneCountry(code, flag) {
 }
 
 // ─── INIT ────────────────────────────────────────────
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCategoryDropdown(); closeSearch(); closeAllCustomSelects(); closeAllAttrFilters(); closeDp(); closePhonePicker(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCategoryDropdown(); closeSearch(); closeAllCustomSelects(); closeAllAttrFilters(); closeDp(); closePhonePicker(); clearQaSearch(); } });
 document.addEventListener('click', e => {
   if (!e.target.closest('.cust-select')) closeAllCustomSelects();
   if (!e.target.closest('.attr-filter')) closeAllAttrFilters();
   if (!e.target.closest('.dp-field-wrap')) closeDp();
   if (!e.target.closest('#phonePickerWrap')) closePhonePicker();
+  if (!e.target.closest('#qa-search-wrap')) {
+    const dd = document.getElementById('qa-dropdown');
+    if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; _hideDropdownGradient(); }
+  }
 });
 window.addEventListener('popstate', e => {
   navigate(e.state?.page || pageFromPath(location.pathname), { skipHistory: true });

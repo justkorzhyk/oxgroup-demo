@@ -533,16 +533,20 @@
           <!-- Quick Add row -->
           <div class="quick-add-sub-label">Quick Add</div>
           <div class="quick-add-row">
-            <div class="quick-search-wrap">
+            <div class="quick-search-wrap" id="qa-search-wrap">
               <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><path d="M21 21L16.65 16.65M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <input type="text" placeholder="Search by name, product ID, or keyword">
+              <input type="text" id="qa-input" placeholder="Search by name, product ID, or keyword" oninput="handleQuickAddSearch(this.value)" autocomplete="off">
+              <button class="qa-clear-btn" id="qa-clear-btn" onclick="clearQaSearch()" type="button">
+                <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="qa-dropdown" id="qa-dropdown"></div>
             </div>
             <div class="qty-control" style="flex-shrink:0">
               <div class="qty-btn" onclick="quickAddQty(-1)">−</div>
               <input class="qty-input" id="quick-add-qty" value="1" type="number" min="1" style="width:40px">
               <div class="qty-btn" onclick="quickAddQty(1)">+</div>
             </div>
-            <button class="btn-add-product">Add Product</button>
+            <button class="btn-add-product" onclick="addProductFromQuickAdd()">Add Product</button>
           </div>
           <!-- Add CSV -->
           <div class="quick-add-sub-label" style="margin-top:20px">Add CSV</div>
