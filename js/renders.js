@@ -2,10 +2,13 @@
 function buildFAQ(containerId, faqs) {
   const el = document.getElementById(containerId);
   if (!el) return;
-  el.innerHTML = faqs.map(f => `
-    <div class="acc-item">
-      <div class="acc-header" onclick="toggleAcc(this)">${f.q} <span class="acc-toggle">+</span></div>
-      <div class="acc-body">${f.a}</div>
+  el.innerHTML = faqs.map((f, i) => `
+    <div class="home-faq-item ${i === 0 ? 'open' : ''}" onclick="toggleHomeFaq(this)">
+      <div class="home-faq-header">
+        <span>${f.q}</span>
+        <span class="home-faq-toggle">${i === 0 ? icon('minus') : icon('plus')}</span>
+      </div>
+      <div class="home-faq-body" ${i === 0 ? 'style="display:block"' : ''}>${f.a}</div>
     </div>
   `).join('');
 }
@@ -15,7 +18,7 @@ function buildCartFAQ(containerId) {
   if (!el) return;
   el.innerHTML = CART_FAQS.map((f, i) => `
     <div class="acc-item">
-      <div class="acc-header" onclick="toggleAcc(this)" style="font-size:13px">${f.q} <span class="acc-toggle">${i === 0 ? '−' : '+'}</span></div>
+      <div class="acc-header" onclick="toggleAcc(this)">${f.q} <span class="acc-toggle">${i === 0 ? '−' : '+'}</span></div>
       <div class="acc-body" ${i === 0 ? 'style="display:block"' : ''}>${f.a}</div>
     </div>
   `).join('');
@@ -27,13 +30,20 @@ function renderHome() {
   const promoRows = PRODUCTS.slice(0, 8);
   const promoEl = document.getElementById('home-promo-rows');
   if (promoEl) {
-    promoEl.innerHTML = promoRows.map(p => `
-      <div class="home-promo-row" onclick="openProduct(${PRODUCTS.indexOf(p)})">
-        <div class="home-promo-thumb" data-product-img="${p.id}" style="display:flex;align-items:center;justify-content:center;color:#868686"><img src="${p.img?.startsWith('http') ? p.img : '/img/placeholder.svg'}" alt="" style="width:100%;height:100%;object-fit:contain"></div>
+    promoEl.innerHTML = promoRows.map((p, rowIdx) => {
+      const idx = PRODUCTS.indexOf(p);
+      const isFav = FAV_ITEMS.includes(p.id);
+      const cartQty = CART_ITEMS.find(c => c.id === p.id)?.qty || 0;
+      const stockDotClass = p.stock <= 0 ? 'red' : p.stock <= 10 ? 'low' : '';
+      return `
+      <div class="home-promo-row${rowIdx === 0 ? ' home-promo-row--featured' : ''}" onclick="openProduct(${idx})">
+        <div class="home-promo-thumb"><img src="${Math.random() > 0.5 && p.img?.startsWith('http') ? p.img : '/Logo-Placeholder-for-Product-Image.png'}" onerror="this.onerror=null;this.src='/Logo-Placeholder-for-Product-Image.png'" alt=""></div>
         <div class="home-promo-info">
           <div class="home-promo-meta">
+            <span style="color:#868686;font-size:13px">${icon('copy', 'icon-sm')}</span>
             <span class="home-promo-sku">${p.id}</span>
-            <div class="home-promo-stock-dot ${p.stock <= 10 ? 'low' : ''}"></div>
+            <div class="home-promo-stock-dot ${stockDotClass}"></div>
+
           </div>
           <div class="home-promo-name">${p.name}</div>
         </div>
@@ -42,19 +52,22 @@ function renderHome() {
           <div class="home-promo-price">£${p.price.toFixed(2)}</div>
         </div>
         <div class="home-promo-actions">
-          <button class="home-promo-heart${FAV_ITEMS.includes(p.id) ? ' fav-active' : ''}" onclick="event.stopPropagation();toggleWish('${p.id}')" title="${FAV_ITEMS.includes(p.id) ? 'Remove from favourites' : 'Add to favourites'}">${icon(FAV_ITEMS.includes(p.id) ? 'heartFilled' : 'heart')}</button>
-          <button class="home-promo-cart" onclick="event.stopPropagation();addToCart(${PRODUCTS.indexOf(p)})" title="Add to cart">${icon('cart')}</button>
+          <button class="home-promo-heart${isFav ? ' fav-active' : ''}" onclick="event.stopPropagation();toggleWish('${p.id}')" title="${isFav ? 'Remove from favourites' : 'Add to favourites'}">${icon(isFav ? 'heartFilled' : 'heart')}</button>
+          <div class="home-promo-cart-wrap">
+            <button class="home-promo-cart" onclick="event.stopPropagation();addToCart(${idx})" title="Add to cart">${icon('cart')}</button>
+            ${cartQty > 0 ? `<span class="home-promo-cart-badge">${cartQty}</span>` : ''}
+          </div>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   }
 
   // FAQ accordion (home page)
   const faqEl = document.getElementById('home-faq-accordion');
   if (faqEl) {
     faqEl.innerHTML = FAQS.map((f, i) => `
-      <div class="home-faq-item ${i === 0 ? 'open' : ''}">
-        <div class="home-faq-header" onclick="toggleHomeFaq(this)">
+      <div class="home-faq-item ${i === 0 ? 'open' : ''}" onclick="toggleHomeFaq(this)">
+        <div class="home-faq-header">
           <span>${f.q}</span>
           <span class="home-faq-toggle">${i === 0 ? icon('minus') : icon('plus')}</span>
         </div>
@@ -245,7 +258,7 @@ function renderListing() {
       // Brand root: Level2 category cards
       tabsEl.innerHTML = contextCats.map((c, i) => `
         <div class="cat-tab" onclick="selectCat(${i})">
-          <div class="cat-tab-icon">${icon(CAT_ICON_MAP?.[c] || 'tag', 'icon-xl')}</div>
+          <div class="cat-tab-icon">${CAT_ICON_MAP?.[c] ? icon(CAT_ICON_MAP[c], 'icon-xl') : `<img src="/Logo-Placeholder-for-Product-Image.png" style="width:100%;height:100%;object-fit:contain">`}</div>
           <span class="cat-tab-label">${c}</span>
         </div>
       `).join('');
@@ -256,7 +269,7 @@ function renderListing() {
       )].sort();
       tabsEl.innerHTML = subCats.map(s => `
         <div class="cat-tab" onclick="selectSubCat('${s.replace(/'/g, "\\'")}')">
-          <div class="cat-tab-icon">${icon(CAT_ICON_MAP?.[s] || 'tag', 'icon-xl')}</div>
+          <div class="cat-tab-icon">${CAT_ICON_MAP?.[s] ? icon(CAT_ICON_MAP[s], 'icon-xl') : `<img src="/Logo-Placeholder-for-Product-Image.png" style="width:100%;height:100%;object-fit:contain">`}</div>
           <span class="cat-tab-label">${s}</span>
         </div>`).join('');
     }
@@ -326,7 +339,7 @@ function renderListing() {
 
   document.getElementById('product-list').innerHTML = pageProds.map(p => `
     <div class="product-row" onclick="openProduct(${PRODUCTS.indexOf(p)})">
-      <div class="prod-img" data-product-img="${p.id}" style="color:#868686"><img src="${p.img?.startsWith('http') ? p.img : '/img/placeholder.svg'}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px"></div>
+      <div class="prod-img" data-product-img="${p.id}" style="color:#868686"><img src="${p.img?.startsWith('http') ? p.img : '/Logo-Placeholder-for-Product-Image.png'}" onerror="this.onerror=null;this.src='/Logo-Placeholder-for-Product-Image.png'" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px"></div>
       <div>
         <div class="prod-sku-line">
           <span class="sku">${p.id}</span>
@@ -339,8 +352,14 @@ function renderListing() {
         ${p.orig > p.price ? `<span class="prod-orig">£${p.orig.toFixed(2)}</span>` : ''}
         <span class="prod-price">£${p.price.toFixed(2)}</span>
       </div>
-      <button class="icon-btn${FAV_ITEMS.includes(p.id) ? ' fav-active' : ''}" onclick="event.stopPropagation();toggleWish('${p.id}')">${icon(FAV_ITEMS.includes(p.id) ? 'heartFilled' : 'heart')}</button>
-      <button class="icon-btn icon-btn--cart" onclick="event.stopPropagation();addToCart(${PRODUCTS.indexOf(p)})">${icon('cart')}</button>
+      ${(() => { const _idx = PRODUCTS.indexOf(p); const _fav = FAV_ITEMS.includes(p.id); const _qty = CART_ITEMS.find(c => c.id === p.id)?.qty || 0; return `
+      <div class="home-promo-actions">
+        <button class="home-promo-heart${_fav ? ' fav-active' : ''}" onclick="event.stopPropagation();toggleWish('${p.id}')" title="${_fav ? 'Remove from favourites' : 'Add to favourites'}">${icon(_fav ? 'heartFilled' : 'heart')}</button>
+        <div class="home-promo-cart-wrap">
+          <button class="home-promo-cart" onclick="event.stopPropagation();addToCart(${_idx})" title="Add to cart">${icon('cart')}</button>
+          ${_qty > 0 ? `<span class="home-promo-cart-badge">${_qty}</span>` : ''}
+        </div>
+      </div>`; })()}
     </div>
   `).join('') || '<div style="padding:40px;text-align:center;color:var(--muted)">No products found in this category.</div>';
 }
@@ -369,7 +388,7 @@ function renderDetail() {
     <div>
       <div class="gallery-main">
         <div id="gallery-main-view" class="gallery-main-view" data-product-img="${p.id}">
-          <img src="${_galleryImages[0] || '/img/placeholder.svg'}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain">
+          <img src="${_galleryImages[0] || '/Logo-Placeholder-for-Product-Image.png'}" onerror="this.onerror=null;this.src='/Logo-Placeholder-for-Product-Image.png'" alt="${p.name}" style="width:100%;height:100%;object-fit:contain">
         </div>
         <div class="gallery-nav prev" onclick="galleryNav(-1)">${icon('chevronLeft')}</div>
         <div class="gallery-nav next" onclick="galleryNav(1)">${icon('chevronRight')}</div>
@@ -383,12 +402,13 @@ function renderDetail() {
     </div>
     <div>
       <div class="prod-id-line">
-        <span style="display:flex;align-items:center;gap:4px">${icon('copy', 'icon-sm')} PRODUCT ID: <strong>${p.id}</strong></span>
-        <span style="display:flex;align-items:center;gap:4px">${icon('package', 'icon-sm')} BARCODE: 5060135477806</span>
+        <span style="display:flex;align-items:center;"> PRODUCT ID: <strong>${p.id}</strong> ${icon('copy', 'icon-sm')}</span>
+        <span style="display:flex;align-items:center;"> BARCODE: <strong>5060135477806</strong> ${icon('copy', 'icon-sm')}</span>
+        
       </div>
       <h1 class="prod-detail-title">${p.name}</h1>
-      <div class="avail">● ${p.stock} pcs available</div>
-      <div class="detail-price">£${p.price.toFixed(2)}</div>
+    
+      <div class="detail-price">£${p.price.toFixed(2)} <div class="avail"></div></div>
       <div class="add-to-cart-row">
         <div class="qty-control">
           <div class="qty-btn" onclick="changeQty(-1)">−</div>
@@ -396,7 +416,7 @@ function renderDetail() {
           <div class="qty-btn" onclick="changeQty(1)">+</div>
         </div>
         <button class="btn-atc" onclick="addToCart()">Add to Cart ${icon('cart')}</button>
-        <button class="btn-wish${FAV_ITEMS.includes(p.id) ? ' active' : ''}" onclick="addToWish()" title="${FAV_ITEMS.includes(p.id) ? 'Remove from favourites' : 'Add to favourites'}">${icon(FAV_ITEMS.includes(p.id) ? 'heartFilled' : 'heart')}</button>
+        <button class="home-promo-heart${FAV_ITEMS.includes(p.id) ? ' fav-active' : ''}" onclick="addToWish()" title="${FAV_ITEMS.includes(p.id) ? 'Remove from favourites' : 'Add to favourites'}">${icon(FAV_ITEMS.includes(p.id) ? 'heartFilled' : 'heart')}</button>
       </div>
       ${p.cat === 'Diamond Tools' ? `
       <div class="size-label">Available Size</div>
@@ -406,31 +426,44 @@ function renderDetail() {
       <div class="detail-specs">
         <div class="spec-row"><span class="spec-label">Order Time</span><span class="spec-val">Order before 12pm despatched same day</span></div>
         <div class="spec-row"><span class="spec-label">Product Guarantee</span><span class="spec-val">No hassle guarantee – no bull. Just OX!</span></div>
-        <div class="spec-row"><span class="spec-label">Product Specifications</span><span class="spec-val"><a href="#">Download PDF ↓</a></span></div>
+        <div class="spec-row"><span class="spec-label">Product Specifications</span><span class="spec-val"><a href="#">Download PDF</a></span></div>
       </div>
-      <div style="border-top:1px solid var(--border);padding-top:16px">
+      <div >
         <h3 class="desc-title">Description</h3>
         <div class="desc-text">${p.desc || `${p.name} — a quality ${p.cat} product by ${p.brand || 'OX'}.`}</div>
       </div>
     </div>
   `;
 
+
+  buildFAQ('detail-faq', FAQS.slice(0, 4));
   // Related products
   const related = PRODUCTS.filter(r => r.cat === p.cat && r.id !== p.id).slice(0, 5);
-  document.getElementById('related-products').innerHTML = related.map(r => `
-    <div class="product-row" onclick="openProduct(${PRODUCTS.indexOf(r)})">
-      <div class="prod-img" style="color:#868686"><img src="${r.img?.startsWith('http') ? r.img : '/img/placeholder.svg'}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px"></div>
+  document.getElementById('related-products').innerHTML = related.map(r => {
+    const _idx = PRODUCTS.indexOf(r);
+    const _fav = FAV_ITEMS.includes(r.id);
+    const _qty = CART_ITEMS.find(c => c.id === r.id)?.qty || 0;
+    return `
+    <div class="product-row" onclick="openProduct(${_idx})">
+      <div class="prod-img"><img src="${r.img?.startsWith('http') ? r.img : '/Logo-Placeholder-for-Product-Image.png'}" onerror="this.onerror=null;this.src='/Logo-Placeholder-for-Product-Image.png'" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px"></div>
       <div>
         <div class="prod-sku-line"><span class="sku">${r.id}</span><div class="stock-dot ${r.stock > 10 ? 'green' : r.stock > 0 ? 'orange' : 'red'}"></div>${!r.inStock ? '<span class="out-badge">Out of Stock</span>' : ''}</div>
         <div class="prod-name">${r.name}</div>
       </div>
-      <div class="prod-price">£${r.price.toFixed(2)}</div>
-      <button class="icon-btn${FAV_ITEMS.includes(r.id) ? ' fav-active' : ''}" onclick="event.stopPropagation();toggleWish('${r.id}')">${icon(FAV_ITEMS.includes(r.id) ? 'heartFilled' : 'heart')}</button>
-      <button class="icon-btn icon-btn--cart" onclick="event.stopPropagation();addToCart(${PRODUCTS.indexOf(r)})">${icon('cart')}</button>
-    </div>
-  `).join('');
+      <div class="prod-price-wrap">
+        ${r.orig > r.price ? `<span class="prod-orig">£${r.orig.toFixed(2)}</span>` : ''}
+        <span class="prod-price">£${r.price.toFixed(2)}</span>
+      </div>
+      <div class="home-promo-actions">
+        <button class="home-promo-heart${_fav ? ' fav-active' : ''}" onclick="event.stopPropagation();toggleWish('${r.id}')" title="${_fav ? 'Remove from favourites' : 'Add to favourites'}">${icon(_fav ? 'heartFilled' : 'heart')}</button>
+        <div class="home-promo-cart-wrap">
+          <button class="home-promo-cart" onclick="event.stopPropagation();addToCart(${_idx})" title="Add to cart">${icon('cart')}</button>
+          ${_qty > 0 ? `<span class="home-promo-cart-badge">${_qty}</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 
-  buildFAQ('detail-faq', FAQS.slice(0, 4));
 }
 
 // ─── CART ───────────────────────────────────────────
@@ -451,20 +484,20 @@ function renderCart() {
   if (CART_ITEMS.length === 0) {
     document.getElementById('cart-table').innerHTML = `
       <div class="cart-empty-state">
-        <div style="color:var(--muted)">${icon('cart', 'icon-xl')}</div>
-        <h2 class="cart-empty-title">There Is No Products</h2>
+        <div class="cart-empty-icon">${icon('cart', 'icon-xl')}</div>
+        <h3>There Is No Products</h3>
         <div class="cart-empty-sub">Add products to see products in cart. Explore our product list</div>
         <div class="cart-empty-btns">
           <button class="btn-explore" onclick="navigate('listing')">Explore Products</button>
           <button class="btn-csv">Upload CSV</button>
         </div>
-        <div style="font-size:13px;color:var(--muted);margin-top:12px">Have any questions? <a href="#" style="color:var(--blue)">Support request</a></div>
+        <div style="font-size:14px; color: #A4A4A4;">Have any questions? <a href="#" style="color: #0BA5EC;">Support request</a></div>
       </div>
     `;
   } else {
     document.getElementById('cart-table').innerHTML = CART_ITEMS.map((item, i) => `
       <div class="cart-row">
-        <div class="prod-img" style="color:#868686"><img src="${item.img?.startsWith('http') ? item.img : '/img/placeholder.svg'}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px"></div>
+        <div class="prod-img" style="color:#868686"><img src="${item.img?.startsWith('http') ? item.img : '/Logo-Placeholder-for-Product-Image.png'}" onerror="this.onerror=null;this.src='/Logo-Placeholder-for-Product-Image.png'" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px"></div>
         <div>
           <div class="prod-sku-line"><span class="sku">${item.id}</span><div class="stock-dot ${item.stock > 10 ? 'green' : item.stock > 0 ? 'orange' : 'red'}"></div>${!item.inStock ? '<span class="out-badge">Out of Stock</span>' : ''}</div>
           <div class="prod-name">${item.name}</div>
@@ -478,8 +511,7 @@ function renderCart() {
           <input class="qty-input" id="cart-qty-${i}" value="${item.qty}" type="number" min="1">
           <div class="qty-btn" onclick="cartQty(${i},1)">${icon('plus')}</div>
         </div>
-        <button class="icon-btn">${icon('heart')}</button>
-        <button class="icon-btn" onclick="removeCartItem(${i})" style="color:var(--red);border-color:var(--red)">${icon('trash')}</button>
+
       </div>
     `).join('');
   }
@@ -489,39 +521,33 @@ function renderCart() {
 }
 
 // ─── CHECKOUT RENDERS ────────────────────────────────
-function renderCheckoutShipping() {
-  buildCartFAQ('checkout-shipping-faq');
-}
-
-function renderCheckoutPayment() {
-  buildCartFAQ('checkout-payment-faq');
-}
+function renderCheckoutShipping() { /* FAQ is hardcoded in HTML */ }
+function renderCheckoutPayment()  { /* FAQ is hardcoded in HTML */ }
 
 function renderCheckoutReview() {
   const itemsEl = document.getElementById('checkout-review-items');
   if (itemsEl) {
     itemsEl.innerHTML = CART_ITEMS.map(item => `
-      <div class="review-item-row">
-        <div class="prod-img" style="color:#868686"><img src="${item.img?.startsWith('http') ? item.img : '/img/placeholder.svg'}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px"></div>
+      <div class="co-review-item">
+        <img class="co-review-img" src="${item.img?.startsWith('http') ? item.img : '/Logo-Placeholder-for-Product-Image.png'}" onerror="this.onerror=null;this.src='/Logo-Placeholder-for-Product-Image.png'" alt="">
         <div>
-          <div class="prod-sku-line"><span class="sku">${item.id}</span><div class="stock-dot ${item.stock > 10 ? 'green' : item.stock > 0 ? 'orange' : 'red'}"></div>${!item.inStock ? '<span class="out-badge">Out of Stock</span>' : ''}</div>
-          <div class="prod-name">${item.name}</div>
+          <div class="co-review-sku">${item.id}</div>
+          <div class="co-review-name">${item.name}</div>
         </div>
-        <div class="review-qty">${item.qty}</div>
-        <div class="review-price-col">
-          <div class="cart-orig">${item.lineOrig}</div>
-          <div class="cart-price">${item.linePrice}</div>
+        <div class="co-review-qty">${item.qty}</div>
+        <div class="co-review-prices">
+          ${item.orig > item.price ? `<div class="co-review-orig">${_fmtGBP(item.orig * item.qty)}</div>` : ''}
+          <div class="co-review-price">${_fmtGBP(item.price * item.qty)}</div>
         </div>
       </div>
     `).join('');
   }
-  // Show PO number if filled in
+  // Carry over PO number from payment step
   const poInput = document.getElementById('po-number');
   const poDisplay = document.getElementById('review-po-display');
   if (poInput && poDisplay && poInput.value) {
     poDisplay.textContent = poInput.value;
   }
-  buildCartFAQ('checkout-review-faq');
 }
 
 // ─── DATE RANGE PICKER ───────────────────────────────
@@ -659,7 +685,7 @@ function buildAccFooter() {
     </div>
     <div class="footer-bottom">
       <div class="footer-logo-text"><span>OX</span> GROUP</div>
-      <div class="footer-bottom-links"><a href="/waitlist">Terms &amp; Conditions</a><a href="/waitlist">Privacy Policy</a><a href="/waitlist">Cookies Settings</a><span>© 2025 OX. All rights reserved.</span></div>
+      <div class="footer-bottom-links"><a href="http://waitlist.localhost">Terms &amp; Conditions</a><a href="http://waitlist.localhost">Privacy Policy</a><a href="http://waitlist.localhost">Cookies Settings</a><span>© 2025 OX. All rights reserved.</span></div>
     </div>
   </footer>`;
 }
@@ -1126,7 +1152,7 @@ function renderAccountFavourites() {
     return `
       <div class="fav-row">
         <div class="fav-img-cell">
-          <img src="${p.img?.startsWith('http') ? p.img : '/img/placeholder.svg'}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px">
+          <img src="${p.img?.startsWith('http') ? p.img : '/Logo-Placeholder-for-Product-Image.png'}" onerror="this.onerror=null;this.src='/Logo-Placeholder-for-Product-Image.png'" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px">
         </div>
         <div class="fav-info">
           <div class="fav-meta">

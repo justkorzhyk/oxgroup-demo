@@ -1,3 +1,23 @@
+// ─── PASSWORD GATE ───────────────────────────────────
+function checkGatePassword() {
+  const input = document.getElementById('gate-input');
+  const errorEl = document.getElementById('gate-error');
+  if (input.value === 'oxgroup2026') {
+    sessionStorage.setItem('ox-auth', '1');
+    const gate = document.getElementById('password-gate');
+    gate.classList.add('unlocked');
+    setTimeout(() => gate.style.display = 'none', 300);
+  } else {
+    input.classList.add('gate-error');
+    errorEl.textContent = 'Incorrect password. Please try again.';
+    input.value = '';
+    setTimeout(() => {
+      input.classList.remove('gate-error');
+      errorEl.textContent = '';
+    }, 2000);
+  }
+}
+
 // ─── NAVIGATION ─────────────────────────────────────
 const CHECKOUT_PAGES = ['checkout-shipping', 'checkout-payment', 'checkout-review', 'checkout-thankyou'];
 const ACCOUNT_PAGES  = ['account-overview', 'account-profile', 'account-email', 'account-address', 'account-password', 'account-cases', 'account-newcase', 'account-case-detail', 'account-favourites', 'account-purchases', 'account-returns', 'account-reorder', 'account-invoices', 'account-invoice-detail', 'account-transaction-history', 'account-tx-detail', 'account-print-statement'];
@@ -88,7 +108,7 @@ function galleryGoTo(idx) {
   _galleryIdx = idx;
   const view = document.getElementById('gallery-main-view');
   if (view) {
-    const img = _galleryImages[idx] || currentProduct?.img || '/img/placeholder.svg';
+    const img = _galleryImages[idx] || currentProduct?.img || '/Logo-Placeholder-for-Product-Image.png';
     view.innerHTML = `<img src="${img}" alt="" style="width:100%;height:100%;object-fit:contain">`;
   }
   document.querySelectorAll('.gallery-thumb').forEach((t, i) => {
@@ -204,8 +224,7 @@ function toggleAcc(el) {
   if (toggle) toggle.textContent = isOpen ? '+' : '−';
 }
 
-function toggleHomeFaq(header) {
-  const item = header.parentElement;
+function toggleHomeFaq(item) {
   const body = item.querySelector('.home-faq-body');
   const toggle = item.querySelector('.home-faq-toggle');
   const isOpen = item.classList.contains('open');
@@ -277,7 +296,7 @@ function handleQuickAddSearch(val) {
   }
 
   dd.innerHTML = results.map(p => {
-    const src  = p.img?.startsWith('http') ? p.img : '/img/placeholder.svg';
+    const src  = p.img?.startsWith('http') ? p.img : '/Logo-Placeholder-for-Product-Image.png';
     const name = p.name.replace(new RegExp(`(${escaped})`, 'gi'),
       '<strong class="qa-match">$1</strong>');
     return `<div class="qa-result-row" onclick="qaSelectProduct('${p.id}')">
@@ -598,8 +617,9 @@ function toggleWish(id) {
     FAV_ITEMS.splice(idx, 1);
     showToast('Removed from favourites', 'heart');
   }
-  if (document.getElementById('home-promo-rows')) renderHome();
-  else renderListing();
+  const _activePage = document.querySelector('.page.active')?.id;
+  if (_activePage === 'page-home') renderHome();
+  else if (_activePage === 'page-listing') renderListing();
   _updateFavBadge();
 }
 
@@ -627,7 +647,37 @@ function closeClearModal() { document.getElementById('clear-modal').classList.re
 function selectShipping(el, type) {
   document.querySelectorAll('.ship-option').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
+  const fields = document.getElementById('third-party-fields');
+  if (fields) fields.style.display = type === 'third-party' ? 'block' : 'none';
 }
+
+function toggleCarrierDropdown() {
+  document.getElementById('carrier-dropdown')?.classList.toggle('open');
+}
+
+function selectCarrier(name) {
+  const dd = document.getElementById('carrier-dropdown');
+  if (!dd) return;
+  dd.querySelector('#carrier-selected-label').textContent = name;
+  dd.classList.remove('open');
+  // Reset search
+  const searchInput = dd.querySelector('.carrier-dd-search input');
+  if (searchInput) { searchInput.value = ''; filterCarriers(''); }
+}
+
+function filterCarriers(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('.carrier-dd-opt').forEach(opt => {
+    opt.classList.toggle('hidden', q.length > 0 && !opt.textContent.toLowerCase().includes(q));
+  });
+}
+
+// Close carrier dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.carrier-dd')) {
+    document.querySelectorAll('.carrier-dd.open').forEach(dd => dd.classList.remove('open'));
+  }
+});
 
 function placeOrder() {
   showToast('Order placed successfully!', 'check');
@@ -1013,12 +1063,12 @@ function renderSearchResults(query) {
   ).slice(0, 5);
 
   const matchedCats = [];
-  Object.values(CAT_DATA).forEach(brandCats => {
+  Object.entries(CAT_DATA).forEach(([brand, brandCats]) => {
     brandCats.forEach(cat => {
       cat.subs.forEach(sub => {
         sub.items.forEach(item => {
           if (item.toLowerCase().includes(q) && matchedCats.length < 4) {
-            matchedCats.push({ name: item, brand: 'OX' });
+            matchedCats.push({ name: item, brand, catName: cat.name, subHeading: sub.heading });
           }
         });
       });
@@ -1033,7 +1083,7 @@ function renderSearchResults(query) {
 
   document.getElementById('search-products').innerHTML = matchedProducts.map(p =>
     `<div class="search-product-row" onclick="openProductFromSearch('${p.id}');closeSearch()">
-       <div class="search-product-img">${icon(p.img, 'icon-sm')}</div>
+       <div class="search-product-img">${p.img?.startsWith('http') ? `<img src="${p.img}" alt="">` : icon('image', 'icon-sm')}</div>
        <span class="search-product-name">${highlight(p.name)}</span>
        <span class="search-product-id">${p.id}</span>
      </div>`
@@ -1043,7 +1093,7 @@ function renderSearchResults(query) {
   document.getElementById('search-divider').style.display = showDivider ? 'block' : 'none';
 
   document.getElementById('search-cats').innerHTML = matchedCats.map(c =>
-    `<div class="search-cat-row" onclick="navigate('listing');closeSearch()">
+    `<div class="search-cat-row" onclick="navigateToCatSub('${c.brand}','${c.catName}','${c.subHeading}','${c.name}');closeSearch()">
        ${icon('dotsGrid', 'icon-sm')}
        <span class="search-cat-name">${highlight(c.name)}</span>
        <span class="search-cat-brand">${c.brand}</span>

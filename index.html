@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OX Group – B2B Trade Store</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
@@ -12,11 +13,31 @@
     var ua = navigator.userAgent;
     var isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
     var isSmall  = window.innerWidth <= 1024;
-    if (isMobile || isSmall) window.location.replace('/waitlist/');
+    if (isMobile || isSmall) window.location.replace('http://waitlist.localhost/');
   })();
 </script>
 </head>
 <body>
+
+<!-- ─── PASSWORD GATE ─── -->
+<div id="password-gate">
+  <div class="gate-card">
+    <div class="gate-logo"><span>OX</span> GROUP</div>
+    <div class="gate-subtitle">Demo Access</div>
+    <div class="gate-field">
+      <input class="gate-input" id="gate-input" type="password" placeholder="Enter password"
+        onkeydown="if(event.key==='Enter')checkGatePassword()">
+      <div class="gate-error-msg" id="gate-error"></div>
+    </div>
+    <button class="gate-btn" onclick="checkGatePassword()">Enter →</button>
+  </div>
+</div>
+<script>
+  // Instantly hide gate if already authenticated this session
+  if (sessionStorage.getItem('ox-auth') === '1') {
+    document.getElementById('password-gate').style.display = 'none';
+  }
+</script>
 
 <!-- ─── NAV ─── -->
 <nav>
@@ -61,6 +82,7 @@
       <div class="nav-icon-btn" onclick="navigate('account-overview')" title="Account Settings" style="cursor:pointer;padding:8px">
         <div class="nav-avatar">OR</div>
       </div>
+      <div class="nav-divider"></div>
       <button class="nav-quick" onclick="navigateCartQuickOrder()">Quick Order</button>
       <div class="nav-divider"></div>
       <div class="nav-icon-btn" onclick="navigate('cart')" style="cursor:pointer">
@@ -104,12 +126,18 @@
       <img src="TRACER.png" alt="TRACER">
       <div class="home-banner-overlay"></div>
     </div>
-    <button class="home-banner-arrow prev" onclick="bannerPrev(event)">&#8592;</button>
-    <button class="home-banner-arrow next" onclick="bannerNext(event)">&#8594;</button>
-    <div class="home-banner-dots">
-      <span class="home-banner-dot active" onclick="bannerGoTo(0,event)"></span>
-      <span class="home-banner-dot" onclick="bannerGoTo(1,event)"></span>
-      <span class="home-banner-dot" onclick="bannerGoTo(2,event)"></span>
+    <div class="home-banner-controls">
+      <div class="home-banner-slider">
+        <span class="home-banner-dot active" onclick="bannerGoTo(0,event)"></span>
+        <span class="home-banner-dot" onclick="bannerGoTo(1,event)"></span>
+        <span class="home-banner-dot" onclick="bannerGoTo(2,event)"></span>
+      </div>
+      <button class="home-banner-arrow-btn" onclick="bannerPrev(event)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="home-banner-arrow-btn" onclick="bannerNext(event)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
   </section>
 
@@ -203,7 +231,7 @@
   <!-- ── Promotions ── -->
   <section class="home-promo-section">
     <div class="home-promo-header">
-      <h2>Promotions</h2>
+      <h2 class="home-promo-heading">Promotions</h2>
       <button class="home-view-all" onclick="navigate('listing')">
         View All
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -214,7 +242,26 @@
     </div>
   </section>
 
- 
+  <!-- ── New Products Banner ── -->
+  <section class="home-new-products-banner">
+    <svg class="home-new-products-bg" width="1282" height="384" viewBox="0 0 1282 384" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path opacity="0.12" d="M282.664 186.019L-380.987 -122.3L-134.047 448.091L-844 1084H-299.96L51.1579 791.096L186.203 1084L919.307 1068.58L572.047 317.055L1282 -315H749.535L417.71 -41.3664L282.664 -315H-465.873L282.664 186.019Z" fill="#9DDBF7"/>
+    </svg>
+      <div class="home-new-products-content">
+            <div class="home-new-products-text">
+              <h2 class="home-new-products-heading">NEW PRODUCTS</h2>
+              <p class="home-new-products-desc">Explore the latest additions to our catalogue, featuring innovative tools and equipment designed for professional performance and reliability</p>
+            </div>
+            <div class="home-new-products-btns">
+              <button class="hnp-btn-primary" onclick="selectedSegment='Promotions';selectedCat=-1;selectedSubCat=null;navigate('listing')">View Products</button>
+              <button class="hnp-btn-secondary" onclick="window.location.href='http://waitlist.localhost'">All Catalogues</button>
+            </div>
+          </div>
+          <div class="home-new-products-img-wrap">
+            <img class="home-new-products-img" src="https://www.figma.com/api/mcp/asset/ec9dc5df-76b1-45c3-8033-f20d8a5e6451" alt="Product Catalogue">
+          </div>
+
+  </section>
 
   <!-- ── Frequently Asked Questions ── -->
   <section class="home-faq-section">
@@ -222,7 +269,7 @@
       <div class="home-faq-left">
         <h2>Frequently Asked Questions</h2>
         <div class="home-faq-sub">
-          Can't find the answer you're looking for? Visit our <a href="/waitlist">FAQs page</a> for more information or <a href="/waitlist">Contact us</a>.
+          Can't find the answer you're looking for? Visit our <a href="http://waitlist.localhost">FAQs page</a> for more information or <a href="http://waitlist.localhost">Contact us</a>.
         </div>
       </div>
       <div class="home-faq-accordion" id="home-faq-accordion">
@@ -236,11 +283,11 @@
     <div class="home-blog-header">
       <div class="home-blog-header-left">
         <h2>News &amp; TIPS</h2>
-        <div class="home-section-sub">Stay up to date with the latest industry news. Visit our <a href="/waitlist" style="color:#0ba5ec">Blog page</a> for more.</div>
+        <div class="home-section-sub">Explore product updates, usage tips, expert insights and step-by-step tutorials on our <a href="http://waitlist.localhost" style="color:#0ba5ec">Blog page</a> </div>
       </div>
       <div class="home-blog-arrows">
-        <button class="home-blog-arrow-btn" onclick="window.location.href='/waitlist'">&#8592;</button>
-        <button class="home-blog-arrow-btn" onclick="window.location.href='/waitlist'">&#8594;</button>
+        <button class="home-blog-arrow-btn" onclick="window.location.href='http://waitlist.localhost'">&#8592;</button>
+        <button class="home-blog-arrow-btn" onclick="window.location.href='http://waitlist.localhost'">&#8594;</button>
       </div>
     </div>
     <div class="home-blog-cards">
@@ -253,9 +300,9 @@
             <span class="home-blog-card-tag">Tools</span>
             <span class="home-blog-card-tag">Industry</span>
           </div>
-          <h3>THE ULTIMATE GUIDE TO DIAMOND BLADES</h3>
+          <h3 class="home-blog-card-title">THE ULTIMATE GUIDE TO DIAMOND BLADES</h3>
           <div class="home-blog-card-body">Learn how to choose the right diamond blade for every cutting application, from masonry to porcelain tile.</div>
-          <a class="home-blog-card-cta" href="/waitlist">
+          <a class="home-blog-card-cta" href="http://waitlist.localhost">
             Read More
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -270,9 +317,9 @@
             <span class="home-blog-card-tag">Safety</span>
             <span class="home-blog-card-tag">Workwear</span>
           </div>
-          <h3>TOP SAFETY GEAR FOR PROFESSIONAL TRADESPEOPLE</h3>
+          <h3 class="home-blog-card-title">TOP SAFETY GEAR FOR PROFESSIONAL TRADESPEOPLE</h3>
           <div class="home-blog-card-body">A comprehensive overview of the most important PPE and safety equipment every tradesperson needs on site.</div>
-          <a class="home-blog-card-cta" href="/waitlist">
+          <a class="home-blog-card-cta" href="http://waitlist.localhost">
             Read More
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -287,9 +334,9 @@
             <span class="home-blog-card-tag">News</span>
             <span class="home-blog-card-tag">Products</span>
           </div>
-          <h3>BORA ADJUSTABLE SPEEDHORSE XT: IN DEPTH REVIEW</h3>
+          <h3 class="home-blog-card-title">BORA ADJUSTABLE SPEEDHORSE XT: IN DEPTH REVIEW</h3>
           <div class="home-blog-card-body">Our team put the new Bora Adjustable SpeedHorse XT through its paces — here's what we found on site.</div>
-          <a class="home-blog-card-cta" href="/waitlist">
+          <a class="home-blog-card-cta" href="http://waitlist.localhost">
             Read More
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -314,22 +361,22 @@
       </div>
       <div class="footer-col">
         <h4>About Us</h4>
-        <a href="/waitlist">Blog</a>
-        <a href="/waitlist">News</a>
-        <a href="/waitlist">Videos</a>
-        <a href="/waitlist">Catalogs</a>
+        <a href="http://waitlist.localhost">Blog</a>
+        <a href="http://waitlist.localhost">News</a>
+        <a href="http://waitlist.localhost">Videos</a>
+        <a href="http://waitlist.localhost">Catalogs</a>
       </div>
       <div class="footer-col">
         <h4>Help</h4>
-        <a href="/waitlist">Support Requests</a>
-        <a href="/waitlist">All Contacts</a>
-        <a href="/waitlist">Orders</a>
-        <a href="/waitlist">Returns</a>
-        <a href="/waitlist">FAQs</a>
+        <a href="http://waitlist.localhost">Support Requests</a>
+        <a href="http://waitlist.localhost">All Contacts</a>
+        <a href="http://waitlist.localhost">Orders</a>
+        <a href="http://waitlist.localhost">Returns</a>
+        <a href="http://waitlist.localhost">FAQs</a>
       </div>
       <div class="footer-col">
         <h4>Social</h4>
-        <a href="/waitlist">LinkedIn</a>
+        <a href="http://waitlist.localhost">LinkedIn</a>
       </div>
       <div class="footer-col">
         <div class="footer-contact">
@@ -342,9 +389,9 @@
     <div class="footer-bottom">
       <div class="footer-logo-text"><span>OX</span> GROUP</div>
       <div class="footer-bottom-links">
-        <a href="/waitlist">Terms &amp; Conditions</a>
-        <a href="/waitlist">Privacy Policy</a>
-        <a href="/waitlist">Cookies Settings</a>
+        <a href="http://waitlist.localhost">Terms &amp; Conditions</a>
+        <a href="http://waitlist.localhost">Privacy Policy</a>
+        <a href="http://waitlist.localhost">Cookies Settings</a>
         <span>© 2025 OX. All rights reserved.</span>
       </div>
     </div>
@@ -402,22 +449,22 @@
       </div>
       <div class="footer-col">
         <h4>About Us</h4>
-        <a href="/waitlist">Blog</a>
-        <a href="/waitlist">News</a>
-        <a href="/waitlist">Videos</a>
-        <a href="/waitlist">Catalogs</a>
+        <a href="http://waitlist.localhost">Blog</a>
+        <a href="http://waitlist.localhost">News</a>
+        <a href="http://waitlist.localhost">Videos</a>
+        <a href="http://waitlist.localhost">Catalogs</a>
       </div>
       <div class="footer-col">
         <h4>Help</h4>
-        <a href="/waitlist">Support Requests</a>
-        <a href="/waitlist">All Contacts</a>
-        <a href="/waitlist">Orders</a>
-        <a href="/waitlist">Returns</a>
-        <a href="/waitlist">FAQs</a>
+        <a href="http://waitlist.localhost">Support Requests</a>
+        <a href="http://waitlist.localhost">All Contacts</a>
+        <a href="http://waitlist.localhost">Orders</a>
+        <a href="http://waitlist.localhost">Returns</a>
+        <a href="http://waitlist.localhost">FAQs</a>
       </div>
       <div class="footer-col">
         <h4>Social</h4>
-        <a href="/waitlist">LinkedIn</a>
+        <a href="http://waitlist.localhost">LinkedIn</a>
       </div>
       <div class="footer-col">
         <div class="footer-contact">
@@ -430,9 +477,9 @@
     <div class="footer-bottom">
       <div class="footer-logo-text"><span>OX</span> GROUP</div>
       <div class="footer-bottom-links">
-        <a href="/waitlist">Terms &amp; Conditions</a>
-        <a href="/waitlist">Privacy Policy</a>
-        <a href="/waitlist">Cookies Settings</a>
+        <a href="http://waitlist.localhost">Terms &amp; Conditions</a>
+        <a href="http://waitlist.localhost">Privacy Policy</a>
+        <a href="http://waitlist.localhost">Cookies Settings</a>
         <span>© 2025 OX. All rights reserved.</span>
       </div>
     </div>
@@ -449,16 +496,23 @@
     <!-- filled by JS -->
   </div>
   <div class="related-section">
-    <h2>Related Products</h2>
-    <div id="related-products"></div>
-  </div>
-  <div class="faq-section">
-    <h2 style="margin-bottom:16px">Frequently Asked Questions</h2>
-    <div class="faq-grid">
-      <div class="faq-left"><p>Can't find the answer you're looking for? Visit our <a href="/waitlist" style="color:var(--blue)">FAQs page</a>.</p></div>
-      <div class="accordion" id="detail-faq"></div>
+    <h2 class="related-title">Related Products</h2>
+    <div id="related-products">
+
+    
     </div>
   </div>
+  <section class="home-faq-section">
+    <div class="home-faq-grid">
+      <div class="home-faq-left">
+        <h2>Frequently Asked Questions</h2>
+        <div class="home-faq-sub">
+          Can't find the answer you're looking for? Visit our <a href="http://waitlist.localhost">FAQs page</a> for more information or <a href="http://waitlist.localhost">Contact us</a>.
+        </div>
+      </div>
+      <div class="home-faq-accordion" id="detail-faq"></div>
+    </div>
+  </section>
   <footer class="footer">
     <div class="footer-bg">
       <img src="/img/brand/footer-bg.jpg" alt="">
@@ -474,22 +528,22 @@
       </div>
       <div class="footer-col">
         <h4>About Us</h4>
-        <a href="/waitlist">Blog</a>
-        <a href="/waitlist">News</a>
-        <a href="/waitlist">Videos</a>
-        <a href="/waitlist">Catalogs</a>
+        <a href="http://waitlist.localhost">Blog</a>
+        <a href="http://waitlist.localhost">News</a>
+        <a href="http://waitlist.localhost">Videos</a>
+        <a href="http://waitlist.localhost">Catalogs</a>
       </div>
       <div class="footer-col">
         <h4>Help</h4>
-        <a href="/waitlist">Support Requests</a>
-        <a href="/waitlist">All Contacts</a>
-        <a href="/waitlist">Orders</a>
-        <a href="/waitlist">Returns</a>
-        <a href="/waitlist">FAQs</a>
+        <a href="http://waitlist.localhost">Support Requests</a>
+        <a href="http://waitlist.localhost">All Contacts</a>
+        <a href="http://waitlist.localhost">Orders</a>
+        <a href="http://waitlist.localhost">Returns</a>
+        <a href="http://waitlist.localhost">FAQs</a>
       </div>
       <div class="footer-col">
         <h4>Social</h4>
-        <a href="/waitlist">LinkedIn</a>
+        <a href="http://waitlist.localhost">LinkedIn</a>
       </div>
       <div class="footer-col">
         <div class="footer-contact">
@@ -502,9 +556,9 @@
     <div class="footer-bottom">
       <div class="footer-logo-text"><span>OX</span> GROUP</div>
       <div class="footer-bottom-links">
-        <a href="/waitlist">Terms &amp; Conditions</a>
-        <a href="/waitlist">Privacy Policy</a>
-        <a href="/waitlist">Cookies Settings</a>
+        <a href="http://waitlist.localhost">Terms &amp; Conditions</a>
+        <a href="http://waitlist.localhost">Privacy Policy</a>
+        <a href="http://waitlist.localhost">Cookies Settings</a>
         <span>© 2025 OX. All rights reserved.</span>
       </div>
     </div>
@@ -519,14 +573,14 @@
   <div class="cart-layout">
     <div>
       <div class="cart-header">
-        <h1>Cart</h1>
-        <div style="color:var(--muted);font-size:13px" id="cart-count-label">3 products &nbsp; 41 items</div>
+        <h2>Cart</h2>
+        <div style="color:var(--muted);font-size:14px" id="cart-count-label">3 products &nbsp; 41 items</div>
         <div class="clear-btn" onclick="openClearModal()">Clear <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><polyline points="3 6 5 6 21 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       </div>
       <!-- Quick Add -->
       <div class="quick-add-panel">
         <div class="quick-add-header" onclick="toggleQuickAdd()">
-          <span class="quick-add-title">Quick Order</span>
+          <h3>Quick Order</h3>
           <span id="quick-add-toggle">+</span>
         </div>
         <div class="quick-add-body" id="quick-add-body" style="display:none">
@@ -578,12 +632,18 @@
               <button class="csv-upload-btn" onclick="csvUpload()">Upload</button>
             </div>
             <div class="csv-instructions">
-              <div class="csv-step"><span>1.</span> Upload Your .CSV</div>
-              <div class="csv-step"><span>2.</span> Add To Cart</div>
-              <div class="csv-step"><span>3.</span> Place Order In Cart</div>
+              <div class="csv-step">1. Upload Your .CSV</div>
+              <div class="csv-step">2. Add To Cart</div>
+              <div class="csv-step">3. Place Order In Cart</div>
               <div class="csv-links">
-                <a class="csv-link" onclick="csvDownloadTemplate()">Download an example .csv template</a>
-                <a class="csv-link" href="/waitlist">Experience any problem?</a>
+                <a class="csv-link" onclick="csvDownloadTemplate()"> <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M8.76951 7.14876L5.96007 5.82645L7.00544 8.27273L4 11H6.30309L7.78947 9.7438L8.36116 11L11.4646 10.9339L9.99455 7.71074L13 5H10.7459L9.3412 6.17355L8.76951 5H5.60073L8.76951 7.14876Z" fill="#A4A4A4"/>
+</svg>
+ Download an example .csv template</a>
+                <a class="csv-link" href="http://waitlist.localhost"> <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M8.76951 7.14876L5.96007 5.82645L7.00544 8.27273L4 11H6.30309L7.78947 9.7438L8.36116 11L11.4646 10.9339L9.99455 7.71074L13 5H10.7459L9.3412 6.17355L8.76951 5H5.60073L8.76951 7.14876Z" fill="#A4A4A4"/>
+</svg>
+ Experience any problem?</a>
               </div>
             </div>
           </div>
@@ -594,8 +654,8 @@
       </div>
     </div>
     <div>
-      <div class="summary-card">
-        <div class="acc-item acc-header" onclick="toggleAcc(this)" style="font-size:13px">Have a promo code? <span class="acc-toggle">+</span></div>
+      <div class="summary-cards">
+        <div class="acc-item acc-header" onclick="toggleAcc(this)">Have a promo code? <span class="acc-toggle">+</span></div>
         <div class="acc-body" style="padding:0 0 10px;display:none"><input class="form-input" placeholder="Enter promo code" style="margin-top:8px"></div>
         <div class="summary-row"><span class="summary-label">Subtotal</span><span class="summary-val" id="cart-subtotal">£2,008.00</span></div>
         <div class="summary-row"><span class="summary-label">Discount</span><span class="summary-val discount" id="cart-discount">-£19</span></div>
@@ -605,7 +665,7 @@
         <div class="summary-faq" style="margin-top:16px">
           <div class="accordion" id="cart-faq"></div>
         </div>
-        <div class="cart-help">Something wrong with this order?<br><a href="/waitlist" style="color:var(--blue)">Contact us</a> or submit a <a href="/waitlist" style="color:var(--blue)">support request</a></div>
+        <div class="cart-help">Something wrong with this order?<br><a href="http://waitlist.localhost" style="color:var(--blue)">Contact us</a> or submit a <a href="http://waitlist.localhost" style="color:var(--blue)">support request</a></div>
       </div>
     </div>
   </div>
@@ -624,22 +684,22 @@
       </div>
       <div class="footer-col">
         <h4>About Us</h4>
-        <a href="/waitlist">Blog</a>
-        <a href="/waitlist">News</a>
-        <a href="/waitlist">Videos</a>
-        <a href="/waitlist">Catalogs</a>
+        <a href="http://waitlist.localhost">Blog</a>
+        <a href="http://waitlist.localhost">News</a>
+        <a href="http://waitlist.localhost">Videos</a>
+        <a href="http://waitlist.localhost">Catalogs</a>
       </div>
       <div class="footer-col">
         <h4>Help</h4>
-        <a href="/waitlist">Support Requests</a>
-        <a href="/waitlist">All Contacts</a>
-        <a href="/waitlist">Orders</a>
-        <a href="/waitlist">Returns</a>
-        <a href="/waitlist">FAQs</a>
+        <a href="http://waitlist.localhost">Support Requests</a>
+        <a href="http://waitlist.localhost">All Contacts</a>
+        <a href="http://waitlist.localhost">Orders</a>
+        <a href="http://waitlist.localhost">Returns</a>
+        <a href="http://waitlist.localhost">FAQs</a>
       </div>
       <div class="footer-col">
         <h4>Social</h4>
-        <a href="/waitlist">LinkedIn</a>
+        <a href="http://waitlist.localhost">LinkedIn</a>
       </div>
       <div class="footer-col">
         <div class="footer-contact">
@@ -652,9 +712,9 @@
     <div class="footer-bottom">
       <div class="footer-logo-text"><span>OX</span> GROUP</div>
       <div class="footer-bottom-links">
-        <a href="/waitlist">Terms &amp; Conditions</a>
-        <a href="/waitlist">Privacy Policy</a>
-        <a href="/waitlist">Cookies Settings</a>
+        <a href="http://waitlist.localhost">Terms &amp; Conditions</a>
+        <a href="http://waitlist.localhost">Privacy Policy</a>
+        <a href="http://waitlist.localhost">Cookies Settings</a>
         <span>© 2025 OX. All rights reserved.</span>
       </div>
     </div>
@@ -666,202 +726,346 @@
      PAGE: CHECKOUT – SHIPPING
 ════════════════════════════════════════════ -->
 <div class="page" id="page-checkout-shipping">
-  <div class="checkout-layout">
-    <div>
-      <h1>Checkout</h1>
-      <div class="checkout-breadcrumb">
-        <span class="crumb-active">1. Shipping Address</span>
-        <span class="crumb-sep">/</span>
-        <span class="crumb-link" onclick="navigate('checkout-payment')">2. Payment</span>
-        <span class="crumb-sep">/</span>
-        <span class="crumb-link">3. Order Review</span>
-      </div>
-      <div class="checkout-section">
-        <h2>Delivery Address</h2>
-        <div class="address-options">
-          <div class="addr-card selected" onclick="document.querySelectorAll('#page-checkout-shipping .addr-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected')">
-            <div class="addr-card-inner">
-              <div>
-                <h4>18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</h4>
-                <div style="color:var(--muted);font-size:12px;margin-top:4px">Contact Person:<br>Thomas (+44 34 5467 0123)</div>
+  <div class="co-layout">
+    <div class="co-body">
+      <!-- LEFT -->
+      <div class="co-left">
+        <h1>Checkout</h1>
+        <div class="checkout-breadcrumb">
+          <span class="crumb-active">1. Shipping Address</span>
+          <span class="crumb-sep">/</span>
+          <span class="crumb-link" onclick="navigate('checkout-payment')">2. Payment</span>
+          <span class="crumb-sep">/</span>
+          <span class="crumb-link">3. Order Review</span>
+        </div>
+
+        <!-- Delivery Address -->
+        <div class="checkout-section">
+          <h3>Delivery Address</h3>
+          <div class="address-options">
+            <div class="addr-card selected" onclick="document.querySelectorAll('#page-checkout-shipping .addr-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected')">
+              <div class="addr-card-inner">
+                <div>
+                  <div style="font-weight:600;margin-bottom:4px">18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</div>
+                  <div style="color:var(--muted);font-size:13px">Contact Person:<br>Thomas (+44 34 5467 0123)</div>
+                </div>
+                <div class="radio-dot"></div>
               </div>
-              <div class="radio-dot"></div>
             </div>
-          </div>
-          <div class="addr-card" onclick="document.querySelectorAll('#page-checkout-shipping .addr-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected')">
-            <div class="addr-card-inner">
-              <div>
-                <h4>18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</h4>
-                <div style="color:var(--muted);font-size:12px;margin-top:4px">Contact Person:<br>Thomas (+44 34 5467 0123)</div>
+            <div class="addr-card" onclick="document.querySelectorAll('#page-checkout-shipping .addr-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected')">
+              <div class="addr-card-inner">
+                <div>
+                  <div style="font-weight:600;margin-bottom:4px">18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</div>
+                  <div style="color:var(--muted);font-size:13px">Contact Person:<br>Thomas (+44 34 5467 0123)</div>
+                </div>
+                <div class="radio-dot"></div>
               </div>
-              <div class="radio-dot"></div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="checkout-section">
-        <h2>Shipping Methods</h2>
-        <div class="ship-options">
-          <div class="ship-option selected" onclick="selectShipping(this,'standard')">
-            <div style="font-weight:600">£100 – UK next day</div>
-            <div class="radio-dot" style="margin-left:auto"></div>
+
+        <!-- Shipping Methods -->
+        <div class="checkout-section">
+          <h3>Shipping Methods</h3>
+          <div class="ship-options">
+            <div class="ship-option selected" onclick="selectShipping(this,'standard')">
+              <div style="flex:1">£100 – UK next day</div>
+              <div class="radio-dot"></div>
+            </div>
+            <div class="ship-option" onclick="selectShipping(this,'third-party')">
+              <div style="flex:1">Third-party shipping</div>
+              <div class="radio-dot"></div>
+            </div>
           </div>
-          <div class="ship-option" onclick="selectShipping(this,'third-party')">
-            <div style="font-weight:600">Third-party shipping</div>
-            <div class="radio-dot" style="margin-left:auto"></div>
+
+          <!-- Third-party fields – shown when third-party is selected -->
+          <div id="third-party-fields" style="display:none;margin-top:20px">
+            <div class="form-field">
+              <label class="form-label">Freight Carrier <span>*</span></label>
+              <div class="co-field-helper">Choose a freight carrier to ship with from the list</div>
+              <div class="carrier-dd" id="carrier-dropdown">
+                <button class="carrier-dd-btn" type="button" onclick="toggleCarrierDropdown()">
+                  <span id="carrier-selected-label">Select carrier…</span>
+                  <span class="carrier-dd-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </button>
+                <div class="carrier-dd-panel">
+                  <div class="carrier-dd-search">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    <input type="text" placeholder="Search carrier" oninput="filterCarriers(this.value)">
+                  </div>
+                  <div class="carrier-dd-list">
+                    <div class="carrier-dd-opt" onclick="selectCarrier('Home Depot Pick-Up')">Home Depot Pick-Up</div>
+                    <div class="carrier-dd-opt" onclick="selectCarrier('Premium Line Transport')">Premium Line Transport</div>
+                    <div class="carrier-dd-opt" onclick="selectCarrier('Prepaid')">Prepaid</div>
+                    <div class="carrier-dd-opt" onclick="selectCarrier('Request Routing')">Request Routing</div>
+                    <div class="carrier-dd-opt" onclick="selectCarrier('LTL')">LTL</div>
+                    <div class="carrier-dd-opt" onclick="selectCarrier('AAA Cooper Freight')">AAA Cooper Freight</div>
+                    <div class="carrier-dd-opt" onclick="selectCarrier('ABF Freight')">ABF Freight</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field" style="margin-bottom:0">
+                <label class="form-label">Shipping Account Number <span>*</span></label>
+                <input class="form-input" placeholder="E.g. RM12345678 / 123456789 / A1B2C3 / 1234AB">
+              </div>
+              <div class="form-field" style="margin-bottom:0">
+                <label class="form-label">Zipcode <span>*</span></label>
+                <input class="form-input" placeholder="E.g. SW1A 1AA">
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </div><!-- /.co-left -->
+
+      <!-- RIGHT SIDEBAR -->
+      <div class="summary-cards">
+        <div class="summary-details">
+          <div class="acc-item acc-header" onclick="toggleAcc(this)">Have a promo code? <span class="acc-toggle">+</span></div>
+          <div class="acc-body" style="padding:0 0 10px;display:none"><input class="form-input" placeholder="Enter promo code" style="margin-top:8px"></div>
+          <div class="summary-row"><span class="summary-label">Subtotal</span><span class="summary-val">£2,008.00</span></div>
+          <div class="summary-row"><span class="summary-label">Discount</span><span class="summary-val discount">-£19</span></div>
+          <div class="summary-row"><span class="summary-label">Shipping</span><span class="summary-val" style="text-align:right">£100<br><span style="font-size:12px;color:var(--muted)">You are £281.30 away from free shipping!</span></span></div>
+          <div class="summary-total"><span class="total-label">Total Amount</span><span class="total-val">£2,089.00</span></div>
+          <button class="btn-checkout" onclick="navigate('checkout-payment')">Continue →</button>
+        </div>
+        <div class="home-faq-item open" onclick="toggleHomeFaq(this)">
+          <div class="home-faq-header"><span>Where do you offer free shipping?</span><span class="home-faq-toggle">−</span></div>
+          <div class="home-faq-body" style="display:block">Metro Areas: FIS Minimum Order Value: $350. Regional Areas &amp; Tasmania: FIS Minimum Order Value: $500. Far Regional Areas: FIS Minimum Order Value: $750.</div>
+        </div>
+        <div class="home-faq-item" onclick="toggleHomeFaq(this)">
+          <div class="home-faq-header"><span>What is your returns policy?</span><span class="home-faq-toggle">+</span></div>
+          <div class="home-faq-body">We offer a no-hassle returns policy. Contact our team within 30 days of receipt.</div>
+        </div>
+        <div class="home-faq-item" onclick="toggleHomeFaq(this)">
+          <div class="home-faq-header"><span>Do you offer a warranty?</span><span class="home-faq-toggle">+</span></div>
+          <div class="home-faq-body">Yes, all our products come with a manufacturer warranty. Contact us for details.</div>
+        </div>
+        <div class="home-faq-item" onclick="toggleHomeFaq(this)">
+          <div class="home-faq-header"><span>Are taxes included in the price?</span><span class="home-faq-toggle">+</span></div>
+          <div class="home-faq-body">All prices shown are exclusive of tax. Applicable taxes will be added at checkout.</div>
+        </div>
+        <div class="cart-help">Something wrong with this order?<br><a href="http://waitlist.localhost" style="color:var(--blue)">Contact us</a> or submit a <a href="http://waitlist.localhost" style="color:var(--blue)">support request</a></div>
+      </div><!-- /.summary-cards -->
+    </div><!-- /.co-body -->
+
+    <div class="checkout-minimal-footer">
+      <span>© 2025 OX GROUP. All rights reserved.</span>
+      <div style="display:flex;gap:16px"><a href="http://waitlist.localhost">Privacy Policy</a><a href="http://waitlist.localhost">Terms of Service</a><a href="http://waitlist.localhost">Cookies Settings</a></div>
     </div>
-    <div>
-      <div class="summary-card">
-        <div class="acc-item acc-header" onclick="toggleAcc(this)" style="font-size:13px">Have a promo code? <span class="acc-toggle">+</span></div>
-        <div class="acc-body" style="padding:0 0 10px;display:none"><input class="form-input" placeholder="Enter promo code" style="margin-top:8px"></div>
-        <div class="summary-row"><span class="summary-label">Subtotal</span><span class="summary-val">£2,008.00</span></div>
-        <div class="summary-row"><span class="summary-label">Discount</span><span class="summary-val discount">-£19</span></div>
-        <div class="summary-row"><span class="summary-label">Shipping</span><span class="summary-val">£100<br><span style="font-size:11px;color:var(--muted)">You are £281.30 away from free shipping!</span></span></div>
-        <div class="summary-total"><span class="total-label">Total Amount</span><span class="total-val">£2,089.00</span></div>
-        <button class="btn-checkout" onclick="navigate('checkout-payment')">Continue →</button>
-        <div class="summary-faq" style="margin-top:16px"><div class="accordion" id="checkout-shipping-faq"></div></div>
-        <div class="cart-help">Something wrong with this order?<br><a href="/waitlist" style="color:var(--blue)">Contact us</a> or submit a <a href="/waitlist" style="color:var(--blue)">support request</a></div>
-      </div>
-    </div>
-  </div>
-  <div class="checkout-minimal-footer">
-    <span>© 2025 OX GROUP. All rights reserved.</span>
-    <div style="display:flex;gap:16px"><a href="/waitlist">Privacy Policy</a><a href="/waitlist">Terms of Service</a><a href="/waitlist">Cookies Settings</a></div>
-  </div>
+  </div><!-- /.co-layout -->
 </div>
 
 <!-- ═══════════════════════════════════════════
      PAGE: CHECKOUT – PAYMENT
 ════════════════════════════════════════════ -->
 <div class="page" id="page-checkout-payment">
-  <div class="checkout-layout">
-    <div>
-      <h1>
-        <span class="checkout-back" onclick="navigate('checkout-shipping')">←</span>Checkout
-      </h1>
-      <div class="checkout-breadcrumb">
-        <span class="crumb-link" onclick="navigate('checkout-shipping')">1. Shipping Address</span>
-        <span class="crumb-sep">/</span>
-        <span class="crumb-active">2. Payment</span>
-        <span class="crumb-sep">/</span>
-        <span class="crumb-link">3. Order Review</span>
-      </div>
-      <div class="checkout-section">
-        <h2>Payment Method</h2>
-        <div class="payment-method-line">
-          Invoice payment method &nbsp;(30days EOM)
-          <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="8" x2="12.01" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="co-layout">
+    <div class="co-body">
+      <!-- LEFT -->
+      <div class="co-left">
+        <h1><span class="checkout-back" onclick="navigate('checkout-shipping')">←</span>Checkout</h1>
+        <div class="checkout-breadcrumb">
+          <span class="crumb-link" onclick="navigate('checkout-shipping')">1. Shipping Address</span>
+          <span class="crumb-sep">/</span>
+          <span class="crumb-active">2. Payment</span>
+          <span class="crumb-sep">/</span>
+          <span class="crumb-link">3. Order Review</span>
         </div>
-        <div class="form-field" style="margin-top:16px">
-          <div class="form-label">Purchase Order Number <span style="color:var(--red)">*</span></div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Add any special instructions or requests for your order</div>
-          <input class="form-input" id="po-number" placeholder="E.g. PO2023-06-500T / PO-001 / 00001">
+
+        <!-- Payment Method -->
+        <div class="checkout-section">
+          <h3>Payment Method</h3>
+          <div class="co-payment-center">
+            <span class="co-payment-method">
+              Invoice payment method &nbsp;(30days EOM)
+              <span class="info-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0_6162_101426)">
+              <path d="M7.57484 7.49984C7.77076 6.94289 8.15746 6.47326 8.66647 6.17411C9.17547 5.87497 9.77392 5.76562 10.3558 5.86543C10.9377 5.96524 11.4655 6.26777 11.8457 6.71944C12.226 7.17111 12.434 7.74277 12.4332 8.33317C12.4332 9.99984 9.93317 10.8332 9.93317 10.8332M9.99984 14.1665H10.0082M18.3332 9.99984C18.3332 14.6022 14.6022 18.3332 9.99984 18.3332C5.39746 18.3332 1.6665 14.6022 1.6665 9.99984C1.6665 5.39746 5.39746 1.6665 9.99984 1.6665C14.6022 1.6665 18.3332 5.39746 18.3332 9.99984Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <defs>
+              <clipPath id="clip0_6162_101426">
+              <rect width="20" height="20" fill="white"/>
+              </clipPath>
+              </defs>
+              </svg>
+              </span>
+            </span>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Purchase Order Number <span>*</span></label>
+            <div class="co-field-helper">Add any special instructions or requests for your order</div>
+            <input class="form-input" id="po-number" placeholder="E.g. PO2023-06-500T / PO-001 / 00001">
+          </div>
         </div>
-      </div>
-      <div class="checkout-section">
-        <h2>Billing Address</h2>
-        <label style="display:flex;align-items:center;gap:8px;margin-bottom:16px;cursor:pointer;font-size:13px">
-          <input type="checkbox" id="same-addr-checkbox" checked style="accent-color:var(--blue)"> Same as Shipping Address
-        </label>
-        <div class="addr-card" style="cursor:default">
-          <h4>18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</h4>
-          <div style="color:var(--muted);font-size:12px;margin-top:4px">Contact Person:<br>Thomas (+44 34 5467 0123)</div>
+
+        <!-- Billing Address -->
+        <div class="checkout-section">
+          <h3>Billing Address</h3>
+          <label style="display:flex;align-items:center;gap:8px;margin-bottom:16px;cursor:pointer;font-size:14px">
+            <input type="checkbox" checked style="accent-color:var(--blue)"> Same as Shipping Address
+          </label>
+          <div class="co-addr-readonly">
+            <strong>18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</strong>
+            <span>Contact Person:<br>Thomas (+44 34 5467 0123)</span>
+          </div>
         </div>
-      </div>
+      </div><!-- /.co-left -->
+
+      <!-- RIGHT SIDEBAR -->
+      <div class="summary-cards">
+        <div class="summary-details">
+          <div class="acc-item acc-header" onclick="toggleAcc(this)">Have a promo code? <span class="acc-toggle">+</span></div>
+          <div class="acc-body" style="padding:0 0 10px;display:none"><input class="form-input" placeholder="Enter promo code" style="margin-top:8px"></div>
+          <div class="summary-row"><span class="summary-label">Subtotal</span><span class="summary-val">£2,008.00</span></div>
+          <div class="summary-row"><span class="summary-label">Discount</span><span class="summary-val discount">-£19</span></div>
+          <div class="summary-row"><span class="summary-label">Shipping</span><span class="summary-val" style="text-align:right">£100<br><span style="font-size:12px;color:var(--muted)">You are £281.30 away from free shipping!</span></span></div>
+          <div class="summary-total"><span class="total-label">Total Amount</span><span class="total-val">£2,089.00</span></div>
+          <button class="btn-checkout" onclick="navigate('checkout-review')">Continue →</button>
+        </div>
+        <div class="home-faq-item open" onclick="toggleHomeFaq(this)">
+          <div class="home-faq-header"><span>Where do you offer free shipping?</span><span class="home-faq-toggle">−</span></div>
+          <div class="home-faq-body" style="display:block">Metro Areas: FIS Minimum Order Value: $350. Regional Areas &amp; Tasmania: FIS Minimum Order Value: $500. Far Regional Areas: FIS Minimum Order Value: $750.</div>
+        </div>
+        <div class="home-faq-item" onclick="toggleHomeFaq(this)">
+          <div class="home-faq-header"><span>What is your returns policy?</span><span class="home-faq-toggle">+</span></div>
+          <div class="home-faq-body">We offer a no-hassle returns policy. Contact our team within 30 days of receipt.</div>
+        </div>
+        <div class="home-faq-item" onclick="toggleHomeFaq(this)">
+          <div class="home-faq-header"><span>Do you offer a warranty?</span><span class="home-faq-toggle">+</span></div>
+          <div class="home-faq-body">Yes, all our products come with a manufacturer warranty. Contact us for details.</div>
+        </div>
+        <div class="home-faq-item" onclick="toggleHomeFaq(this)">
+          <div class="home-faq-header"><span>Are taxes included in the price?</span><span class="home-faq-toggle">+</span></div>
+          <div class="home-faq-body">All prices shown are exclusive of tax. Applicable taxes will be added at checkout.</div>
+        </div>
+        <div class="cart-help">Something wrong with this order?<br><a href="http://waitlist.localhost" style="color:var(--blue)">Contact us</a> or submit a <a href="http://waitlist.localhost" style="color:var(--blue)">support request</a></div>
+      </div><!-- /.summary-cards -->
+    </div><!-- /.co-body -->
+
+    <div class="checkout-minimal-footer">
+      <span>© 2025 OX GROUP. All rights reserved.</span>
+      <div style="display:flex;gap:16px"><a href="http://waitlist.localhost">Privacy Policy</a><a href="http://waitlist.localhost">Terms of Service</a><a href="http://waitlist.localhost">Cookies Settings</a></div>
     </div>
-    <div>
-      <div class="summary-card">
-        <div class="acc-item acc-header" onclick="toggleAcc(this)" style="font-size:13px">Have a promo code? <span class="acc-toggle">+</span></div>
-        <div class="acc-body" style="padding:0 0 10px;display:none"><input class="form-input" placeholder="Enter promo code" style="margin-top:8px"></div>
-        <div class="summary-row"><span class="summary-label">Subtotal</span><span class="summary-val">£2,008.00</span></div>
-        <div class="summary-row"><span class="summary-label">Discount</span><span class="summary-val discount">-£19</span></div>
-        <div class="summary-row"><span class="summary-label">Shipping</span><span class="summary-val">£100<br><span style="font-size:11px;color:var(--muted)">You are £281.30 away from free shipping!</span></span></div>
-        <div class="summary-total"><span class="total-label">Total Amount</span><span class="total-val">£2,089.00</span></div>
-        <button class="btn-checkout" onclick="navigate('checkout-review')">Continue →</button>
-        <div class="summary-faq" style="margin-top:16px"><div class="accordion" id="checkout-payment-faq"></div></div>
-        <div class="cart-help">Something wrong with this order?<br><a href="/waitlist" style="color:var(--blue)">Contact us</a> or submit a <a href="/waitlist" style="color:var(--blue)">support request</a></div>
-      </div>
-    </div>
-  </div>
-  <div class="checkout-minimal-footer">
-    <span>© 2025 OX GROUP. All rights reserved.</span>
-    <div style="display:flex;gap:16px"><a href="/waitlist">Privacy Policy</a><a href="/waitlist">Terms of Service</a><a href="/waitlist">Cookies Settings</a></div>
-  </div>
+  </div><!-- /.co-layout -->
 </div>
 
 <!-- ═══════════════════════════════════════════
      PAGE: CHECKOUT – ORDER REVIEW
 ════════════════════════════════════════════ -->
 <div class="page" id="page-checkout-review">
-  <div class="checkout-layout">
-    <div>
-      <h1>
-        <span class="checkout-back" onclick="navigate('checkout-payment')">←</span>Checkout
-      </h1>
-      <div class="checkout-breadcrumb">
-        <span class="crumb-link" onclick="navigate('checkout-shipping')">1. Shipping Address</span>
-        <span class="crumb-sep">/</span>
-        <span class="crumb-link" onclick="navigate('checkout-payment')">2. Payment</span>
-        <span class="crumb-sep">/</span>
-        <span class="crumb-active">3. Order Review</span>
-      </div>
-      <div class="checkout-section">
-        <div class="review-section-header">
-          <h2 style="margin-bottom:0">Items to Ship</h2>
-          <svg class="icon icon-sm" style="color:var(--muted);cursor:pointer" viewBox="0 0 24 24" fill="none"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="co-layout">
+    <div class="co-body">
+      <!-- LEFT -->
+      <div class="co-left">
+        <h1><span class="checkout-back" onclick="navigate('checkout-payment')">←</span>Checkout</h1>
+        <div class="checkout-breadcrumb">
+          <span class="crumb-link" onclick="navigate('checkout-shipping')">1. Shipping Address</span>
+          <span class="crumb-sep">/</span>
+          <span class="crumb-link" onclick="navigate('checkout-payment')">2. Payment</span>
+          <span class="crumb-sep">/</span>
+          <span class="crumb-active">3. Order Review</span>
         </div>
-        <div id="checkout-review-items" style="margin-top:12px"><!-- filled by JS --></div>
-      </div>
-      <div class="checkout-section">
-        <h2>Ship To</h2>
-        <div class="form-label" style="margin-bottom:4px">Delivery Address*</div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Where your order will be delivered and to whom</div>
-        <div class="review-address-card">
-          <div style="font-weight:600">18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</div>
-          <div style="color:var(--muted);font-size:12px;margin-top:4px">Contact Person:<br>Thomas (+44 34 5467 0123)</div>
+
+        <!-- Items to Ship -->
+        <div class="checkout-section">
+          <div class="co-section-hdr">
+            <h3>Items to Ship</h3>
+            <span class="co-edit-btn" onclick="navigate('cart')" title="Edit cart">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </div>
         </div>
-        <div class="form-label" style="margin-bottom:4px;margin-top:12px">Shipping Method*</div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">How your order will be delivered</div>
-        <div class="review-ship-method">£100 – UK next day</div>
-        <div class="review-back-link">To update Shipping details, go back to <a onclick="navigate('checkout-shipping')">Shipping Address</a></div>
-      </div>
-      <div class="checkout-section">
-        <h2>Payment</h2>
-        <div class="review-payment-line">
-          Invoice payment method &nbsp;(30days EOM)
-          <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="8" x2="12.01" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
+        <!-- Ship To -->
+        <div class="checkout-section">
+          <h3>Ship To</h3>
+          <div class="form-label">Delivery Address <span>*</span></div>
+          <div class="co-field-helper">Where your order will be delivered and to whom</div>
+          <div class="co-addr-readonly">
+            <strong>18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</strong>
+            <span>Contact Person:<br>Thomas (+44 34 5467 0123)</span>
+          </div>
+          <div class="form-label" style="margin-top:20px">Shipping Method <span>*</span></div>
+          <div class="co-field-helper">How your order will be delivered</div>
+          <div class="co-method-box">£100 – UK next day</div>
+          <div class="co-back-to">To update Shipping details, go back to <a onclick="navigate('checkout-shipping')">Shipping Address</a></div>
         </div>
-        <div class="form-label" style="margin-bottom:4px">Purchase Order Number*</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:12px" id="review-po-display">E.g. PO2023-06-500T / PO-001 / 00001</div>
-        <div class="form-label" style="margin-bottom:4px">Billing Address*</div>
-        <div class="review-address-card">
-          <div style="font-weight:600">18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</div>
-          <div style="color:var(--muted);font-size:12px;margin-top:4px">Contact Person:<br>Thomas (+44 34 5467 0123)</div>
+
+        <!-- Payment -->
+        <div class="checkout-section">
+          <h3>Payment</h3>
+          <div class="co-review-invoice">
+            Invoice payment method &nbsp;(30days EOM)
+              <span class="info-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0_6162_101426)">
+              <path d="M7.57484 7.49984C7.77076 6.94289 8.15746 6.47326 8.66647 6.17411C9.17547 5.87497 9.77392 5.76562 10.3558 5.86543C10.9377 5.96524 11.4655 6.26777 11.8457 6.71944C12.226 7.17111 12.434 7.74277 12.4332 8.33317C12.4332 9.99984 9.93317 10.8332 9.93317 10.8332M9.99984 14.1665H10.0082M18.3332 9.99984C18.3332 14.6022 14.6022 18.3332 9.99984 18.3332C5.39746 18.3332 1.6665 14.6022 1.6665 9.99984C1.6665 5.39746 5.39746 1.6665 9.99984 1.6665C14.6022 1.6665 18.3332 5.39746 18.3332 9.99984Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <defs>
+              <clipPath id="clip0_6162_101426">
+              <rect width="20" height="20" fill="white"/>
+              </clipPath>
+              </defs>
+              </svg>
+              </span>
+          </div>
+          <div>
+            <div class="form-label">Purchase Order Number <span>*</span></div>
+            <div class="co-field-helper">Add any special instructions or requests for your order</div>
+            <div class="co-po-display" id="review-po-display">E.g. PO2023-06-500T / PO-001 / 00001</div>
+          </div>
+          <div>
+            <div class="form-label" style="margin-top:16px">Billing Address <span>*</span></div>
+              <div class="co-field-helper">This address is used for invoicing and payment records.</div>
+            <div class="co-addr-readonly">
+              <strong>18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</strong>
+              <span>Contact Person:<br>Thomas (+44 34 5467 0123)</span>
+            </div>
+            <div class="co-back-to">To update Payment details, go back to <a onclick="navigate('checkout-payment')">Payment</a></div>
+          </div>
+          
         </div>
-        <div class="review-back-link">To update Payment details, go back to <a onclick="navigate('checkout-payment')">Payment</a></div>
-      </div>
+      </div><!-- /.co-left -->
+
+      <!-- RIGHT SIDEBAR -->
+      <div class="summary-cards">
+        <div class="summary-details">
+          <div class="acc-item acc-header" onclick="toggleAcc(this)">Have a promo code? <span class="acc-toggle">+</span></div>
+          <div class="acc-body" style="padding:0 0 10px;display:none"><input class="form-input" placeholder="Enter promo code" style="margin-top:8px"></div>
+          <div class="summary-row"><span class="summary-label">Subtotal</span><span class="summary-val">£2,008.00</span></div>
+          <div class="summary-row"><span class="summary-label">Discount</span><span class="summary-val discount">-£19</span></div>
+          <div class="summary-row"><span class="summary-label">Shipping</span><span class="summary-val" style="text-align:right">£100<br><span style="font-size:12px;color:var(--muted)">You are £281.30 away from free shipping!</span></span></div>
+          <div class="summary-total"><span class="total-label">Total Amount</span><span class="total-val">£2,089.00</span></div>
+          <button class="btn-place" onclick="placeOrder()">Place Order
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="home-faq-item open" onclick="toggleHomeFaq(this)">
+          <div class="home-faq-header"><span>Where do you offer free shipping?</span><span class="home-faq-toggle">−</span></div>
+          <div class="home-faq-body" style="display:block">Metro Areas: FIS Minimum Order Value: $350. Regional Areas &amp; Tasmania: FIS Minimum Order Value: $500. Far Regional Areas: FIS Minimum Order Value: $750.</div>
+        </div>
+        <div class="home-faq-item" onclick="toggleHomeFaq(this)">
+          <div class="home-faq-header"><span>What is your returns policy?</span><span class="home-faq-toggle">+</span></div>
+          <div class="home-faq-body">We offer a no-hassle returns policy. Contact our team within 30 days of receipt.</div>
+        </div>
+        <div class="home-faq-item" onclick="toggleHomeFaq(this)">
+          <div class="home-faq-header"><span>Do you offer a warranty?</span><span class="home-faq-toggle">+</span></div>
+          <div class="home-faq-body">Yes, all our products come with a manufacturer warranty. Contact us for details.</div>
+        </div>
+        <div class="home-faq-item" onclick="toggleHomeFaq(this)">
+          <div class="home-faq-header"><span>Are taxes included in the price?</span><span class="home-faq-toggle">+</span></div>
+          <div class="home-faq-body">All prices shown are exclusive of tax. Applicable taxes will be added at checkout.</div>
+        </div>
+        <div class="cart-help">Something wrong with this order?<br><a href="http://waitlist.localhost" style="color:var(--blue)">Contact us</a> or submit a <a href="http://waitlist.localhost" style="color:var(--blue)">support request</a></div>
+      </div><!-- /.summary-cards -->
+    </div><!-- /.co-body -->
+
+    <div class="checkout-minimal-footer">
+      <span>© 2025 OX GROUP. All rights reserved.</span>
+      <div style="display:flex;gap:16px"><a href="http://waitlist.localhost">Privacy Policy</a><a href="http://waitlist.localhost">Terms of Service</a><a href="http://waitlist.localhost">Cookies Settings</a></div>
     </div>
-    <div>
-      <div class="summary-card">
-        <div class="acc-item acc-header" onclick="toggleAcc(this)" style="font-size:13px">Have a promo code? <span class="acc-toggle">+</span></div>
-        <div class="acc-body" style="padding:0 0 10px;display:none"><input class="form-input" placeholder="Enter promo code" style="margin-top:8px"></div>
-        <div class="summary-row"><span class="summary-label">Subtotal</span><span class="summary-val">£2,008.00</span></div>
-        <div class="summary-row"><span class="summary-label">Discount</span><span class="summary-val discount">-£19</span></div>
-        <div class="summary-row"><span class="summary-label">Shipping</span><span class="summary-val">£100<br><span style="font-size:11px;color:var(--muted)">You are £281.30 away from free shipping!</span></span></div>
-        <div class="summary-total"><span class="total-label">Total Amount</span><span class="total-val">£2,089.00</span></div>
-        <button class="btn-place" onclick="placeOrder()">Place Order <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-        <div class="summary-faq" style="margin-top:16px"><div class="accordion" id="checkout-review-faq"></div></div>
-        <div class="cart-help">Something wrong with this order?<br><a href="/waitlist" style="color:var(--blue)">Contact us</a> or submit a <a href="/waitlist" style="color:var(--blue)">support request</a></div>
-      </div>
-    </div>
-  </div>
-  <div class="checkout-minimal-footer">
-    <span>© 2025 OX GROUP. All rights reserved.</span>
-    <div style="display:flex;gap:16px"><a href="/waitlist">Privacy Policy</a><a href="/waitlist">Terms of Service</a><a href="/waitlist">Cookies Settings</a></div>
-  </div>
+  </div><!-- /.co-layout -->
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -870,7 +1074,7 @@
 <div class="page" id="page-checkout-thankyou">
   <div class="thankyou-page">
     <div class="thankyou-icon">
-      <svg class="icon" style="width:28px;height:28px" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg class="icon" style="width:28px;height:28px" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="#0BA5EC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>
     <h1>Thank You For<br>Choosing Us!</h1>
     <div class="thankyou-sub">Your order has been successfully placed</div>
@@ -878,7 +1082,7 @@
       <button class="thankyou-btn-primary" onclick="navigate('home')">Home Page</button>
       <button class="thankyou-btn-outline">Cancel Order</button>
     </div>
-    <div class="thankyou-help">Have any questions? <a href="/waitlist" style="color:var(--blue)">Support request</a></div>
+    <div class="thankyou-help">Have any questions? <a href="http://waitlist.localhost" style="color:var(--blue)">Support request</a></div>
     <div class="order-card">
       <div class="order-card-header">
         <div class="order-id">
@@ -899,7 +1103,7 @@
         <span class="order-meta-label">ORDER BY:</span><span>Acme Corp</span>
         <span class="order-meta-label">DELIVERY ADDRESS:</span><span>18 Industrial Park Road, Unit 4, Manchester, M17 1PA, UK</span>
       </div>
-      <h2 id="order-list-title">Order list (3)</h2>
+      <h5 id="order-list-title">Order list (3)</h5>
       <table class="order-table" id="order-table"><!-- filled by JS --></table>
       <div class="order-totals">
         <div class="order-total-row"><span>SUBTOTAL</span><span id="order-subtotal">£2,008.00</span></div>
@@ -911,7 +1115,7 @@
   </div>
   <div class="checkout-minimal-footer">
     <span>© 2025 OX GROUP. All rights reserved.</span>
-    <div style="display:flex;gap:16px"><a href="/waitlist">Privacy Policy</a><a href="/waitlist">Terms of Service</a><a href="/waitlist">Cookies Settings</a></div>
+    <div style="display:flex;gap:16px"><a href="http://waitlist.localhost">Privacy Policy</a><a href="http://waitlist.localhost">Terms of Service</a><a href="http://waitlist.localhost">Cookies Settings</a></div>
   </div>
 </div>
 
