@@ -25,8 +25,22 @@
     <img class="gate-logo" src="img/logo.png" alt="OX Group">
     <div class="gate-subtitle">Demo Access</div>
     <div class="gate-field">
-      <input class="gate-input" id="gate-input" type="password" placeholder="Enter password"
-        onkeydown="if(event.key==='Enter')checkGatePassword()">
+      <div class="gate-input-wrap">
+        <input class="gate-input" id="gate-input" type="password" placeholder="Enter password"
+          onkeydown="if(event.key==='Enter')checkGatePassword()">
+        <button type="button" class="gate-eye" onclick="toggleGatePassword()" aria-label="Toggle password visibility">
+          <svg id="gate-eye-show" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C1C1C1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <svg id="gate-eye-hide" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C1C1C1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+            <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/>
+            <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/>
+            <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/>
+            <path d="m2 2 20 20"/>
+          </svg>
+        </button>
+      </div>
       <div class="gate-error-msg" id="gate-error"></div>
     </div>
     <button class="gate-btn" onclick="checkGatePassword()">Enter →</button>

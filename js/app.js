@@ -1,4 +1,14 @@
 // ─── PASSWORD GATE ───────────────────────────────────
+function toggleGatePassword() {
+  const input = document.getElementById('gate-input');
+  const showIcon = document.getElementById('gate-eye-show');
+  const hideIcon = document.getElementById('gate-eye-hide');
+  const isPassword = input.type === 'password';
+  input.type = isPassword ? 'text' : 'password';
+  showIcon.style.display = isPassword ? 'none' : '';
+  hideIcon.style.display = isPassword ? '' : 'none';
+}
+
 function checkGatePassword() {
   const input = document.getElementById('gate-input');
   const errorEl = document.getElementById('gate-error');
