@@ -511,7 +511,10 @@ function renderCart() {
           <input class="qty-input" id="cart-qty-${i}" value="${item.qty}" type="number" min="1">
           <div class="qty-btn" onclick="cartQty(${i},1)">${icon('plus')}</div>
         </div>
-
+        <div class="home-promo-actions">
+          <button class="fav-icon-btn" onclick="toggleWish('${item.id}')" title="Add to favourites">${icon(FAV_ITEMS.includes(item.id) ? 'heartFilled' : 'heart')}</button>
+          <button class="fav-icon-btn" onclick="removeCartItem(${i})" title="Remove from cart">${icon('trash')}</button>
+        </div>
       </div>
     `).join('');
   }
@@ -536,8 +539,8 @@ function renderCheckoutReview() {
         </div>
         <div class="co-review-qty">${item.qty}</div>
         <div class="co-review-prices">
-          ${item.orig > item.price ? `<div class="co-review-orig">${_fmtGBP(item.orig * item.qty)}</div>` : ''}
-          <div class="co-review-price">${_fmtGBP(item.price * item.qty)}</div>
+          <div class="co-review-orig">${item.lineOrig}</div>
+          <div class="co-review-price">${item.linePrice}</div>
         </div>
       </div>
     `).join('');
@@ -710,10 +713,10 @@ function renderAccountOverview() {
     <div class="acct-layout">
       <aside class="acct-sidebar">${buildAccSidebar('account-overview')}</aside>
       <div class="acct-content">
-        <h1 class="acct-title">Overview</h1>
+        <h2 class="acct-title">Overview</h2>
         <div>
           <div class="acct-table-header">
-            <h2 class="acct-section-heading">Recent Purchases</h2>
+            <h4 class="acct-section-heading">Recent Purchases</h4>
             <button class="btn-view-history" onclick="navigate('account-purchases')">View Purchases History</button>
           </div>
           <table class="acct-data-table">
@@ -722,11 +725,11 @@ function renderAccountOverview() {
           </table>
         </div>
         <div>
-          <h2 class="acct-section-heading" style="margin-bottom:20px">My Settings</h2>
+          <h4 class="acct-section-heading" style="margin-bottom:20px">My Settings</h4>
           <div class="my-settings-rows" style="display:flex;flex-direction:column;gap:24px">
             <div style="display:flex;gap:32px;align-items:flex-start">
               <div class="acct-section-label">
-                <h3 class="acct-section-title">Profile</h3>
+                <div class="acct-section-title">Profile</div>
                 <div class="acct-section-desc">Information of your business</div>
               </div>
               <div class="settings-info-card" style="flex:1">
@@ -739,7 +742,7 @@ function renderAccountOverview() {
             </div>
             <div style="display:flex;gap:32px;align-items:flex-start">
               <div class="acct-section-label">
-                <h3 class="acct-section-title">Shipping</h3>
+                <div class="acct-section-title">Shipping</div>
                 <div class="acct-section-desc">Where your order should be delivered and who will receive it</div>
               </div>
               <div class="settings-info-card" style="flex:1">
@@ -767,7 +770,7 @@ function renderAccountProfile() {
         <h1 class="acct-title">Profile Information</h1>
         <div class="acct-section">
           <div class="acct-section-label">
-            <h3 class="acct-section-title">Company name <span style="color:var(--red)">*</span></h3>
+            <div class="acct-section-title">Company name <span style="color:var(--red)">*</span></div>
             <div class="acct-section-desc">Official name of your business</div>
           </div>
           <div class="acct-section-control">
@@ -779,7 +782,7 @@ function renderAccountProfile() {
         </div>
         <div class="acct-section">
           <div class="acct-section-label">
-            <h3 class="acct-section-title">Phone number <span style="color:var(--red)">*</span></h3>
+            <div class="acct-section-title">Phone number <span style="color:var(--red)">*</span></div>
             <div class="acct-section-desc">Your main contact number</div>
           </div>
           <div class="acct-section-control">
@@ -804,7 +807,7 @@ function renderAccountProfile() {
         </div>
         <div class="acct-section">
           <div class="acct-section-label">
-            <h3 class="acct-section-title">Email <span style="color:var(--red)">*</span></h3>
+            <div class="acct-section-title">Email <span style="color:var(--red)">*</span></div>
             <div class="acct-section-desc">Receive important notification about your orders, requests, promotions, etc</div>
           </div>
           <div class="acct-section-control">
@@ -836,7 +839,7 @@ function renderAccountEmail() {
         <h1 class="acct-title">Email Preferences</h1>
         <div class="acct-section">
           <div class="acct-section-label">
-            <h3 class="acct-section-title">Notification <span style="color:var(--red)">*</span></h3>
+            <div class="acct-section-title">Notification <span style="color:var(--red)">*</span></div>
             <div class="acct-section-desc">Recommendation: Leave "Important Notifications" enabled in order to receive all important messages</div>
           </div>
           <div class="acct-section-control">
@@ -888,7 +891,7 @@ function renderAccountPassword() {
         <h1 class="acct-title">Update Your Password</h1>
         <div class="acct-section">
           <div class="acct-section-label">
-            <h3 class="acct-section-title">Current password <span style="color:var(--red)">*</span></h3>
+            <div class="acct-section-title">Current password <span style="color:var(--red)">*</span></div>
             <div class="acct-section-desc">Enter your existing password for verification</div>
           </div>
           <div class="acct-section-control">
@@ -900,7 +903,7 @@ function renderAccountPassword() {
         </div>
         <div class="acct-section">
           <div class="acct-section-label">
-            <h3 class="acct-section-title">New password <span style="color:var(--red)">*</span></h3>
+            <div class="acct-section-title">New password <span style="color:var(--red)">*</span></div>
             <div class="acct-section-desc">Create a new password for your account</div>
           </div>
           <div class="acct-section-control">
@@ -917,7 +920,7 @@ function renderAccountPassword() {
         </div>
         <div class="acct-section">
           <div class="acct-section-label">
-            <h3 class="acct-section-title">Submit new password <span style="color:var(--red)">*</span></h3>
+            <div class="acct-section-title">Submit new password <span style="color:var(--red)">*</span></div>
             <div class="acct-section-desc">Re-enter your new password to confirm</div>
           </div>
           <div class="acct-section-control">
@@ -982,7 +985,7 @@ function renderAccountNewCase() {
         <h1 class="acct-title">Submit New Case</h1>
         <div class="acct-section">
           <div class="acct-section-label">
-            <h3 class="acct-section-title">Subject <span style="color:var(--red)">*</span></h3>
+            <div class="acct-section-title">Subject <span style="color:var(--red)">*</span></div>
             <div class="acct-section-desc">Official name of your business</div>
           </div>
           <div class="acct-section-control">
@@ -991,7 +994,7 @@ function renderAccountNewCase() {
         </div>
         <div class="acct-section">
           <div class="acct-section-label">
-            <h3 class="acct-section-title">Type of inquiry (optional)</h3>
+            <div class="acct-section-title">Type of inquiry (optional)</div>
             <div class="acct-section-desc">Pick one of the reasons of your request from the list and describe your request</div>
           </div>
           <div class="acct-section-control">
@@ -1000,7 +1003,7 @@ function renderAccountNewCase() {
         </div>
         <div class="acct-section">
           <div class="acct-section-label">
-            <h3 class="acct-section-title">Notes <span style="color:var(--red)">*</span></h3>
+            <div class="acct-section-title">Notes <span style="color:var(--red)">*</span></div>
             <div class="acct-section-desc">Add detailed explanation for your request</div>
           </div>
           <div class="acct-section-control">
@@ -1009,7 +1012,7 @@ function renderAccountNewCase() {
         </div>
         <div class="acct-section">
           <div class="acct-section-label">
-            <h3 class="acct-section-title">Contact email <span style="color:var(--red)">*</span></h3>
+            <div class="acct-section-title">Contact email <span style="color:var(--red)">*</span></div>
             <div class="acct-section-desc">This email will be used for communication regarding your case.</div>
           </div>
           <div class="acct-section-control">
@@ -1032,7 +1035,7 @@ function renderAccountNewCase() {
                 </div>
               </label>
             </div>
-            <button class="btn-submit-case" onclick="showToast('Case submitted successfully','check')">Submit</button>
+            <button class="btn-submit-case" onclick="showToast('Case submitted successfully','check');navigate('account-cases')">Submit</button>
           </div>
         </div>
       </div>
@@ -1289,22 +1292,27 @@ function renderAccountReorder() {
       : `<div class="reorder-price-cur">£${p.price.toFixed(2)}</div>`;
     return `
       <div class="reorder-row">
-        <div class="reorder-thumb">${icon(p.img, 'icon-lg')}</div>
+        <div class="reorder-thumb"><img src="${p.img?.startsWith('http') ? p.img : '/Logo-Placeholder-for-Product-Image.png'}" onerror="this.onerror=null;this.src='/Logo-Placeholder-for-Product-Image.png'" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:4px"></div>
         <div class="reorder-info">
           <div class="reorder-meta">
             <span class="reorder-sku" onclick="copyReorderCode('${p.id}')">${icon('copy','icon-sm')} ${p.id}</span>
-            <span class="reorder-stock"><span class="reorder-stock-dot ${stockDot}"></span>${p.stock}</span>
+            <span class="reorder-stock"><span class="reorder-stock-dot ${stockDot}"></span>
             <span class="reorder-last-order">Last order: ${p.lastOrder}</span>
           </div>
           <div class="reorder-name">${p.name}</div>
         </div>
         <div class="reorder-price-cell">${priceHtml}</div>
-        <div class="reorder-qty-stepper">
-          <button class="reorder-qty-btn" onclick="reorderQtyChange(${i},-1)">−</button>
-          <span class="reorder-qty-val" id="reorder-qty-${i}">${qty}</span>
-          <button class="reorder-qty-btn" onclick="reorderQtyChange(${i},1)">+</button>
+        <div class="qty-control">
+          <div class="qty-btn" onclick="event.stopPropagation();reorderQtyChange(${i},-1)">${icon('minus')}</div>
+          <input class="qty-input" id="reorder-qty-${i}" value="${qty}" type="number" min="1">
+          <div class="qty-btn" onclick="event.stopPropagation();reorderQtyChange(${i},1)">${icon('plus')}</div>
         </div>
-        <button class="reorder-cart-btn" onclick="reorderAddToCart(${i})" title="Add to cart">${icon('cart','icon-sm')}</button>
+        <div class="home-promo-actions">
+          <button class="home-promo-heart" onclick="event.stopPropagation();toggleWish('${p.id}')" title="Add to favourites">${icon(FAV_ITEMS.includes(p.id) ? 'heartFilled' : 'heart')}</button>
+          <div class="home-promo-cart-wrap">
+            <button class="home-promo-cart" onclick="event.stopPropagation();reorderAddToCart(${i})" title="Add to cart">${icon('cart')}</button>
+          </div>
+        </div>
       </div>`;
   }).join('');
 
@@ -1485,11 +1493,11 @@ function renderAccountInvoiceDetail() {
       </div>
       <div class="inv-detail-billing-row">
         <span class="inv-detail-info-label">Terms</span>
-        <span class="inv-detail-info-value">Net 30</span>
+        <span class="inv-detail-info-value">30 Days EOM</span>
       </div>
       <div class="inv-detail-billing-row">
         <span class="inv-detail-info-label">Memo</span>
-        <span class="inv-detail-info-value inv-detail-memo">Standard billing terms apply. Payment due within 30 days of invoice date.</span>
+        <span class="inv-detail-info-value inv-detail-memo">139-UK397560</span>
       </div>
     </div>`;
 
@@ -1526,11 +1534,11 @@ function renderAccountInvoiceDetail() {
         <!-- Header -->
         <div class="inv-detail-header">
           <div class="inv-detail-header-left">
-            <button class="inv-detail-back" onclick="navigate('account-invoices')">${icon('chevronLeft','icon-sm')} Back</button>
+            <button class="inv-detail-back" onclick="navigate('account-invoices')">${icon('chevronLeft','icon-sm')} </button>
             <h1 class="inv-detail-title">INVOICE #${inv.id}</h1>
             <button class="acct-icon-btn" onclick="copyInvoiceId('${inv.id}')" title="Copy">${icon('copy','icon-sm')}</button>
           </div>
-          <div class="inv-detail-total">${total}</div>
+          <h3 class="inv-detail-total">${total}</h3>
         </div>
 
         <div class="inv-detail-body">
@@ -1563,29 +1571,25 @@ function renderAccountInvoiceDetail() {
             <!-- Products section -->
             <div class="inv-detail-section">
               <button class="inv-detail-section-header" onclick="toggleAcc(this)">
-                <span>Product (1)</span>
+                <h4>Product (1)</h4>
                 <span class="acc-toggle">−</span>
               </button>
               <div class="inv-detail-section-body open" style="display:block">
-                <div class="inv-detail-product-row">
-                  <div class="inv-detail-product-img">
-                    <div class="inv-detail-img-placeholder">${icon('package','icon-sm')}</div>
-                  </div>
-                  <div class="inv-detail-product-info">
-                    <div class="inv-detail-product-sku-row">
-                      <span class="inv-detail-product-sku">${sampleProduct.id || 'PM-4550'}</span>
-                      <span class="inv-detail-product-stock-dot ${sampleProduct.inStock ? 'in' : 'out'}"></span>
-                      <span class="inv-detail-product-stock-count">${sampleProduct.stock || 2}</span>
+                <div class="home-promo-row">
+                  <div class="home-promo-thumb"><img src="${sampleProduct.img?.startsWith('http') ? sampleProduct.img : '/Logo-Placeholder-for-Product-Image.png'}" onerror="this.onerror=null;this.src='/Logo-Placeholder-for-Product-Image.png'" alt="" style="width:100%;height:100%;object-fit:contain"></div>
+                  <div class="home-promo-info">
+                    <div class="home-promo-meta">
+                      <span class="home-promo-sku">${sampleProduct.id || 'PM-4550'}</span>
+                      <div class="home-promo-stock-dot ${sampleProduct.inStock ? '' : 'low'}"></div>
                     </div>
-                    <div class="inv-detail-product-name">${sampleProduct.name || 'BORA Adjustable Speedhorse XT'}</div>
+                    <div class="home-promo-name">${sampleProduct.name || 'BORA Adjustable Speedhorse XT'}</div>
                   </div>
-                  <div class="inv-detail-product-qty">
-                    <span class="inv-detail-qty-val">1</span>
+                  <span class="inv-detail-qty-val">1</span>
+                  <div class="home-promo-prices">
+                    <div class="home-promo-orig">${sampleProduct.orig ? '£'+sampleProduct.orig.toFixed(2) : '£2,000.00'}</div>
+                    <div class="home-promo-price">£${sampleProduct.price ? sampleProduct.price.toFixed(2) : '1,400.00'}</div>
                   </div>
-                  <div class="inv-detail-product-pricing">
-                    <span class="inv-detail-price-orig">${sampleProduct.orig ? '£'+sampleProduct.orig.toFixed(2) : '£2,000.00'}</span>
-                    <span class="inv-detail-price-sale">£${sampleProduct.price ? sampleProduct.price.toFixed(2) : '1,400.00'}</span>
-                  </div>
+                  
                 </div>
               </div>
             </div>
@@ -1593,7 +1597,7 @@ function renderAccountInvoiceDetail() {
             <!-- Billing section -->
             <div class="inv-detail-section">
               <button class="inv-detail-section-header" onclick="toggleAcc(this)">
-                <span>Billing</span>
+                <h4>Billing</h4>
                 <span class="acc-toggle">−</span>
               </button>
               <div class="inv-detail-section-body open" style="display:block">
@@ -1608,16 +1612,16 @@ function renderAccountInvoiceDetail() {
             <div class="inv-detail-summary">
               <h3 class="inv-detail-summary-title">Summary</h3>
               <div class="inv-detail-summary-row">
-                <span>Subtotal</span><span>${subtotal}</span>
+                <p>Subtotal</p><span>${subtotal}</span>
               </div>
               <div class="inv-detail-summary-row">
-                <span>Tax Total</span><span>${tax}</span>
+                <p>Tax Total</p><span>${tax}</span>
               </div>
               <div class="inv-detail-summary-row">
-                <span>Shipping</span><span>${shipping}</span>
+                <p>Shipping</p><span>${shipping}</span>
               </div>
               <div class="inv-detail-summary-row">
-                <span>Handling</span><span>${handling}</span>
+                <p>Handling</p><span>${handling}</span>
               </div>
               ${summaryExtra}
             </div>
@@ -1726,42 +1730,36 @@ function renderAccountTransactionDetail() {
         <span class="acc-toggle">−</span>
       </button>
       <div class="inv-detail-section-body open" style="display:block">
-        <div class="inv-detail-product-row">
-          <div class="inv-detail-product-img">
-            <div class="inv-detail-img-placeholder">${icon('package','icon-sm')}</div>
-          </div>
-          <div class="inv-detail-product-info">
-            <div class="inv-detail-product-sku-row">
-              <span class="inv-detail-product-sku">${prod1.id || 'PM-4550'}</span>
-              <span class="inv-detail-product-stock-dot ${prod1.inStock ? 'in' : 'out'}"></span>
-              <span class="inv-detail-product-stock-count">${prod1.stock || 2}</span>
+        <div class="home-promo-row">
+          <div class="home-promo-thumb"><img src="${prod1.img?.startsWith('http') ? prod1.img : '/Logo-Placeholder-for-Product-Image.png'}" onerror="this.onerror=null;this.src='/Logo-Placeholder-for-Product-Image.png'" alt="" style="width:100%;height:100%;object-fit:contain"></div>
+          <div class="home-promo-info">
+            <div class="home-promo-meta">
+              <span class="home-promo-sku">${prod1.id || 'PM-4550'}</span>
+              <div class="home-promo-stock-dot ${prod1.inStock ? '' : 'low'}"></div>
             </div>
-            <div class="inv-detail-product-name">${prod1.name || 'BORA Adjustable Speedhorse XT'}</div>
+            <div class="home-promo-name">${prod1.name || 'BORA Adjustable Speedhorse XT'}</div>
           </div>
-          <div class="inv-detail-product-qty"><span class="inv-detail-qty-val">1</span></div>
-          <div class="inv-detail-product-pricing">
-            <span class="inv-detail-price-orig">${prod1.orig ? '£'+prod1.orig.toFixed(2) : '£1,200.00'}</span>
-            <span class="inv-detail-price-sale">${prod1.price ? fmtGbp(prod1.price) : '£1,000.00'}</span>
+          <div class="home-promo-prices">
+            <div class="home-promo-orig">${prod1.orig ? '£'+prod1.orig.toFixed(2) : '£1,200.00'}</div>
+            <div class="home-promo-price">${prod1.price ? fmtGbp(prod1.price) : '£1,000.00'}</div>
           </div>
+          <span class="inv-detail-qty-val">1</span>
         </div>
         <div class="tx-detail-divider"></div>
-        <div class="inv-detail-product-row">
-          <div class="inv-detail-product-img">
-            <div class="inv-detail-img-placeholder">${icon('package','icon-sm')}</div>
-          </div>
-          <div class="inv-detail-product-info">
-            <div class="inv-detail-product-sku-row">
-              <span class="inv-detail-product-sku">${prod2.id || 'OX-S248930'}</span>
-              <span class="inv-detail-product-stock-dot ${prod2.inStock ? 'in' : 'out'}"></span>
-              <span class="inv-detail-product-stock-count">${prod2.stock || 2}</span>
+        <div class="home-promo-row">
+          <div class="home-promo-thumb"><img src="${prod2.img?.startsWith('http') ? prod2.img : '/Logo-Placeholder-for-Product-Image.png'}" onerror="this.onerror=null;this.src='/Logo-Placeholder-for-Product-Image.png'" alt="" style="width:100%;height:100%;object-fit:contain"></div>
+          <div class="home-promo-info">
+            <div class="home-promo-meta">
+              <span class="home-promo-sku">${prod2.id || 'OX-S248930'}</span>
+              <div class="home-promo-stock-dot ${prod2.inStock ? '' : 'low'}"></div>
             </div>
-            <div class="inv-detail-product-name">${prod2.name || 'OX Folding Collapsible Ear Defenders'}</div>
+            <div class="home-promo-name">${prod2.name || 'OX Folding Collapsible Ear Defenders'}</div>
           </div>
-          <div class="inv-detail-product-qty"><span class="inv-detail-qty-val">1</span></div>
-          <div class="inv-detail-product-pricing">
-            <span class="inv-detail-price-orig"></span>
-            <span class="inv-detail-price-sale">${fmtGbp(amtNum - (prod1.price || 1000))}</span>
+          <div class="home-promo-prices">
+            <div class="home-promo-orig"></div>
+            <div class="home-promo-price">${fmtGbp(amtNum - (prod1.price || 1000))}</div>
           </div>
+          <span class="inv-detail-qty-val">1</span>
         </div>
       </div>
     </div>` : '';
@@ -1915,20 +1913,20 @@ function renderAccountTransactionDetail() {
             <div class="inv-detail-summary">
               <h3 class="inv-detail-summary-title">Summary</h3>
               <div class="inv-detail-summary-row">
-                <span>Subtotal</span><span>${subtotal}</span>
+                <p>Subtotal</p><span>${subtotal}</span>
               </div>
               <div class="inv-detail-summary-row">
-                <span>Tax Total</span><span>${tax}</span>
+                <p>Tax Total</p><span>${tax}</span>
               </div>
               <div class="inv-detail-summary-row">
-                <span>Shipping</span><span>${shipping}</span>
+                <p>Shipping</p><span>${shipping}</span>
               </div>
               <div class="inv-detail-summary-row">
-                <span>Handling</span><span>${handling}</span>
+                <p>Handling</p><span>${handling}</span>
               </div>
               <div class="inv-detail-summary-divider"></div>
               <div class="inv-detail-summary-row inv-detail-summary-total">
-                <span>Total Amount</span><span>${tx.amount}</span>
+                <p>Total Amount</p><span>${tx.amount}</span>
               </div>
             </div>
             <div class="inv-detail-actions">
@@ -1946,7 +1944,7 @@ function renderAccountTransactionDetail() {
         <!-- Header -->
         <div class="inv-detail-header">
           <div class="inv-detail-header-left">
-            <button class="inv-detail-back" onclick="navigate('account-transaction-history')">${icon('chevronLeft','icon-sm')} Back</button>
+            <button class="inv-detail-back" onclick="navigate('account-transaction-history')">${icon('chevronLeft','icon-sm')}</button>
             <h1 class="inv-detail-title">${tx.type.toUpperCase()} #${tx.id}</h1>
             <button class="acct-icon-btn" onclick="copyTxId('${tx.id}')" title="Copy">${icon('copy','icon-sm')}</button>
           </div>
@@ -1986,7 +1984,7 @@ function renderAccountPrintStatement() {
 
           <div class="stmt-row">
             <div class="stmt-label">
-              <h4 class="stmt-label-title">Statement date <span class="stmt-req">*</span></h4>
+              <div class="stmt-label-title">Statement date <span class="stmt-req">*</span></div>
               <div class="stmt-label-desc">The statement includes all transactions up to the selected statement date. Optionally, set a start date to limit the period.</div>
             </div>
             <div class="stmt-controls">${dateInput('stmt-date', stmtDate)}</div>
@@ -1996,7 +1994,7 @@ function renderAccountPrintStatement() {
 
           <div class="stmt-row">
             <div class="stmt-label">
-              <h4 class="stmt-label-title">Start date (optional)</h4>
+              <div class="stmt-label-title">Start date (optional)</div>
               <div class="stmt-label-desc">Use this to limit the statement period.</div>
             </div>
             <div class="stmt-controls">${dateInput('stmt-start', stmtStartDate)}</div>
@@ -2006,7 +2004,7 @@ function renderAccountPrintStatement() {
 
           <div class="stmt-row">
             <div class="stmt-label">
-              <h4 class="stmt-label-title">Statement preferences <span class="stmt-req">*</span></h4>
+              <div class="stmt-label-title">Statement preferences <span class="stmt-req">*</span></div>
               <div class="stmt-label-desc">Choose how the statement should be generated and displayed.</div>
             </div>
             <div class="stmt-controls">
@@ -2083,9 +2081,7 @@ function renderAccountPurchases() {
             <div class="ph-filter-tab${purchasesFilter === 'open' ? ' active' : ''}" onclick="setPurchasesFilter('open')">Open</div>
             <div class="ph-filter-tab${purchasesFilter === 'all'  ? ' active' : ''}" onclick="setPurchasesFilter('all')">All</div>
           </div>
-          <div class="ph-toolbar">
-            ${buildCustomSelect('purchases-sort', ['Newest First', 'Oldest First', 'Amount: High to Low', 'Amount: Low to High'])}
-          </div>
+        
           <div class="acct-divider"></div>
           <table class="acct-data-table">
             <thead><tr>

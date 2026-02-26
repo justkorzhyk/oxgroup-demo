@@ -800,7 +800,7 @@ function reorderQtyChange(idx, delta) {
   if (reorderQtys[idx] == null) reorderQtys[idx] = 1;
   reorderQtys[idx] = Math.max(1, reorderQtys[idx] + delta);
   const el = document.getElementById('reorder-qty-' + idx);
-  if (el) el.textContent = reorderQtys[idx];
+  if (el) el.value = reorderQtys[idx];
 }
 function reorderAddToCart(idx) {
   const item = (reorderStockOnly ? REORDER_ITEMS.filter(p => p.inStock) : REORDER_ITEMS)[idx];
@@ -1093,7 +1093,7 @@ function renderSearchResults(query) {
 
   document.getElementById('search-products').innerHTML = matchedProducts.map(p =>
     `<div class="search-product-row" onclick="openProductFromSearch('${p.id}');closeSearch()">
-       <div class="search-product-img">${p.img?.startsWith('http') ? `<img src="${p.img}" alt="">` : icon('image', 'icon-sm')}</div>
+       <div class="search-product-img"><img src="${p.img?.startsWith('http') ? p.img : '/Logo-Placeholder-for-Product-Image.png'}" onerror="this.onerror=null;this.src='/Logo-Placeholder-for-Product-Image.png'" alt="" style="width:100%;height:100%;object-fit:contain"></div>
        <span class="search-product-name">${highlight(p.name)}</span>
        <span class="search-product-id">${p.id}</span>
      </div>`
