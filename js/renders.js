@@ -27,7 +27,7 @@ function buildCartFAQ(containerId) {
 // ─── HOME RENDER ────────────────────────────────────
 function renderHome() {
   // Promo rows (home page)
-  const promoRows = PRODUCTS.filter(p => p.img?.startsWith('http')).slice(0, 8);
+  const promoRows = PRODUCTS.filter(p => p.img?.startsWith('http') && p.inStock && p.stock > 0).slice(0, 8);
   const promoEl = document.getElementById('home-promo-rows');
   if (promoEl) {
     promoEl.innerHTML = promoRows.map((p, rowIdx) => {
@@ -408,7 +408,7 @@ function renderDetail() {
       </div>
       <h1 class="prod-detail-title">${p.name}</h1>
     
-      <div class="detail-price">£${p.price.toFixed(2)} <div class="avail"><div class="stock-dot ${p.stock > 10 ? 'green' : p.stock > 0 ? 'orange' : 'red'}"></div>${!p.inStock || p.stock <= 0 ? '<span class="out-badge">Out of Stock</span>' : ''}</div></div>
+      <div class="detail-price">£${p.price.toFixed(2)} <div class="avail"><div class="stock-dot ${p.stock > 10 ? 'green' : p.stock > 0 ? 'orange' : 'red'}"></div>${!p.inStock || p.stock <= 0 ?'' : ''}</div></div>
       <div class="add-to-cart-row">
         <div class="qty-control">
           <div class="qty-btn" onclick="changeQty(-1)">−</div>
@@ -438,7 +438,7 @@ function renderDetail() {
 
   buildFAQ('detail-faq', FAQS.slice(0, 4));
   // Related products
-  const related = PRODUCTS.filter(r => r.cat === p.cat && r.id !== p.id).slice(0, 5);
+  const related = PRODUCTS.filter(r => r.cat === p.cat && r.id !== p.id && r.inStock && r.stock > 0).slice(0, 5);
   document.getElementById('related-products').innerHTML = related.map(r => {
     const _idx = PRODUCTS.indexOf(r);
     const _fav = FAV_ITEMS.includes(r.id);
