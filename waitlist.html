@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OX Group — Join the Waitlist</title>
+<link rel="icon" type="image/png" href="/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -12,8 +13,8 @@
 :root {
   --blue:   #6e96fb;
   --purple: #a940ff;
-  --bg:     #0d0e12;
-  --card:   #0d1018;
+  --bg:     #0E0E0E;
+  --card:   #0E0E0E;
   --white:  #ffffff;
   --muted:  rgba(255,255,255,0.5);
   --faint:  rgba(255,255,255,0.08);
@@ -32,42 +33,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ── Background ─────────────────────────────── */
-.bg-blob {
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(90px);
-  pointer-events: none;
-  z-index: 0;
-  will-change: transform;
-}
-.bg-blob-1 {
-  width: 700px; height: 700px;
-  background: radial-gradient(circle, rgba(110,150,251,0.28) 0%, transparent 65%);
-  top: -220px; right: -120px;
-}
-.bg-blob-2 {
-  width: 550px; height: 550px;
-  background: radial-gradient(circle, rgba(169,64,255,0.22) 0%, transparent 65%);
-  bottom: -120px; left: -120px;
-}
-.bg-blob-3 {
-  width: 350px; height: 350px;
-  background: radial-gradient(circle, rgba(110,150,251,0.12) 0%, transparent 65%);
-  top: 55%; left: 45%;
-  transform: translate(-50%, -50%);
-}
 
-/* Subtle dot grid */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
-  background-size: 36px 36px;
-  pointer-events: none;
-  z-index: 0;
-}
 
 /* ── Nav ─────────────────────────────────────── */
 nav {
@@ -97,13 +63,7 @@ nav {
   color: #fff;
   flex-shrink: 0;
 }
-.nav-link {
-  font-size: 14px;
-  color: var(--muted);
-  text-decoration: none;
-  transition: color 0.15s;
-}
-.nav-link:hover { color: var(--white); }
+
 
 /* ── Main ────────────────────────────────────── */
 main {
@@ -121,13 +81,11 @@ main {
 .card-outer {
   width: 100%;
   max-width: 620px;
-  background: linear-gradient(137deg, rgba(110,150,251,0.55) 0%, rgba(0,0,0,0.25) 50%, rgba(169,64,255,0.35) 100%);
+  background: rgba(255,255,255,0.06);
   border-radius: 26px;
   padding: 1.8px;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(255,255,255,0.04);
 }
 .card {
-  background: linear-gradient(160deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
   background-color: var(--card);
   border-radius: 24px;
   padding: 52px 48px;
@@ -175,10 +133,7 @@ h1 {
   max-width: 520px;
 }
 .gradient-text {
-  background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #00AAFF;
 }
 
 /* ── Body text ───────────────────────────────── */
@@ -199,13 +154,13 @@ h1 {
 }
 .form-row {
   display: flex;
+
   gap: 8px;
 }
 .email-input {
   flex: 1;
-  height: 50px;
-  padding: 0 22px;
-  border-radius: 100px;
+  padding: 24px 24px;
+  border-radius: 16px;
   border: 1px solid var(--faint);
   background: rgba(255,255,255,0.04);
   color: var(--white);
@@ -223,11 +178,10 @@ h1 {
 .email-input.error { border-color: #f87171; }
 
 .submit-btn {
-  height: 50px;
-  padding: 0 26px;
-  border-radius: 100px;
+  padding: 24px 24px;
+  border-radius: 16px;
   border: none;
-  background: linear-gradient(135deg, var(--blue) 0%, #5878e8 100%);
+  background: #00AAFF;
   color: #fff;
   font-family: inherit;
   font-size: 15px;
@@ -244,6 +198,79 @@ h1 {
   background: linear-gradient(135deg, #22c55e, #16a34a);
   cursor: default;
 }
+
+/* ── Country searchable dropdown ─────────────── */
+.cd { position: relative; width: 100%; }
+.cd-btn {
+  width: 100%;
+  padding: 24px 24px;
+  border-radius: 16px;
+  border: 1px solid var(--faint);
+  background: rgba(255,255,255,0.04);
+  color: var(--white);
+  font-family: inherit;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: border-color 0.2s, background 0.2s;
+  text-align: left;
+}
+.cd-btn:focus, .cd.open .cd-btn {
+  border-color: var(--blue);
+  background: rgba(110,150,251,0.06);
+  outline: none;
+}
+.cd-placeholder { color: rgba(255,255,255,0.32); }
+.cd-chevron { flex-shrink: 0; transition: transform 0.2s; opacity: 0.4; }
+.cd.open .cd-chevron { transform: rotate(180deg); }
+.cd-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0; right: 0;
+  background: #1a1d27;
+  border: 1px solid var(--faint);
+  border-radius: 16px;
+  overflow: hidden;
+  z-index: 100;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+.cd.open .cd-panel { display: block; }
+.cd-search {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--faint);
+}
+.cd-search input {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--faint);
+  border-radius: 8px;
+  padding: 14px 14px;
+  color: var(--white);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+}
+.cd-search input::placeholder { color: rgba(255,255,255,0.3); }
+.cd-search input:focus { border-color: var(--blue); }
+.cd-list { max-height: 220px; overflow-y: auto; padding: 8px 0; }
+.cd-list::-webkit-scrollbar { width: 4px; }
+.cd-list::-webkit-scrollbar-track { background: transparent; }
+.cd-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
+.cd-opt {
+  padding: 10px 20px;
+  font-size: 15px;
+  color: var(--white);
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+}
+.cd-opt:hover, .cd-opt.focused { background: rgba(110,150,251,0.12); }
+.cd-opt.hidden { display: none; }
+.cd-empty { padding: 12px 20px; font-size: 14px; color: rgba(255,255,255,0.3); display: none; }
 
 .form-hint {
   font-size: 13px;
@@ -337,7 +364,6 @@ footer a:hover { color: var(--white); }
 @media (max-width: 600px) {
   h1 { font-size: 36px; }
   .card { padding: 32px 24px; gap: 22px; }
-  .form-row { flex-direction: column; }
   .submit-btn { width: 100%; }
   .social { flex-direction: column; gap: 10px; }
 }
@@ -345,18 +371,12 @@ footer a:hover { color: var(--white); }
 </head>
 <body>
 
-<!-- Background effects -->
-<div class="bg-blob bg-blob-1"></div>
-<div class="bg-blob bg-blob-2"></div>
-<div class="bg-blob bg-blob-3"></div>
 
 <!-- Nav -->
 <nav>
   <a class="nav-logo" href="/">
-    <div class="nav-logo-mark">OX</div>
-    OX Group
+   <img src="/logo.png">
   </a>
-  <a class="nav-link" href="/">Back to store</a>
 </nav>
 
 <!-- Main content -->
@@ -381,10 +401,43 @@ footer a:hover { color: var(--white); }
 
       <!-- Email form -->
       <div class="form">
-        <div class="form-row">
           <input id="email-input" type="email" class="email-input" placeholder="Enter your work email">
+          <div class="cd" id="country-dd">
+            <button type="button" class="cd-btn" onclick="cdToggle()">
+              <span class="cd-placeholder" id="cd-label">Select your country</span>
+              <svg class="cd-chevron" width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+            <div class="cd-panel">
+              <div class="cd-search"><input type="text" placeholder="Search country…" oninput="cdFilter(this.value)" id="cd-search-input"></div>
+              <div class="cd-list" id="cd-list">
+                <div class="cd-opt" onclick="cdSelect('United Kingdom')">United Kingdom</div>
+                <div class="cd-opt" onclick="cdSelect('United States')">United States</div>
+                <div class="cd-opt" onclick="cdSelect('Australia')">Australia</div>
+                <div class="cd-opt" onclick="cdSelect('Canada')">Canada</div>
+                <div class="cd-opt" onclick="cdSelect('Ireland')">Ireland</div>
+                <div class="cd-opt" onclick="cdSelect('New Zealand')">New Zealand</div>
+                <div class="cd-opt" onclick="cdSelect('Germany')">Germany</div>
+                <div class="cd-opt" onclick="cdSelect('France')">France</div>
+                <div class="cd-opt" onclick="cdSelect('Netherlands')">Netherlands</div>
+                <div class="cd-opt" onclick="cdSelect('Spain')">Spain</div>
+                <div class="cd-opt" onclick="cdSelect('Italy')">Italy</div>
+                <div class="cd-opt" onclick="cdSelect('Sweden')">Sweden</div>
+                <div class="cd-opt" onclick="cdSelect('Norway')">Norway</div>
+                <div class="cd-opt" onclick="cdSelect('Denmark')">Denmark</div>
+                <div class="cd-opt" onclick="cdSelect('Switzerland')">Switzerland</div>
+                <div class="cd-opt" onclick="cdSelect('Belgium')">Belgium</div>
+                <div class="cd-opt" onclick="cdSelect('Austria')">Austria</div>
+                <div class="cd-opt" onclick="cdSelect('Poland')">Poland</div>
+                <div class="cd-opt" onclick="cdSelect('Portugal')">Portugal</div>
+                <div class="cd-opt" onclick="cdSelect('Singapore')">Singapore</div>
+                <div class="cd-opt" onclick="cdSelect('United Arab Emirates')">United Arab Emirates</div>
+                <div class="cd-opt" onclick="cdSelect('South Africa')">South Africa</div>
+                <div class="cd-opt" onclick="cdSelect('Other')">Other</div>
+              </div>
+              <div class="cd-empty" id="cd-empty">No countries found</div>
+            </div>
+          </div>
           <button id="submit-btn" class="submit-btn" onclick="joinWaitlist()">Join Waitlist</button>
-        </div>
         <p class="form-hint">Free to join &nbsp;·&nbsp; No credit card &nbsp;·&nbsp; Unsubscribe anytime</p>
       </div>
 
@@ -423,10 +476,50 @@ footer a:hover { color: var(--white); }
 </footer>
 
 <script>
-  function joinWaitlist() {
-    const input = document.getElementById('email-input');
-    const btn   = document.getElementById('submit-btn');
-    const email = input.value.trim();
+  // Country dropdown
+  let _cdValue = '';
+  function cdToggle() {
+    const dd = document.getElementById('country-dd');
+    const isOpen = dd.classList.toggle('open');
+    if (isOpen) {
+      setTimeout(() => document.getElementById('cd-search-input').focus(), 50);
+    }
+  }
+  function cdSelect(val) {
+    _cdValue = val;
+    window._cdValue = val;
+    const label = document.getElementById('cd-label');
+    label.textContent = val;
+    label.classList.remove('cd-placeholder');
+    document.getElementById('country-dd').classList.remove('open');
+    // reset search
+    document.getElementById('cd-search-input').value = '';
+    cdFilter('');
+  }
+  function cdFilter(q) {
+    const opts = document.querySelectorAll('.cd-opt');
+    let visible = 0;
+    opts.forEach(o => {
+      const match = o.textContent.toLowerCase().includes(q.toLowerCase());
+      o.classList.toggle('hidden', !match);
+      if (match) visible++;
+    });
+    document.getElementById('cd-empty').style.display = visible === 0 ? 'block' : 'none';
+  }
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#country-dd')) {
+      document.getElementById('country-dd').classList.remove('open');
+    }
+  });
+
+  const KLAVIYO_PUBLIC_KEY = 'Wi8Zpq';
+  const KLAVIYO_LIST_ID   = 'VqXF7p';
+
+  async function joinWaitlist() {
+    const input   = document.getElementById('email-input');
+    const btn     = document.getElementById('submit-btn');
+    const country = window._cdValue || '';
+    const email   = input.value.trim();
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       input.classList.add('error');
@@ -435,11 +528,53 @@ footer a:hover { color: var(--white); }
       return;
     }
 
-    btn.textContent = 'You\'re in! ✓';
-    btn.classList.add('success');
+    btn.textContent = 'Joining...';
     btn.disabled = true;
     input.disabled = true;
-    input.style.opacity = '0.5';
+
+    try {
+      const res = await fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + KLAVIYO_PUBLIC_KEY, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'revision': '2024-10-15' },
+        body: JSON.stringify({
+          data: {
+            type: 'subscription',
+            attributes: {
+              profile: {
+                data: {
+                  type: 'profile',
+                  attributes: {
+                    email: email,
+                    ...(country && { location: { country } })
+                  }
+                }
+              }
+            },
+            relationships: {
+              list: {
+                data: { type: 'list', id: KLAVIYO_LIST_ID }
+              }
+            }
+          }
+        })
+      });
+
+      if (res.status === 202) {
+        btn.textContent = 'You\'re in! ✓';
+        btn.classList.add('success');
+        input.style.opacity = '0.5';
+      } else {
+        const body = await res.text();
+        console.error('Klaviyo error', res.status, body);
+        throw new Error(res.status + ': ' + body);
+      }
+    } catch (err) {
+      console.error('Submit error:', err);
+      btn.textContent = 'Try again';
+      btn.disabled = false;
+      input.disabled = false;
+      input.style.opacity = '1';
+    }
   }
 </script>
 </body>

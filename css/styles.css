@@ -197,8 +197,8 @@ footer {
 .footer-links a { font-size: 11px; color: var(--muted); }
 
 /* ─── PRODUCT LISTING ─── */
-.breadcrumb { padding: 12px 24px; font-size: 12px; color: var(--muted); display: flex; gap: 6px; align-items: center; border-bottom: 1px solid var(--border); }
-.breadcrumb a { color: var(--muted); }
+.breadcrumb { padding: 12px 24px; font-size: 14px; color: var(--muted); display: flex; -ms-flex-align: center; gap: 6px; border-bottom: 1px solid var(--border); }
+.breadcrumb a { color: var(--muted); height: 18px; }
 .breadcrumb a:hover { color: var(--blue); }
 .breadcrumb .bc-active { color: var(--white); font-weight: 500; }
 .listing-header { padding: 20px 24px 0; display: flex; align-items: center; gap: 16px; }
@@ -416,6 +416,7 @@ footer {
 
 /* ─── CART ─── */
 .cart-layout { display: flex; gap: 24px; padding: 40px 0px 96px 0px; align-items: start; }
+.cart-left {width: 936px;}
 .cart-title { font-family: var(--font-display);}
 .cart-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px;}
 .clear-btn { color: var(--muted);  display: flex; align-items: center; gap: 4px; cursor: pointer; margin-left: auto; }
