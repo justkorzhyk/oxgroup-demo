@@ -942,8 +942,9 @@ function renderCatDropdown() {
   const brand = CAT_BRANDS[catActiveBrand];
   const cats  = CAT_DATA[brand] || [];
 
+  const CAT_COMING_SOON = new Set(['SMART', 'UNITEC']);
   document.getElementById('cat-tabs').innerHTML = CAT_BRANDS.map((b, i) =>
-    `<div class="cat-tab${i === catActiveBrand ? ' active' : ''}" onclick="selectCatBrand(${i})">${b}</div>`
+    `<div class="cat-tab${i === catActiveBrand ? ' active' : ''}${CAT_COMING_SOON.has(b) ? ' cat-tab-disabled' : ''}" ${CAT_COMING_SOON.has(b) ? '' : `onclick="selectCatBrand(${i})"`}>${b}${CAT_COMING_SOON.has(b) ? ' <span class="brand-coming-soon">Coming Soon</span>' : ''}</div>`
   ).join('');
 
   if (cats.length === 0) {
