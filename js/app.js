@@ -188,7 +188,9 @@ function navigate(page, opts = {}) {
   }
   if (page === 'home') {
     renderHome();
-    if (!_brandCache['ox']) loadBrandProducts('OX');
+    if (!_brandCache['ox'])   loadBrandProducts('OX');
+    if (!_brandCache['bora']) _prefetchBrand('BORA');
+    if (!_brandCache['tracer']) _prefetchBrand('TRACER');
   }
   if (page === 'listing') {
     if (_brandCache[selectedBrand.toLowerCase()]) renderListing();
@@ -1072,8 +1074,11 @@ function handleSearch(val) {
 function renderSearchResults(query) {
   const q = query.toLowerCase();
 
-  const matchedProducts = PRODUCTS.filter(p =>
-    p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q)
+  const _searchPool = ['ox', 'bora', 'tracer']
+    .flatMap(b => _brandCache[b] || [])
+    .filter(p => p.img?.startsWith('http'));
+  const matchedProducts = _searchPool.filter(p =>
+    p.name?.toLowerCase().includes(q) || p.id?.toLowerCase().includes(q)
   ).slice(0, 5);
 
   const matchedCats = [];

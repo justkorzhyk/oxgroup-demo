@@ -1,6 +1,16 @@
 // ─── ASYNC PRODUCTS LOADER ───────────────────────────
 const _brandCache = {};
 
+// Silently fetch a brand into cache without affecting the UI
+async function _prefetchBrand(brand) {
+  const key = brand.toLowerCase();
+  if (_brandCache[key]) return;
+  try {
+    const res = await fetch(`/data/products-${key}.json`);
+    if (res.ok) _brandCache[key] = await res.json();
+  } catch (e) { /* silently ignore prefetch failures */ }
+}
+
 async function loadBrandProducts(brand) {
   const key = brand.toLowerCase();
 
