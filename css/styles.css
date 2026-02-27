@@ -371,6 +371,7 @@ footer {
   transition: background .2s; cursor: pointer; border: none;
 }
 .btn-atc:hover { background: var(--blue-dark); }
+.btn-atc:disabled { background: var(--bg3); color: var(--muted); cursor: not-allowed; opacity: 0.6; }
 .btn-wish { width: 40px; height: 40px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg3); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--muted); cursor: pointer; transition: all .15s; }
 .btn-wish:hover, .btn-wish.active { border-color: var(--red); color: var(--red); }
 .size-label { font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; margin-top: 24px; }
@@ -414,7 +415,7 @@ footer {
 .related-title { margin-bottom: 24px; }
 
 /* ─── CART ─── */
-.cart-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; padding: 40px 0px 96px 0px; align-items: start; }
+.cart-layout { display: flex; gap: 24px; padding: 40px 0px 96px 0px; align-items: start; }
 .cart-title { font-family: var(--font-display);}
 .cart-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px;}
 .clear-btn { color: var(--muted);  display: flex; align-items: center; gap: 4px; cursor: pointer; margin-left: auto; }
@@ -846,6 +847,7 @@ footer {
   transition: background .15s; font-family: var(--font-body);
 }
 .home-promo-cart:hover { background: #0984bd; color: var(--white); }
+.home-promo-cart:disabled { opacity: 0.35; cursor: not-allowed; background: none; color: var(--muted); }
 .home-promo-cart-badge {
   position: absolute; top: -4px; right: -4px;
   background: #0ba5ec; color: #fff; font-size: 10px; font-weight: 700;
@@ -1066,6 +1068,7 @@ footer {
 /* ─── QUICK ADD ─── */
 .quick-add-panel { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 12px; background: var(--bg2); }
 .quick-add-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; user-select: none; }
+.quick-add-header h3 {font-size: 18px;}
 .quick-add-title { font-family: var(--font-display); font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
 .quick-add-body { padding: 0 20px 20px; }
 .quick-add-row { display: flex; align-items: center; gap: 10px; }

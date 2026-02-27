@@ -54,7 +54,7 @@ function renderHome() {
         <div class="home-promo-actions">
           <button class="home-promo-heart${isFav ? ' fav-active' : ''}" onclick="event.stopPropagation();toggleWish('${p.id}')" title="${isFav ? 'Remove from favourites' : 'Add to favourites'}">${icon(isFav ? 'heartFilled' : 'heart')}</button>
           <div class="home-promo-cart-wrap">
-            <button class="home-promo-cart" onclick="event.stopPropagation();addToCart(${idx})" title="Add to cart">${icon('cart')}</button>
+            <button class="home-promo-cart" onclick="event.stopPropagation();addToCart(${idx})" title="Add to cart" ${!p.inStock || p.stock <= 0 ? 'disabled' : ''}>${icon('cart')}</button>
             ${cartQty > 0 ? `<span class="home-promo-cart-badge">${cartQty}</span>` : ''}
           </div>
         </div>
@@ -356,7 +356,7 @@ function renderListing() {
       <div class="home-promo-actions">
         <button class="home-promo-heart${_fav ? ' fav-active' : ''}" onclick="event.stopPropagation();toggleWish('${p.id}')" title="${_fav ? 'Remove from favourites' : 'Add to favourites'}">${icon(_fav ? 'heartFilled' : 'heart')}</button>
         <div class="home-promo-cart-wrap">
-          <button class="home-promo-cart" onclick="event.stopPropagation();addToCart(${_idx})" title="Add to cart">${icon('cart')}</button>
+          <button class="home-promo-cart" onclick="event.stopPropagation();addToCart(${_idx})" title="Add to cart" ${!p.inStock || p.stock <= 0 ? 'disabled' : ''}>${icon('cart')}</button>
           ${_qty > 0 ? `<span class="home-promo-cart-badge">${_qty}</span>` : ''}
         </div>
       </div>`; })()}
@@ -415,7 +415,7 @@ function renderDetail() {
           <input class="qty-input" id="qty-val" value="1" type="number" min="1">
           <div class="qty-btn" onclick="changeQty(1)">+</div>
         </div>
-        <button class="btn-atc" onclick="addToCart()">Add to Cart ${icon('cart')}</button>
+        <button class="btn-atc" onclick="addToCart()" ${!p.inStock || p.stock <= 0 ? 'disabled' : ''}>${!p.inStock || p.stock <= 0 ? 'Out of Stock' : `Add to Cart ${icon('cart')}`}</button>
         <button class="home-promo-heart${FAV_ITEMS.includes(p.id) ? ' fav-active' : ''}" onclick="addToWish()" title="${FAV_ITEMS.includes(p.id) ? 'Remove from favourites' : 'Add to favourites'}">${icon(FAV_ITEMS.includes(p.id) ? 'heartFilled' : 'heart')}</button>
       </div>
       ${p.cat === 'Diamond Tools' ? `
@@ -457,7 +457,7 @@ function renderDetail() {
       <div class="home-promo-actions">
         <button class="home-promo-heart${_fav ? ' fav-active' : ''}" onclick="event.stopPropagation();toggleWish('${r.id}')" title="${_fav ? 'Remove from favourites' : 'Add to favourites'}">${icon(_fav ? 'heartFilled' : 'heart')}</button>
         <div class="home-promo-cart-wrap">
-          <button class="home-promo-cart" onclick="event.stopPropagation();addToCart(${_idx})" title="Add to cart">${icon('cart')}</button>
+          <button class="home-promo-cart" onclick="event.stopPropagation();addToCart(${_idx})" title="Add to cart" ${!r.inStock || r.stock <= 0 ? 'disabled' : ''}>${icon('cart')}</button>
           ${_qty > 0 ? `<span class="home-promo-cart-badge">${_qty}</span>` : ''}
         </div>
       </div>

@@ -612,6 +612,7 @@ function clearCart() {
 function addToCart(idx) {
   const product  = (idx !== undefined) ? PRODUCTS[idx] : currentProduct;
   if (!product) return;
+  if (!product.inStock || product.stock <= 0) return;
   const qty      = (idx !== undefined) ? 1 : Math.max(1, parseInt(document.getElementById('qty-val')?.value || 1));
   const existing = CART_ITEMS.find(it => it.id === product.id);
   if (existing) {
