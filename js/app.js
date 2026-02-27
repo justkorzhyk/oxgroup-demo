@@ -186,7 +186,10 @@ function navigate(page, opts = {}) {
     }
     history.pushState({ page }, '', path);
   }
-  if (page === 'home')                  renderHome();
+  if (page === 'home') {
+    renderHome();
+    if (!_brandCache['ox']) loadBrandProducts('OX');
+  }
   if (page === 'listing') {
     if (_brandCache[selectedBrand.toLowerCase()]) renderListing();
     else loadBrandProducts(selectedBrand);

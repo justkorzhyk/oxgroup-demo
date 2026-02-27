@@ -27,7 +27,7 @@ function buildCartFAQ(containerId) {
 // ─── HOME RENDER ────────────────────────────────────
 function renderHome() {
   // Promo rows (home page)
-  const promoRows = PRODUCTS.slice(0, 8);
+  const promoRows = PRODUCTS.filter(p => p.img?.startsWith('http')).slice(0, 8);
   const promoEl = document.getElementById('home-promo-rows');
   if (promoEl) {
     promoEl.innerHTML = promoRows.map((p, rowIdx) => {
@@ -37,7 +37,7 @@ function renderHome() {
       const stockDotClass = p.stock <= 0 ? 'red' : p.stock <= 10 ? 'low' : '';
       return `
       <div class="home-promo-row${rowIdx === 0 ? ' home-promo-row--featured' : ''}" onclick="openProduct(${idx})">
-        <div class="home-promo-thumb"><img src="${Math.random() > 0.5 && p.img?.startsWith('http') ? p.img : '/Logo-Placeholder-for-Product-Image.png'}" onerror="this.onerror=null;this.src='/Logo-Placeholder-for-Product-Image.png'" alt=""></div>
+        <div class="home-promo-thumb"><img src="${p.img?.startsWith('http') ? p.img : '/Logo-Placeholder-for-Product-Image.png'}" onerror="this.onerror=null;this.src='/Logo-Placeholder-for-Product-Image.png'" alt=""></div>
         <div class="home-promo-info">
           <div class="home-promo-meta">
             <span style="color:#868686;font-size:13px">${icon('copy', 'icon-sm')}</span>
