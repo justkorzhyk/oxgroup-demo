@@ -355,7 +355,7 @@ footer {
 .prod-id-line span { display: flex; align-items: center; gap: 6px; }
 .prod-id-line span strong {color: var(--white);}
 .prod-detail-title { font-family: var(--font-display); font-size: 36px; font-weight: 800; text-transform: uppercase; line-height: 1.1; margin-bottom: 12px; }
-.avail { background: var(--green); width: 10px; height: 10px; border-radius: 55px; }
+.avail { display: flex; align-items: center; gap: 8px; }
 .detail-price { font-family: var(--font-display); font-size: 40px; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; gap: 16px; }
 .add-to-cart-row { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; }
 .qty-control { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 3px; background: var(--bg3); overflow: hidden; }

@@ -408,7 +408,7 @@ function renderDetail() {
       </div>
       <h1 class="prod-detail-title">${p.name}</h1>
     
-      <div class="detail-price">£${p.price.toFixed(2)} <div class="avail"></div></div>
+      <div class="detail-price">£${p.price.toFixed(2)} <div class="avail"><div class="stock-dot ${p.stock > 10 ? 'green' : p.stock > 0 ? 'orange' : 'red'}"></div>${!p.inStock || p.stock <= 0 ? '<span class="out-badge">Out of Stock</span>' : ''}</div></div>
       <div class="add-to-cart-row">
         <div class="qty-control">
           <div class="qty-btn" onclick="changeQty(-1)">−</div>
