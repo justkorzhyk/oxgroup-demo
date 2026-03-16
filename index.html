@@ -8,14 +8,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
-<script>
-  (function(){
-    var ua = navigator.userAgent;
-    var isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-    var isSmall  = window.innerWidth <= 1024;
-    if (isMobile || isSmall) window.location.replace('http://waitlist.localhost/');
-  })();
-</script>
 </head>
 <body>
 
@@ -66,7 +58,7 @@
       <input type="text" id="nav-search-input" placeholder="Search by name, product ID, or keyword"
         oninput="handleSearch(this.value)"
         onfocus="openSearchIfValue()"
-        onkeydown="if(event.key==='Enter'){navigate('listing');closeSearch()}else if(event.key==='Escape')closeSearch()">
+        onkeydown="if(event.key==='Enter'&&this.value.trim()){navigateSearch(this.value.trim());closeSearch()}else if(event.key==='Escape')closeSearch()">
       <span class="nav-search-clear" onclick="clearSearch()">
         <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </span>
@@ -74,7 +66,7 @@
         <div id="search-products"></div>
         <div class="search-divider" id="search-divider" style="display:none"></div>
         <div id="search-cats"></div>
-        <div class="search-footer" onclick="navigate('listing');closeSearch()">
+        <div class="search-footer" onclick="navigateSearch(document.getElementById('nav-search-input').value);closeSearch()">
           All Results
           <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
         </div>
@@ -132,11 +124,11 @@
       <img src="OX.png" alt="OX">
       <div class="home-banner-overlay"></div>
     </div>
-    <div class="home-banner-slide" onclick="navigateBrand('BORA')">
+    <div class="home-banner-slide" >
       <img src="BORA.png" alt="BORA">
       <div class="home-banner-overlay"></div>
     </div>
-    <div class="home-banner-slide" onclick="navigateBrand('TRACER')">
+    <div class="home-banner-slide" >
       <img src="TRACER.png" alt="TRACER">
       <div class="home-banner-overlay"></div>
     </div>
@@ -177,7 +169,7 @@
 
       </div>
       <!-- Tracer -->
-      <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigateBrand('TRACER')">
+      <div class="home-brand-card" onmouseenter="activateBrand(this)" >
         <img src="/img/brand/tracer.jpg" alt="Tracer">
         <div class="brand-overlay-narrow"></div>
         <div class="brand-overlay-featured"></div>
@@ -185,15 +177,12 @@
         <div class="brand-content">
           <h3>TRACER</h3>
           <div class="brand-content-desc">Professional marking and measuring tools trusted by tradespeople worldwide for precision on every job.</div>
-            <button class="brand-content-btn" onclick="event.stopPropagation();navigateBrand('TRACER')">
-            View Products
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
+          <div class="brand-content-btn brand-content-btn--soon">Coming Soon</div>
         </div>
 
       </div>
       <!-- Bora -->
-      <div class="home-brand-card" onmouseenter="activateBrand(this)" onclick="navigateBrand('BORA')">
+      <div class="home-brand-card" onmouseenter="activateBrand(this)">
         <img src="/img/brand/bora.jpg" alt="Bora">
         <div class="brand-overlay-narrow"></div>
         <div class="brand-overlay-featured"></div>
@@ -201,42 +190,33 @@
         <div class="brand-content">
           <h3>BORA</h3>
           <div class="brand-content-desc">Innovative tool guides and accessories that elevate precision in every cut and joint on site.</div>
-          <button class="brand-content-btn" onclick="event.stopPropagation();navigateBrand('BORA')">
-            View Products
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
+          <div class="brand-content-btn brand-content-btn--soon">Coming Soon</div>
         </div>
       </div>
       <!-- Smart -->
-      <div class="home-brand-card" >
+      <div class="home-brand-card" onmouseenter="activateBrand(this)">
         <img src="/img/brand/smart.jpg" alt="Smart">
         <div class="brand-overlay-narrow"></div>
         <div class="brand-overlay-featured"></div>
-        <div class="brand-name"><span class="brand-coming-soon">Coming Soon</span> SMART</div>
+        <div class="brand-name"> SMART</div>
         <div class="brand-content">
           <div class="brand-content-text">
           <h3>SMART</h3>
           <div class="brand-content-desc">Smart solutions for modern tradespeople — where advanced technology meets everyday craftsmanship.</div>
           </div>
-          <button class="brand-content-btn" onclick="event.stopPropagation();navigateBrand('SMART')">
-            View Products
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
+          <div class="brand-content-btn brand-content-btn--soon">Coming Soon</div>
         </div>
       </div>
       <!-- Unitec -->
-      <div class="home-brand-card" >
+      <div class="home-brand-card" onmouseenter="activateBrand(this)">
         <img src="/img/brand/unitec.jpg" alt="Unitec">
         <div class="brand-overlay-narrow"></div>
         <div class="brand-overlay-featured"></div>
-        <div class="brand-name"><span class="brand-coming-soon">Coming Soon</span>  UNITEC</div>
+        <div class="brand-name"> UNITEC</div>
         <div class="brand-content">
           <h3>UNITEC</h3>
           <div class="brand-content-desc">Reliable, performance-driven tools engineered to handle the toughest professional environments.</div>
-          <button class="brand-content-btn" onclick="event.stopPropagation();navigateBrand('UNITEC')">
-            View Products
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
+          <div class="brand-content-btn brand-content-btn--soon">Coming Soon</div>
         </div>
       </div>
     </div>
@@ -268,11 +248,11 @@
             </div>
             <div class="home-new-products-btns">
               <button class="hnp-btn-primary" onclick="selectedSegment='Promotions';selectedCat=-1;selectedSubCat=null;navigate('listing')">View Products</button>
-              <button class="hnp-btn-secondary" onclick="window.location.href='http://waitlist.localhost'">All Catalogues</button>
+              <button class="hnp-btn-secondary" >All Catalogues</button>
             </div>
           </div>
           <div class="home-new-products-img-wrap">
-            <img class="home-new-products-img" src="https://www.figma.com/api/mcp/asset/ec9dc5df-76b1-45c3-8033-f20d8a5e6451" alt="Product Catalogue">
+            <img class="home-new-products-img" src="img/home-page-new-products-image.png" alt="Product Catalogue">
           </div>
 
   </section>
@@ -283,7 +263,7 @@
       <div class="home-faq-left">
         <h2>Frequently Asked Questions</h2>
         <div class="home-faq-sub">
-          Can't find the answer you're looking for? Visit our <a href="http://waitlist.localhost">FAQs page</a> for more information or <a href="http://waitlist.localhost">Contact us</a>.
+          Can't find the answer you're looking for? Visit our <a>FAQs page</a> for more information or <a>Contact us</a>.
         </div>
       </div>
       <div class="home-faq-accordion" id="home-faq-accordion">
@@ -297,7 +277,7 @@
     <div class="home-blog-header">
       <div class="home-blog-header-left">
         <h2>News &amp; TIPS</h2>
-        <div class="home-section-sub">Explore product updates, usage tips, expert insights and step-by-step tutorials on our <a href="http://waitlist.localhost" style="color:#0ba5ec">Blog page</a> </div>
+        <div class="home-section-sub">Explore product updates, usage tips, expert insights and step-by-step tutorials on our <a style="color:#0ba5ec">Blog page</a> </div>
       </div>
       <div class="home-blog-arrows">
         <button class="home-blog-arrow-btn" onclick="window.location.href='http://waitlist.localhost'">&#8592;</button>
@@ -316,7 +296,7 @@
           </div>
           <h3 class="home-blog-card-title">THE ULTIMATE GUIDE TO DIAMOND BLADES</h3>
           <div class="home-blog-card-body">Learn how to choose the right diamond blade for every cutting application, from masonry to porcelain tile.</div>
-          <a class="home-blog-card-cta" href="http://waitlist.localhost">
+          <a class="home-blog-card-cta">
             Read More
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -333,7 +313,7 @@
           </div>
           <h3 class="home-blog-card-title">TOP SAFETY GEAR FOR PROFESSIONAL TRADESPEOPLE</h3>
           <div class="home-blog-card-body">A comprehensive overview of the most important PPE and safety equipment every tradesperson needs on site.</div>
-          <a class="home-blog-card-cta" href="http://waitlist.localhost">
+          <a class="home-blog-card-cta">
             Read More
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -350,7 +330,7 @@
           </div>
           <h3 class="home-blog-card-title">BORA ADJUSTABLE SPEEDHORSE XT: IN DEPTH REVIEW</h3>
           <div class="home-blog-card-body">Our team put the new Bora Adjustable SpeedHorse XT through its paces — here's what we found on site.</div>
-          <a class="home-blog-card-cta" href="http://waitlist.localhost">
+          <a class="home-blog-card-cta">
             Read More
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -368,29 +348,29 @@
       <div class="footer-col">
         <h4>Products</h4>
         <a onclick="navigateBrand('OX')">OX</a>
-        <a onclick="navigateBrand('BORA')">BORA</a>
-        <a onclick="navigateBrand('TRACER')">TRACER</a>
-        <a onclick="navigateBrand('SMART')">SMART</a>
-        <a onclick="navigateBrand('UNITEC')">UNITEC</a>
+        <a >BORA</a>
+        <a >TRACER</a>
+        <a >SMART</a>
+        <a>UNITEC</a>
       </div>
       <div class="footer-col">
         <h4>About Us</h4>
-        <a href="http://waitlist.localhost">Blog</a>
-        <a href="http://waitlist.localhost">News</a>
-        <a href="http://waitlist.localhost">Videos</a>
-        <a href="http://waitlist.localhost">Catalogs</a>
+        <a>Blog</a>
+        <a>News</a>
+        <a>Videos</a>
+        <a>Catalogs</a>
       </div>
       <div class="footer-col">
         <h4>Help</h4>
-        <a href="http://waitlist.localhost">Support Requests</a>
-        <a href="http://waitlist.localhost">All Contacts</a>
-        <a href="http://waitlist.localhost">Orders</a>
-        <a href="http://waitlist.localhost">Returns</a>
-        <a href="http://waitlist.localhost">FAQs</a>
+        <a>Support Requests</a>
+        <a>All Contacts</a>
+        <a>Orders</a>
+        <a>Returns</a>
+        <a>FAQs</a>
       </div>
       <div class="footer-col">
         <h4>Social</h4>
-        <a href="http://waitlist.localhost">LinkedIn</a>
+        <a>LinkedIn</a>
       </div>
       <div class="footer-col">
         <div class="footer-contact">
@@ -401,12 +381,12 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <div class="footer-logo-text"><span>OX</span> GROUP</div>
+      <img class="footer-logo" src="img/logo.png" alt="OX Group">
       <div class="footer-bottom-links">
-        <a href="http://waitlist.localhost">Terms &amp; Conditions</a>
-        <a href="http://waitlist.localhost">Privacy Policy</a>
-        <a href="http://waitlist.localhost">Cookies Settings</a>
-        <span>© 2025 OX. All rights reserved.</span>
+        <a>Terms &amp; Conditions</a>
+        <a>Privacy Policy</a>
+        <a>Cookies Settings</a>
+        <span>© 2026 OX. All rights reserved.</span>
       </div>
     </div>
   </footer>
@@ -456,29 +436,29 @@
       <div class="footer-col">
         <h4>Products</h4>
         <a onclick="navigateBrand('OX')">OX</a>
-        <a onclick="navigateBrand('BORA')">BORA</a>
-        <a onclick="navigateBrand('TRACER')">TRACER</a>
-        <a onclick="navigateBrand('SMART')">SMART</a>
-        <a onclick="navigateBrand('UNITEC')">UNITEC</a>
+        <a >BORA</a>
+        <a >TRACER</a>
+        <a >SMART</a>
+        <a >UNITEC</a>
       </div>
       <div class="footer-col">
         <h4>About Us</h4>
-        <a href="http://waitlist.localhost">Blog</a>
-        <a href="http://waitlist.localhost">News</a>
-        <a href="http://waitlist.localhost">Videos</a>
-        <a href="http://waitlist.localhost">Catalogs</a>
+        <a>Blog</a>
+        <a>News</a>
+        <a>Videos</a>
+        <a>Catalogs</a>
       </div>
       <div class="footer-col">
         <h4>Help</h4>
-        <a href="http://waitlist.localhost">Support Requests</a>
-        <a href="http://waitlist.localhost">All Contacts</a>
-        <a href="http://waitlist.localhost">Orders</a>
-        <a href="http://waitlist.localhost">Returns</a>
-        <a href="http://waitlist.localhost">FAQs</a>
+        <a>Support Requests</a>
+        <a>All Contacts</a>
+        <a>Orders</a>
+        <a>Returns</a>
+        <a>FAQs</a>
       </div>
       <div class="footer-col">
         <h4>Social</h4>
-        <a href="http://waitlist.localhost">LinkedIn</a>
+        <a>LinkedIn</a>
       </div>
       <div class="footer-col">
         <div class="footer-contact">
@@ -488,17 +468,30 @@
         </div>
       </div>
     </div>
-    <div class="footer-bottom">
-      <div class="footer-logo-text"><span>OX</span> GROUP</div>
+     <div class="footer-bottom">
+      <img class="footer-logo" src="img/logo.png" alt="OX Group">
       <div class="footer-bottom-links">
-        <a href="http://waitlist.localhost">Terms &amp; Conditions</a>
-        <a href="http://waitlist.localhost">Privacy Policy</a>
-        <a href="http://waitlist.localhost">Cookies Settings</a>
-        <span>© 2025 OX. All rights reserved.</span>
+        <a>Terms &amp; Conditions</a>
+        <a>Privacy Policy</a>
+        <a>Cookies Settings</a>
+        <span>© 2026 OX. All rights reserved.</span>
       </div>
     </div>
   </footer>
 
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: SEARCH RESULTS
+════════════════════════════════════════════ -->
+<div class="page" id="page-search">
+  <div class="listing-header">
+    <h1 id="search-result-heading">Search</h1>
+    <span class="product-count" id="search-result-count"></span>
+  </div>
+  <div class="category-tabs" id="search-cat-tabs"></div>
+  <div class="product-list" id="search-result-list"></div>
+  <div class="pagination" id="search-pagination" style="display:none"></div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -521,7 +514,7 @@
       <div class="home-faq-left">
         <h2>Frequently Asked Questions</h2>
         <div class="home-faq-sub">
-          Can't find the answer you're looking for? Visit our <a href="http://waitlist.localhost">FAQs page</a> for more information or <a href="http://waitlist.localhost">Contact us</a>.
+          Can't find the answer you're looking for? Visit our <a>FAQs page</a> for more information or <a>Contact us</a>.
         </div>
       </div>
       <div class="home-faq-accordion" id="detail-faq"></div>
@@ -535,29 +528,29 @@
       <div class="footer-col">
         <h4>Products</h4>
         <a onclick="navigateBrand('OX')">OX</a>
-        <a onclick="navigateBrand('BORA')">BORA</a>
-        <a onclick="navigateBrand('TRACER')">TRACER</a>
-        <a onclick="navigateBrand('SMART')">SMART</a>
-        <a onclick="navigateBrand('UNITEC')">UNITEC</a>
+        <a >BORA</a>
+        <a >TRACER</a>
+        <a >SMART</a>
+        <a >UNITEC</a>
       </div>
       <div class="footer-col">
         <h4>About Us</h4>
-        <a href="http://waitlist.localhost">Blog</a>
-        <a href="http://waitlist.localhost">News</a>
-        <a href="http://waitlist.localhost">Videos</a>
-        <a href="http://waitlist.localhost">Catalogs</a>
+        <a>Blog</a>
+        <a>News</a>
+        <a>Videos</a>
+        <a>Catalogs</a>
       </div>
       <div class="footer-col">
         <h4>Help</h4>
-        <a href="http://waitlist.localhost">Support Requests</a>
-        <a href="http://waitlist.localhost">All Contacts</a>
-        <a href="http://waitlist.localhost">Orders</a>
-        <a href="http://waitlist.localhost">Returns</a>
-        <a href="http://waitlist.localhost">FAQs</a>
+        <a>Support Requests</a>
+        <a>All Contacts</a>
+        <a>Orders</a>
+        <a>Returns</a>
+        <a>FAQs</a>
       </div>
       <div class="footer-col">
         <h4>Social</h4>
-        <a href="http://waitlist.localhost">LinkedIn</a>
+        <a>LinkedIn</a>
       </div>
       <div class="footer-col">
         <div class="footer-contact">
@@ -567,13 +560,13 @@
         </div>
       </div>
     </div>
-    <div class="footer-bottom">
-      <div class="footer-logo-text"><span>OX</span> GROUP</div>
+     <div class="footer-bottom">
+      <img class="footer-logo" src="img/logo.png" alt="OX Group">
       <div class="footer-bottom-links">
-        <a href="http://waitlist.localhost">Terms &amp; Conditions</a>
-        <a href="http://waitlist.localhost">Privacy Policy</a>
-        <a href="http://waitlist.localhost">Cookies Settings</a>
-        <span>© 2025 OX. All rights reserved.</span>
+        <a>Terms &amp; Conditions</a>
+        <a>Privacy Policy</a>
+        <a>Cookies Settings</a>
+        <span>© 2026 OX. All rights reserved.</span>
       </div>
     </div>
   </footer>
@@ -654,7 +647,7 @@
 <path d="M8.76951 7.14876L5.96007 5.82645L7.00544 8.27273L4 11H6.30309L7.78947 9.7438L8.36116 11L11.4646 10.9339L9.99455 7.71074L13 5H10.7459L9.3412 6.17355L8.76951 5H5.60073L8.76951 7.14876Z" fill="#A4A4A4"/>
 </svg>
  Download an example .csv template</a>
-                <a class="csv-link" href="http://waitlist.localhost"> <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <a class="csv-link"> <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.76951 7.14876L5.96007 5.82645L7.00544 8.27273L4 11H6.30309L7.78947 9.7438L8.36116 11L11.4646 10.9339L9.99455 7.71074L13 5H10.7459L9.3412 6.17355L8.76951 5H5.60073L8.76951 7.14876Z" fill="#A4A4A4"/>
 </svg>
  Experience any problem?</a>
@@ -679,7 +672,7 @@
         <div class="summary-faq" style="margin-top:16px">
           <div class="accordion" id="cart-faq"></div>
         </div>
-        <div class="cart-help">Something wrong with this order?<br><a href="http://waitlist.localhost" style="color:var(--blue)">Contact us</a> or submit a <a href="http://waitlist.localhost" style="color:var(--blue)">support request</a></div>
+        <div class="cart-help">Something wrong with this order?<br><a style="color:var(--blue)">Contact us</a> or submit a <a style="color:var(--blue)">support request</a></div>
       </div>
     </div>
   </div>
@@ -691,29 +684,29 @@
       <div class="footer-col">
         <h4>Products</h4>
         <a onclick="navigateBrand('OX')">OX</a>
-        <a onclick="navigateBrand('BORA')">BORA</a>
-        <a onclick="navigateBrand('TRACER')">TRACER</a>
-        <a onclick="navigateBrand('SMART')">SMART</a>
-        <a onclick="navigateBrand('UNITEC')">UNITEC</a>
+        <a >BORA</a>
+        <a >TRACER</a>
+        <a >SMART</a>
+        <a >UNITEC</a>
       </div>
       <div class="footer-col">
         <h4>About Us</h4>
-        <a href="http://waitlist.localhost">Blog</a>
-        <a href="http://waitlist.localhost">News</a>
-        <a href="http://waitlist.localhost">Videos</a>
-        <a href="http://waitlist.localhost">Catalogs</a>
+        <a>Blog</a>
+        <a>News</a>
+        <a>Videos</a>
+        <a>Catalogs</a>
       </div>
       <div class="footer-col">
         <h4>Help</h4>
-        <a href="http://waitlist.localhost">Support Requests</a>
-        <a href="http://waitlist.localhost">All Contacts</a>
-        <a href="http://waitlist.localhost">Orders</a>
-        <a href="http://waitlist.localhost">Returns</a>
-        <a href="http://waitlist.localhost">FAQs</a>
+        <a>Support Requests</a>
+        <a>All Contacts</a>
+        <a>Orders</a>
+        <a>Returns</a>
+        <a>FAQs</a>
       </div>
       <div class="footer-col">
         <h4>Social</h4>
-        <a href="http://waitlist.localhost">LinkedIn</a>
+        <a>LinkedIn</a>
       </div>
       <div class="footer-col">
         <div class="footer-contact">
@@ -723,13 +716,13 @@
         </div>
       </div>
     </div>
-    <div class="footer-bottom">
-      <div class="footer-logo-text"><span>OX</span> GROUP</div>
+     <div class="footer-bottom">
+      <img class="footer-logo" src="img/logo.png" alt="OX Group">
       <div class="footer-bottom-links">
-        <a href="http://waitlist.localhost">Terms &amp; Conditions</a>
-        <a href="http://waitlist.localhost">Privacy Policy</a>
-        <a href="http://waitlist.localhost">Cookies Settings</a>
-        <span>© 2025 OX. All rights reserved.</span>
+        <a>Terms &amp; Conditions</a>
+        <a>Privacy Policy</a>
+        <a>Cookies Settings</a>
+        <span>© 2026 OX. All rights reserved.</span>
       </div>
     </div>
   </footer>
@@ -860,13 +853,13 @@
           <div class="home-faq-header"><span>Are taxes included in the price?</span><span class="home-faq-toggle">+</span></div>
           <div class="home-faq-body">All prices shown are exclusive of tax. Applicable taxes will be added at checkout.</div>
         </div>
-        <div class="cart-help">Something wrong with this order?<br><a href="http://waitlist.localhost" style="color:var(--blue)">Contact us</a> or submit a <a href="http://waitlist.localhost" style="color:var(--blue)">support request</a></div>
+        <div class="cart-help">Something wrong with this order?<br><a style="color:var(--blue)">Contact us</a> or submit a <a style="color:var(--blue)">support request</a></div>
       </div><!-- /.summary-cards -->
     </div><!-- /.co-body -->
 
     <div class="checkout-minimal-footer">
-      <span>© 2025 OX GROUP. All rights reserved.</span>
-      <div style="display:flex;gap:16px"><a href="http://waitlist.localhost">Privacy Policy</a><a href="http://waitlist.localhost">Terms of Service</a><a href="http://waitlist.localhost">Cookies Settings</a></div>
+      <span>© 2026 OX GROUP. All rights reserved.</span>
+      <div style="display:flex;gap:16px"><a>Privacy Policy</a><a>Terms of Service</a><a>Cookies Settings</a></div>
     </div>
   </div><!-- /.co-layout -->
 </div>
@@ -954,13 +947,13 @@
           <div class="home-faq-header"><span>Are taxes included in the price?</span><span class="home-faq-toggle">+</span></div>
           <div class="home-faq-body">All prices shown are exclusive of tax. Applicable taxes will be added at checkout.</div>
         </div>
-        <div class="cart-help">Something wrong with this order?<br><a href="http://waitlist.localhost" style="color:var(--blue)">Contact us</a> or submit a <a href="http://waitlist.localhost" style="color:var(--blue)">support request</a></div>
+        <div class="cart-help">Something wrong with this order?<br><a style="color:var(--blue)">Contact us</a> or submit a <a style="color:var(--blue)">support request</a></div>
       </div><!-- /.summary-cards -->
     </div><!-- /.co-body -->
 
     <div class="checkout-minimal-footer">
-      <span>© 2025 OX GROUP. All rights reserved.</span>
-      <div style="display:flex;gap:16px"><a href="http://waitlist.localhost">Privacy Policy</a><a href="http://waitlist.localhost">Terms of Service</a><a href="http://waitlist.localhost">Cookies Settings</a></div>
+      <span>© 2026 OX GROUP. All rights reserved.</span>
+      <div style="display:flex;gap:16px"><a>Privacy Policy</a><a>Terms of Service</a><a>Cookies Settings</a></div>
     </div>
   </div><!-- /.co-layout -->
 </div>
@@ -1071,13 +1064,13 @@
           <div class="home-faq-header"><span>Are taxes included in the price?</span><span class="home-faq-toggle">+</span></div>
           <div class="home-faq-body">All prices shown are exclusive of tax. Applicable taxes will be added at checkout.</div>
         </div>
-        <div class="cart-help">Something wrong with this order?<br><a href="http://waitlist.localhost" style="color:var(--blue)">Contact us</a> or submit a <a href="http://waitlist.localhost" style="color:var(--blue)">support request</a></div>
+        <div class="cart-help">Something wrong with this order?<br><a style="color:var(--blue)">Contact us</a> or submit a <a style="color:var(--blue)">support request</a></div>
       </div><!-- /.summary-cards -->
     </div><!-- /.co-body -->
 
     <div class="checkout-minimal-footer">
-      <span>© 2025 OX GROUP. All rights reserved.</span>
-      <div style="display:flex;gap:16px"><a href="http://waitlist.localhost">Privacy Policy</a><a href="http://waitlist.localhost">Terms of Service</a><a href="http://waitlist.localhost">Cookies Settings</a></div>
+      <span>© 2026 OX GROUP. All rights reserved.</span>
+      <div style="display:flex;gap:16px"><a>Privacy Policy</a><a>Terms of Service</a><a>Cookies Settings</a></div>
     </div>
   </div><!-- /.co-layout -->
 </div>
@@ -1096,7 +1089,7 @@
       <button class="thankyou-btn-primary" onclick="navigate('home')">Home Page</button>
       <button class="thankyou-btn-outline">Cancel Order</button>
     </div>
-    <div class="thankyou-help">Have any questions? <a href="http://waitlist.localhost" style="color:var(--blue)">Support request</a></div>
+    <div class="thankyou-help">Have any questions? <a style="color:var(--blue)">Support request</a></div>
     <div class="order-card">
       <div class="order-card-header">
         <div class="order-id">
@@ -1128,8 +1121,8 @@
     </div>
   </div>
   <div class="checkout-minimal-footer">
-    <span>© 2025 OX GROUP. All rights reserved.</span>
-    <div style="display:flex;gap:16px"><a href="http://waitlist.localhost">Privacy Policy</a><a href="http://waitlist.localhost">Terms of Service</a><a href="http://waitlist.localhost">Cookies Settings</a></div>
+    <span>© 2026 OX GROUP. All rights reserved.</span>
+    <div style="display:flex;gap:16px"><a>Privacy Policy</a><a>Terms of Service</a><a>Cookies Settings</a></div>
   </div>
 </div>
 
